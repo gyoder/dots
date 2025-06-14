@@ -1,3 +1,6 @@
+vim/.vim/backup
+
+
 # Compiled Lua sources
 luac.out
 
