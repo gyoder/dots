@@ -9,14 +9,15 @@ set -x PATH /Users/scie/.local/nvim-macos-arm64/bin \
   /Users/scie/.local/bin \
   /Users/scie/Library/Python/3.9/bin \
   /opt/local/var/macports/sources/rsync.macports.org/macports/release/tarballs/ports/emulators \
-  /usr/bin \
   /opt/homebrew/bin/iodine \
   /opt/homebrew/bin \
   /Users/scie/.platformio/penv/bin/ \
   /Users/scie/.cargo/bin \
   /Users/scie/.local/xonsh-env/xbin \
   /usr/bin \
-  /bin
+  /usr/sbin \
+  /bin \
+  /sbin
 if status is-interactive
   function source_env
     if not test -f .env
