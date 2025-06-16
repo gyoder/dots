@@ -234,10 +234,34 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
+-- Config for: marks.nvim
+time([[Config for marks.nvim]], true)
+try_loadstring("\27LJ\2\n4\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\25plugins/marks-config\frequire\0", "config", "marks.nvim")
+time([[Config for marks.nvim]], false)
+-- Config for: blink.cmp
+time([[Config for blink.cmp]], true)
+try_loadstring("\27LJ\2\n4\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\25plugins/blink_config\frequire\0", "config", "blink.cmp")
+time([[Config for blink.cmp]], false)
+-- Config for: nvim-treesitter
+time([[Config for nvim-treesitter]], true)
+try_loadstring("\27LJ\2\n*\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\15plugins/ts\frequire\0", "config", "nvim-treesitter")
+time([[Config for nvim-treesitter]], false)
+-- Config for: neogit
+time([[Config for neogit]], true)
+try_loadstring("\27LJ\2\n8\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\vneogit\frequire\0", "config", "neogit")
+time([[Config for neogit]], false)
 -- Config for: git-blame.nvim
 time([[Config for git-blame.nvim]], true)
 try_loadstring("\27LJ\2\nN\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\1\19gitblame_delay\3\1\nsetup\rgitblame\frequire\0", "config", "git-blame.nvim")
 time([[Config for git-blame.nvim]], false)
+-- Config for: solarized.nvim
+time([[Config for solarized.nvim]], true)
+try_loadstring("\27LJ\2\n³\1\0\0\4\0\n\0\0246\0\0\0009\0\1\0'\1\3\0=\1\2\0006\0\4\0'\2\5\0B\0\2\0026\1\0\0009\1\1\1+\2\2\0=\2\6\0016\1\0\0009\1\1\1'\2\3\0=\2\2\0019\1\a\0004\3\0\0B\1\2\0016\1\0\0009\1\b\0019\1\t\1'\3\5\0B\1\2\1K\0\1\0\16colorscheme\bcmd\nsetup\18termguicolors\14solarized\frequire\tdark\15background\6o\bvim\0", "config", "solarized.nvim")
+time([[Config for solarized.nvim]], false)
+-- Config for: octo.nvim
+time([[Config for octo.nvim]], true)
+try_loadstring("\27LJ\2\n2\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\tocto\frequire\0", "config", "octo.nvim")
+time([[Config for octo.nvim]], false)
 -- Config for: autoclose.nvim
 time([[Config for autoclose.nvim]], true)
 try_loadstring("\27LJ\2\n7\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\14autoclose\frequire\0", "config", "autoclose.nvim")
@@ -250,26 +274,6 @@ time([[Config for lualine.nvim]], false)
 time([[Config for betterTerm.nvim]], true)
 try_loadstring("\27LJ\2\n8\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\15betterTerm\frequire\0", "config", "betterTerm.nvim")
 time([[Config for betterTerm.nvim]], false)
--- Config for: solarized.nvim
-time([[Config for solarized.nvim]], true)
-try_loadstring("\27LJ\2\n³\1\0\0\4\0\n\0\0246\0\0\0009\0\1\0'\1\3\0=\1\2\0006\0\4\0'\2\5\0B\0\2\0026\1\0\0009\1\1\1+\2\2\0=\2\6\0016\1\0\0009\1\1\1'\2\3\0=\2\2\0019\1\a\0004\3\0\0B\1\2\0016\1\0\0009\1\b\0019\1\t\1'\3\5\0B\1\2\1K\0\1\0\16colorscheme\bcmd\nsetup\18termguicolors\14solarized\frequire\tdark\15background\6o\bvim\0", "config", "solarized.nvim")
-time([[Config for solarized.nvim]], false)
--- Config for: blink.cmp
-time([[Config for blink.cmp]], true)
-try_loadstring("\27LJ\2\n4\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\25plugins/blink_config\frequire\0", "config", "blink.cmp")
-time([[Config for blink.cmp]], false)
--- Config for: neogit
-time([[Config for neogit]], true)
-try_loadstring("\27LJ\2\n8\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\vneogit\frequire\0", "config", "neogit")
-time([[Config for neogit]], false)
--- Config for: octo.nvim
-time([[Config for octo.nvim]], true)
-try_loadstring("\27LJ\2\n2\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\tocto\frequire\0", "config", "octo.nvim")
-time([[Config for octo.nvim]], false)
--- Config for: nvim-treesitter
-time([[Config for nvim-treesitter]], true)
-try_loadstring("\27LJ\2\n*\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\15plugins/ts\frequire\0", "config", "nvim-treesitter")
-time([[Config for nvim-treesitter]], false)
 -- Config for: nvim-platformio.lua
 time([[Config for nvim-platformio.lua]], true)
 try_loadstring("\27LJ\2\nn\0\0\3\0\a\0\f6\0\0\0009\0\1\0009\0\2\0\14\0\0\0X\0\6€6\0\3\0'\2\4\0B\0\2\0029\0\5\0005\2\6\0B\0\2\1K\0\1\0\1\0\1\blsp\vclangd\nsetup\15platformio\frequire\14is_purdue\6g\bvim\0", "config", "nvim-platformio.lua")
@@ -278,10 +282,6 @@ time([[Config for nvim-platformio.lua]], false)
 time([[Config for rustaceanvim]], true)
 try_loadstring("\27LJ\2\n3\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\24plugins/rust-config\frequire\0", "config", "rustaceanvim")
 time([[Config for rustaceanvim]], false)
--- Config for: marks.nvim
-time([[Config for marks.nvim]], true)
-try_loadstring("\27LJ\2\n4\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\25plugins/marks-config\frequire\0", "config", "marks.nvim")
-time([[Config for marks.nvim]], false)
 
 _G._packer.inside_compile = false
 if _G._packer.needs_bufread == true then
