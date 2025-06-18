@@ -16,6 +16,15 @@ vim.lsp.config('pyright', {
 
 vim.lsp.enable("pyright")
 
+vim.lsp.config('ty', {
+  on_attach = function()
+    print('ty is now active in this file')
+  end,
+})
+
+-- vim.lsp.enable("ty")
+
+
 
 vim.lsp.config('clangd', {
   on_attach = function()
