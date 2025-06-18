@@ -1,6 +1,6 @@
 set host (hostname)
 
-if test "$host" = "turing"
+if string match -q "*turing*" "$host"
     set -x PATH /Users/scie/.local/nvim-macos-arm64/bin \
       /opt/homebrew/Cellar/universal-ctags/HEAD-43ca055/bin \
       /Users/scie/.local/xonsh-env/xbin \
