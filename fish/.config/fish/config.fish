@@ -22,7 +22,8 @@ if string match -q "*turing*" "$host"
       /bin \
       /sbin
 else if test "$host" = "lovelace"
-    set -x PATH /home/linuxbrew/.linuxbrew/bin \
+    set -x PATH /home/scie/.local/bin \
+      /home/linuxbrew/.linuxbrew/bin \
       /home/linuxbrew/.linuxbrew/sbin \
       /home/scie/.nvm/versions/node/v22.15.0/bin \
       /home/scie/.cargo/bin \
