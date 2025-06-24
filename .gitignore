@@ -1,7 +1,8 @@
 vim/.vim/backup
 vim/.config/nvim/plugin/packer_compiled.lua
 fish/.config/fish/fish_variables
-
+tmux/.tmux/plugins
+fish/.config/fish/fishd.tmp*
 
 # Compiled Lua sources
 luac.out
