@@ -39,28 +39,5 @@ else if test "$host" = "lovelace"
 end
 
 if status is-interactive
-  function source_env
-    if not test -f .env
-      echo "No .env file found in current directory"
-      return 1
-    end
-
-    for line in (cat .env)
-      set line (string trim -- $line)
-      # Skip empty lines and comments
-      if test -z "$line" -o (string sub --start 1 --length 1 "$line") = "#"
-        continue
-      end
-      # Check if line contains =
-      if string match -q "*=*" "$line"
-        set parts (string split -m1 '=' "$line")
-        set var_name $parts[1]
-        set var_value $parts[2]
-        # Remove surrounding quotes if present
-        set var_value (string trim --chars='"' "$var_value")
-        set var_value (string trim --chars="'" "$var_value")
-        set -x $var_name $var_value
-      end
-    end
-  end
+  fish_config theme choose "Rosé Pine"
 end
