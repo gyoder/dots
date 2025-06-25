@@ -1,4 +1,4 @@
 require('lualine').setup {
-  options = { theme = "solarized" }
+  options = { theme = "rose-pine" }
 }
 

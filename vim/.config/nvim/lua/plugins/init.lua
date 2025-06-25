@@ -27,7 +27,7 @@ return require('packer').startup(function(use)
       vim.o.termguicolors = true
       vim.o.background = 'dark'
       solarized.setup({})
-      vim.cmd.colorscheme 'solarized'
+      -- vim.cmd.colorscheme 'solarized'
     end
   }
   use {
@@ -146,6 +146,22 @@ return require('packer').startup(function(use)
   use { "geigerzaehler/tree-sitter-jinja2" }
 
   use "echasnovski/mini.base16"
+
+  use 'rktjmp/lush.nvim'
+
+  use {
+    "rose-pine/neovim",
+    as = "rose-pine",
+    config = function()
+      require("rose-pine").setup({
+        variant = "moon"
+      })
+      vim.cmd("colorscheme rose-pine")
+    end
+  }
+
+  use "folke/which-key.nvim"
+
 
 
   ------------------------
