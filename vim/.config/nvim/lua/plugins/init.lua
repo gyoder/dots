@@ -160,7 +160,7 @@ return require('packer').startup(function(use)
     end
   }
 
-  use "folke/which-key.nvim"
+  -- use "folke/which-key.nvim"
 
 
 
