@@ -7,3 +7,4 @@ theme = rose-pine
 font-family = "ComicCode Nerd Font"
 macos-option-as-alt = left
 macos-icon = microchip
+font-feature = -liga
