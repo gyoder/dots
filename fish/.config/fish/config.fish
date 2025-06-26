@@ -40,4 +40,5 @@ end
 
 if status is-interactive
   fish_config theme choose "Rosé Pine"
+  zoxide init fish | source
 end
