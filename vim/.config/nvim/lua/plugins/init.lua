@@ -47,9 +47,17 @@ return require('packer').startup(function(use)
     requires = { 'nvim-tree/nvim-web-devicons', opt = true },
     config = function() require('plugins/lualine-config') end
   }
+  -- use {
+  --   'm4xshen/autoclose.nvim',
+  --   config = function() require("autoclose").setup() end
+  -- }
+  --
   use {
-    'm4xshen/autoclose.nvim',
-    config = function() require("autoclose").setup() end
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+      require("nvim-autopairs").setup {}
+    end
   }
 
   use  {
