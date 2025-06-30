@@ -50,6 +50,8 @@ vim.lsp.config('zls', {
 
 vim.lsp.enable("zls")
 
+vim.lsp.enable("gopls")
+
 -- https://lsp-zero.netlify.app/blog/lsp-client-features.html
 
 vim.opt.completeopt = {'menu', 'menuone', 'noselect', 'noinsert'}
