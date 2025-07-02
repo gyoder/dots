@@ -48,6 +48,9 @@ if vim.g.is_purdue then
 end
 
 
+vim.opt.spell = true
+vim.opt.spelllang = "en_us"
+
 
 
 
