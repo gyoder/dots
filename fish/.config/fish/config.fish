@@ -40,6 +40,8 @@ end
 
 if status is-interactive
   fish_config theme choose "Rosé Pine"
-  zoxide init fish | source
   starship init fish | source
+  if not string match -q "*purdue*" "$host"
+    zoxide init fish | source
+  end
 end
