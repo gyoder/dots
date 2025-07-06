@@ -37,7 +37,7 @@ else if test "$host" = "lovelace"
       /usr/local/games \
       /snap/bin
 else if test "$host" = "lee"
-  fish_add_path ~/.config/bin
+  fish_add_path ~/.local/bin
 end
 
 if status is-interactive
