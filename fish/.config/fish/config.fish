@@ -39,6 +39,9 @@ else if test "$host" = "lovelace"
 end
 
 if status is-interactive
+  set -g fish_greeting ""
+  pfetch
+
   fish_config theme choose "Rosé Pine"
   starship init fish | source
   if not string match -q "*purdue*" "$host"
