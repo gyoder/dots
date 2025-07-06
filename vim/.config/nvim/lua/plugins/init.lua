@@ -124,19 +124,6 @@ return require('packer').startup(function(use)
     'mrcjkb/rustaceanvim',
     config = function() require('plugins/rust-config') end
   }
-  use {
-    'pwntester/octo.nvim',
-    requires = {
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope.nvim',
-      -- OR 'ibhagwan/fzf-lua',
-      -- OR 'folke/snacks.nvim',
-      'nvim-tree/nvim-web-devicons',
-    },
-    config = function ()
-      require"octo".setup()
-    end
-  }
 
   use {
     "NeogitOrg/neogit",
@@ -148,8 +135,6 @@ return require('packer').startup(function(use)
   use "mfussenegger/nvim-dap"
   use 'theHamsta/nvim-dap-virtual-text'
   use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} }
-
-  use 'wakatime/vim-wakatime'
 
   use { "geigerzaehler/tree-sitter-jinja2" }
 

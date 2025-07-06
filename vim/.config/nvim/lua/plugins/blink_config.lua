@@ -1,6 +1,6 @@
 require("blink.cmp").setup({
   fuzzy = {
-    implementation = "prefer_rust",
+    implementation = "lua",
     prebuilt_binaries = {
       download = true,
       force_version = 'v1.2.0',
