@@ -47,10 +47,39 @@ if vim.g.is_purdue then
   vim.cmd("set noundofile") -- i forgor how to do this in lua so i didnt
 end
 
+--
+-- vim.opt.spell = true
+-- vim.opt.spelllang = "en_us"
+--
 
-vim.opt.spell = true
-vim.opt.spelllang = "en_us"
+-- For init.lua
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.textwidth = 80
+  end,
+})
 
+vim.o.clipboard = "unnamedplus"
 
+vim.api.nvim_create_autocmd("TextYankPost", {
+  callback = function()
+    vim.highlight.on_yank()
+    local osc52 = require("vim.ui.clipboard.osc52")
+    local contents = vim.v.event.regcontents
+    local regtype = vim.v.event.regtype
 
+    if type(contents) == "string" then
+      contents = { contents }
+    end
 
+    if regtype == "V" then
+      for i, line in ipairs(contents) do
+        contents[i] = line .. "\n"
+      end
+    end
+
+    osc52.copy("+")(contents)
+    osc52.copy("*")(contents)
+  end,
+})
