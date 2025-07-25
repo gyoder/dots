@@ -60,6 +60,13 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+vim.api.nvim_create_autocmd("TermOpen", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.spell = false
+  end,
+})
+
 vim.o.clipboard = "unnamedplus"
 
 vim.api.nvim_create_autocmd("TextYankPost", {
