@@ -52,7 +52,6 @@ end
 -- vim.opt.spelllang = "en_us"
 --
 
--- For init.lua
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function()
@@ -90,3 +89,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     osc52.copy("*")(contents)
   end,
 })
+
+-- Enable experimental UI in neovim-nightly
+require('vim._extui').enable({})

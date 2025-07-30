@@ -54,13 +54,9 @@ vim.lsp.enable("gopls")
 
 vim.lsp.enable("tinymist")
 
+vim.lsp.enable("cspell-ls")
 
-vim.lsp.config('textlsp', {
-  on_attach = function()
-    print('textlsp is now active in this file')
-  end,
-})
-vim.lsp.enable("textlsp")
+vim.lsp.enable("astro")
 
 -- https://lsp-zero.netlify.app/blog/lsp-client-features.html
 

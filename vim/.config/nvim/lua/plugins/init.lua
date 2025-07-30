@@ -163,6 +163,31 @@ return require('packer').startup(function(use)
 
   -- use "folke/which-key.nvim"
 
+  use({
+    "andrewferrier/wrapping.nvim",
+    config = function()
+      require("wrapping").setup()
+    end,
+  })
+
+  use({
+    "iamcco/markdown-preview.nvim",
+    run = function() vim.fn["mkdp#util#install"]() end,
+  })
+
+
+  use {
+    'preservim/vim-pencil',
+    config = function()
+      vim.cmd([[
+      augroup PencilSetup
+      autocmd!
+      autocmd FileType markdown,text,tex,gitcommit setlocal formatoptions+=t
+      autocmd FileType markdown,text,tex,gitcommit PencilHard
+      augroup END       augroup END
+      ]])
+    end
+  }
 
 
   ------------------------
