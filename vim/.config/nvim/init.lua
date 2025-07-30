@@ -99,28 +99,5 @@ if vim.env.TMUX ~= nil then
   }
 end
 
---
--- vim.api.nvim_create_autocmd("TextYankPost", {
---   callback = function()
---     vim.highlight.on_yank()
---     local osc52 = require("vim.ui.clipboard.osc52")
---     local contents = vim.v.event.regcontents
---     local regtype = vim.v.event.regtype
---
---     if type(contents) == "string" then
---       contents = { contents }
---     end
---
---     if regtype == "V" then
---       for i, line in ipairs(contents) do
---         contents[i] = line .. "\n"
---       end
---     end
---
---     osc52.copy("+")(contents)
---     osc52.copy("*")(contents)
---   end,
--- })
---
 -- Enable experimental UI in neovim-nightly
 require('vim._extui').enable({})
