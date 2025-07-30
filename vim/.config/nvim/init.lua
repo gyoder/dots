@@ -68,27 +68,59 @@ vim.api.nvim_create_autocmd("TermOpen", {
 
 vim.o.clipboard = "unnamedplus"
 
-vim.api.nvim_create_autocmd("TextYankPost", {
-  callback = function()
-    vim.highlight.on_yank()
-    local osc52 = require("vim.ui.clipboard.osc52")
-    local contents = vim.v.event.regcontents
-    local regtype = vim.v.event.regtype
+vim.g.clipboard = {
+	name = "OSC 52",
+	copy = {
+		["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+		["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+	},
+	paste = {
+		["+"] = require("vim.ui.clipboard.osc52").paste("+"),
+		["*"] = require("vim.ui.clipboard.osc52").paste("*"),
+	},
+}
+-- stupid hacky workaround to make it so i can paste from tmux with OSC52
+-- https://github.com/neovim/neovim/discussions/29350#discussioncomment-10299517
+-- tracking issue about tmux behavior: https://github.com/tmux/tmux/issues/4275
+if vim.env.TMUX ~= nil then
+  local copy = {'tmux', 'load-buffer', '-w', '-'}
+  local paste = {'bash', '-c', 'tmux refresh-client -l && sleep 0.05 && tmux save-buffer -'}
+  vim.g.clipboard = {
+    name = 'tmux',
+    copy = {
+      ['+'] = copy,
+      ['*'] = copy,
+    },
+    paste = {
+      ['+'] = paste,
+      ['*'] = paste,
+    },
+    cache_enabled = 0,
+  }
+end
 
-    if type(contents) == "string" then
-      contents = { contents }
-    end
-
-    if regtype == "V" then
-      for i, line in ipairs(contents) do
-        contents[i] = line .. "\n"
-      end
-    end
-
-    osc52.copy("+")(contents)
-    osc52.copy("*")(contents)
-  end,
-})
-
+--
+-- vim.api.nvim_create_autocmd("TextYankPost", {
+--   callback = function()
+--     vim.highlight.on_yank()
+--     local osc52 = require("vim.ui.clipboard.osc52")
+--     local contents = vim.v.event.regcontents
+--     local regtype = vim.v.event.regtype
+--
+--     if type(contents) == "string" then
+--       contents = { contents }
+--     end
+--
+--     if regtype == "V" then
+--       for i, line in ipairs(contents) do
+--         contents[i] = line .. "\n"
+--       end
+--     end
+--
+--     osc52.copy("+")(contents)
+--     osc52.copy("*")(contents)
+--   end,
+-- })
+--
 -- Enable experimental UI in neovim-nightly
 require('vim._extui').enable({})
