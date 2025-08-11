@@ -1,8 +1,24 @@
 vim.g.mapleader = "\\"
 vim.keymap.set("n", "<leader>\\", ":nohlsearch<CR>")
 
-vim.keymap.set("n", "<leader>vv", ":vsplit<CR>")
-vim.keymap.set("n", "<leader>vt", ":tabnew<CR>")
+vim.keymap.set("n", "<leader>vv", function() vim.cmd("vsplit") end)
+vim.keymap.set("n", "<leader>vt", function() vim.cmd("tabnew") end)
+vim.keymap.set("n", "<leader>vw", function() vim.cmd("tabclose") end)
+vim.keymap.set("n", "<leader>vW", function() vim.cmd("tabonly") end)
+vim.keymap.set("n", "<leader>vf", function() require('telescope-tabs').list_tabs() end)
+vim.keymap.set("n", "<C-j>", function() vim.cmd("tabnext") end)
+vim.keymap.set("n", "<C-k>", function() vim.cmd("tabNext") end)
+vim.keymap.set("n", "<leader>v1", function() vim.cmd("tabnext 1") end)
+vim.keymap.set("n", "<leader>v2", function() vim.cmd("tabnext 2") end)
+vim.keymap.set("n", "<leader>v3", function() vim.cmd("tabnext 3") end)
+vim.keymap.set("n", "<leader>v4", function() vim.cmd("tabnext 4") end)
+vim.keymap.set("n", "<leader>v5", function() vim.cmd("tabnext 5") end)
+vim.keymap.set("n", "<leader>v6", function() vim.cmd("tabnext 6") end)
+vim.keymap.set("n", "<leader>v7", function() vim.cmd("tabnext 7") end)
+vim.keymap.set("n", "<leader>v8", function() vim.cmd("tabnext 8") end)
+vim.keymap.set("n", "<leader>v9", function() vim.cmd("tabnext 9") end)
+
+
 
 -- easier to move windows
 vim.keymap.set("n", "`h", "<C-w>h")
@@ -13,6 +29,8 @@ vim.keymap.set("n", "`l", "<C-w>l")
 vim.keymap.set("n", "<leader>qr", vim.lsp.buf.rename)
 vim.keymap.set("n", "<leader>qf", vim.lsp.buf.format)
 vim.keymap.set("n", "<leader>dd", vim.diagnostic.open_float)
+
+
 
 -------- PLUGINS -------
 
@@ -73,5 +91,8 @@ vim.keymap.set('n', '<C-b>', function()
     })  end,
   { desc = "Show Sidebar" }
 )
+
+
+
 
 
