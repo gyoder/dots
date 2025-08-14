@@ -18,7 +18,9 @@ if string match -q "*turing*" "$host"
       /Users/scie/.cargo/bin \
       /Users/scie/.local/xonsh-env/xbin \
       /usr/bin \
+      /usr/local/bin \
       /usr/sbin \
+      /usr/local/sbin \
       /bin \
       /sbin
 else if test "$host" = "lovelace"

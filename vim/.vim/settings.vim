@@ -22,6 +22,8 @@ set showmatch
 set hlsearch
 set history=1000
 set splitright
+set relativenumber
+
 
 if version >= 703
     set undodir=~/.vim/backup
