@@ -10,9 +10,13 @@ vim.keymap.set(
 )
 vim.keymap.set(
   "n",
-  "K",  -- Override Neovim's built-in hover keymap with rustaceanvim's hover actions
+  "K",
   function()
-    vim.cmd.RustLsp({'hover', 'actions'})
+    if vim.bo.filetype == "rust" then
+      vim.cmd.RustLsp({'hover', 'actions'})
+    else
+      vim.lsp.buf.hover()
+    end
   end,
   { silent = true, buffer = bufnr }
 )
