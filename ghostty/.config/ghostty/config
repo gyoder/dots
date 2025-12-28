@@ -3,8 +3,9 @@
 clipboard-read = allow
 clipboard-write = allow
 copy-on-select = true
-theme = rose-pine
+theme = Rose Pine
 font-family = "ComicCode Nerd Font"
+font-style-italic = "ComicCode Nerd Font Light"
 macos-option-as-alt = left
 macos-icon = microchip
 font-feature = -calt

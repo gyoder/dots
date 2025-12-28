@@ -4,7 +4,7 @@
 ---
 return {
   cmd = { 'cspell-lsp', '--stdio' },
-  filetypes = {"go", "rust", "js", "ts", "html", "css", "json", "yaml", "markdown", "gitcommit", "typst", "lua", "htmlua"},
+  filetypes = { "go", "rust", "js", "ts", "html", "css", "json", "yaml", "markdown", "gitcommit", "typst", "lua", "htmlua", "c", "cpp", "arduino" },
   root_markers = {
     '.git',
     'cspell.json',
@@ -19,5 +19,11 @@ return {
     'cspell.config.yml',
     'cspell.yaml',
     'cspell.yml',
+  },
+  init_options = {
+    userWordsFile = vim.fn.expand('~/.config/cspell/user-dictionary.txt'),
+    configPaths = {
+      vim.fn.expand('~/.cspell.json'),
+    },
   },
 }

@@ -2,9 +2,9 @@ vim.cmd [[packadd packer.nvim]]
 
 local ensure_packer = function()
   local fn = vim.fn
-  local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+  local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
   if fn.empty(fn.glob(install_path)) > 0 then
-    fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+    fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
     vim.cmd [[packadd packer.nvim]]
     return true
   end
@@ -32,7 +32,7 @@ return require('packer').startup(function(use)
   }
   use {
     'nvim-telescope/telescope.nvim', tag = '0.1.x',
-    requires = { {'nvim-lua/plenary.nvim'} }
+    requires = { { 'nvim-lua/plenary.nvim' } }
   }
 
   use {
@@ -60,7 +60,7 @@ return require('packer').startup(function(use)
     end
   }
 
-  use  {
+  use {
     'CRAG666/betterTerm.nvim',
     config = function() require('betterTerm').setup() end
   }
@@ -68,9 +68,9 @@ return require('packer').startup(function(use)
   use {
     'anurag3301/nvim-platformio.lua',
     requires = {
-      {'akinsho/nvim-toggleterm.lua'},
-      {'nvim-telescope/telescope.nvim'},
-      {'nvim-lua/plenary.nvim'},
+      { 'akinsho/nvim-toggleterm.lua' },
+      { 'nvim-telescope/telescope.nvim' },
+      { 'nvim-lua/plenary.nvim' },
     },
     config = function()
       if not vim.g.is_purdue then
@@ -113,28 +113,95 @@ return require('packer').startup(function(use)
 
   use {
     'f-person/git-blame.nvim',
-    config = function ()
+    config = function()
       require("gitblame").setup {
         gitblame_delay = 1
       }
     end
   }
 
-  use {
-    'mrcjkb/rustaceanvim',
-    config = function() require('plugins/rust-config') end
-  }
+  -- use {
+  --   'mrcjkb/rustaceanvim',
+  --   config = function() require('plugins/rust-config') end
+  -- }
 
   use {
     "NeogitOrg/neogit",
-    config = function ()
+    config = function()
       require("neogit").setup {}
     end
   }
 
-  use "mfussenegger/nvim-dap"
+  use {
+    "mfussenegger/nvim-dap",
+
+    config = function()
+      local dap = require("dap")
+
+      require('dap.ext.vscode').load_launchjs(nil, {
+        node = { 'javascript', 'typescript' },
+        python = { 'python' },
+        go = { 'go' },
+        codelldb = { 'c', 'cpp', 'rust' }
+      })
+
+      vim.keymap.set('n', '<M-u>', function() dap.continue() end, { desc = 'DAP: Continue' })
+      vim.keymap.set('n', '<M-i>', function() dap.step_into() end, { desc = 'DAP: Step Into' })
+      vim.keymap.set('n', '<M-o>', function() dap.step_out() end, { desc = 'DAP: Step Out' })
+      vim.keymap.set('n', '<M-p>', function() dap.step_over() end, { desc = 'DAP: Step Over' })
+      vim.keymap.set('n', '<M-b>', function() dap.toggle_breakpoint() end, { desc = 'DAP: Toggle Breakpoint' })
+      vim.keymap.set('n', '<F5>', function() dap.continue() end)
+      vim.keymap.set('n', '<F10>', function() dap.step_over() end)
+      vim.keymap.set('n', '<F11>', function() dap.step_into() end)
+      vim.keymap.set('n', '<F12>', function() dap.step_out() end)
+      vim.keymap.set('n', '<Leader>b', function() dap.toggle_breakpoint() end)
+      vim.keymap.set('n', '<Leader>dr', function() dap.repl.open() end)
+
+      dap.adapters.codelldb = {
+        type = "executable",
+        command = "codelldb"
+      }
+      dap.configurations.cpp = {
+        {
+          name = "Launch file",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
+        },
+      }
+    end
+  }
+
+
+  use {
+    'stevearc/overseer.nvim',
+    config = function() require('overseer').setup() end
+  }
   use 'theHamsta/nvim-dap-virtual-text'
-  use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} }
+  use {
+    "rcarriga/nvim-dap-ui",
+    requires = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+    config = function()
+      local dap, dapui = require("dap"), require("dapui")
+      dapui.setup()
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
+    end
+  }
 
   use { "geigerzaehler/tree-sitter-jinja2" }
 
@@ -176,29 +243,30 @@ return require('packer').startup(function(use)
   })
 
 
+  -- use {
+  --   'preservim/vim-pencil',
+  --   config = function()
+  --     vim.cmd([[
+  --     augroup PencilSetup
+  --     autocmd!
+  --     autocmd FileType markdown,text,tex,gitcommit setlocal formatoptions+=t
+  --     autocmd FileType markdown,text,tex,gitcommit PencilHard
+  --     augroup END       augroup END
+  --     ]])
+  --   end
+  -- }
+
   use {
-    'preservim/vim-pencil',
+    'LukasPietzschmann/telescope-tabs',
+    requires = { 'nvim-telescope/telescope.nvim' },
     config = function()
-      vim.cmd([[
-      augroup PencilSetup
-      autocmd!
-      autocmd FileType markdown,text,tex,gitcommit setlocal formatoptions+=t
-      autocmd FileType markdown,text,tex,gitcommit PencilHard
-      augroup END       augroup END
-      ]])
+      require 'telescope-tabs'.setup {
+        -- Your custom config :^)
+      }
     end
   }
 
- use {
-	'LukasPietzschmann/telescope-tabs',
-	requires = { 'nvim-telescope/telescope.nvim' },
-	config = function()
-		require'telescope-tabs'.setup{
-			-- Your custom config :^)
-		}
-	end
-}
-
+  use "HiPhish/rainbow-delimiters.nvim"
 
 
   ------------------------
@@ -207,4 +275,3 @@ return require('packer').startup(function(use)
     require('packer').sync()
   end
 end)
-

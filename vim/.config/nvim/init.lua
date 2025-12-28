@@ -56,8 +56,47 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function()
     vim.opt_local.textwidth = 80
+    vim.opt_local.formatoptions = "atcqjnl"
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+
+    -- Show column guide
+    vim.opt_local.colorcolumn = "80"
   end,
 })
+
+-- Typst configuration
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "typst",
+  callback = function()
+    -- Line wrapping settings
+    vim.opt_local.textwidth = 80
+    vim.opt_local.formatoptions = "atcqjnl"
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+
+    -- Show column guide
+    vim.opt_local.colorcolumn = "80"
+  end,
+})
+-- Setup formatting on LSP attach
+-- vim.api.nvim_create_autocmd("LspAttach", {
+--   callback = function(args)
+--     local client = vim.lsp.get_client_by_id(args.data.client_id)
+--
+--     if client and client.supports_method("textDocument/formatting") then
+--       vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+--         buffer = args.buf,
+--         callback = function()
+--           vim.lsp.buf.format({
+--             async = true,
+--             bufnr = args.buf,
+--           })
+--         end,
+--       })
+--     end
+--   end,
+-- })
 
 vim.api.nvim_create_autocmd("TermOpen", {
   pattern = "*",
@@ -69,22 +108,22 @@ vim.api.nvim_create_autocmd("TermOpen", {
 vim.o.clipboard = "unnamedplus"
 
 vim.g.clipboard = {
-	name = "OSC 52",
-	copy = {
-		["+"] = require("vim.ui.clipboard.osc52").copy("+"),
-		["*"] = require("vim.ui.clipboard.osc52").copy("*"),
-	},
-	paste = {
-		["+"] = require("vim.ui.clipboard.osc52").paste("+"),
-		["*"] = require("vim.ui.clipboard.osc52").paste("*"),
-	},
+  name = "OSC 52",
+  copy = {
+    ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+    ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+  },
+  paste = {
+    ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
+    ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
+  },
 }
 -- stupid hacky workaround to make it so i can paste from tmux with OSC52
 -- https://github.com/neovim/neovim/discussions/29350#discussioncomment-10299517
 -- tracking issue about tmux behavior: https://github.com/tmux/tmux/issues/4275
 if vim.env.TMUX ~= nil then
-  local copy = {'tmux', 'load-buffer', '-w', '-'}
-  local paste = {'bash', '-c', 'tmux refresh-client -l && sleep 0.05 && tmux save-buffer -'}
+  local copy = { 'tmux', 'load-buffer', '-w', '-' }
+  local paste = { 'bash', '-c', 'tmux refresh-client -l && sleep 0.05 && tmux save-buffer -' }
   vim.g.clipboard = {
     name = 'tmux',
     copy = {
@@ -98,6 +137,15 @@ if vim.env.TMUX ~= nil then
     cache_enabled = 0,
   }
 end
+
+
+
+-- https://simondalvai.org/blog/godot-neovim/
+require("godot")
+
+
+
+
 
 -- Enable experimental UI in neovim-nightly
 require('vim._extui').enable({})

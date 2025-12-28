@@ -14,6 +14,7 @@ if string match -q "*turing*" "$host"
       /opt/local/var/macports/sources/rsync.macports.org/macports/release/tarballs/ports/emulators \
       /opt/homebrew/bin/iodine \
       /opt/homebrew/bin \
+      /opt/homebrew/opt/zig@0.14/bin \
       /Users/scie/.platformio/penv/bin/ \
       /Users/scie/.cargo/bin \
       /Users/scie/.local/xonsh-env/xbin \

@@ -15,6 +15,7 @@ vim.lsp.config('pyright', {
 })
 
 vim.lsp.enable("pyright")
+-- vim.lsp.enable("basedpyright")
 
 vim.lsp.config('ty', {
   on_attach = function()
@@ -49,6 +50,7 @@ vim.lsp.config('zls', {
 })
 
 vim.lsp.enable("zls")
+-- vim.lsp.enable("zigscient")
 
 vim.lsp.enable("gopls")
 
@@ -58,8 +60,40 @@ vim.lsp.enable("cspell-ls")
 
 vim.lsp.enable("astro")
 
+vim.lsp.config('rust_analyzer', {
+  on_attach = function()
+    print('rust-analyzer is now active in this file')
+  end,
+})
+
+vim.lsp.enable("rust-analyzer")
+vim.lsp.enable("gdscript")
+vim.lsp.config('csharp-ls', {
+  on_attach = function()
+    print('csharp-ls is now active in this file')
+  end,
+})
+
+
+vim.lsp.enable("csharp-ls")
+
 -- https://lsp-zero.netlify.app/blog/lsp-client-features.html
 
-vim.opt.completeopt = {'menu', 'menuone', 'noselect', 'noinsert'}
+vim.opt.completeopt = { 'menu', 'menuone', 'noselect', 'noinsert' }
 vim.opt.shortmess:append('c')
 
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("lsp", { clear = true }),
+  callback = function(args)
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = args.buf,
+      callback = function()
+        if vim.bo[args.buf].filetype == "typst" or vim.bo[args.buf].filetype == "c" then
+          return
+        end
+        vim.lsp.buf.format({ async = false, id = args.data.client_id })
+      end,
+    })
+  end
+})
