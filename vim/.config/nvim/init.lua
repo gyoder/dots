@@ -146,6 +146,7 @@ require("godot")
 
 
 
-
--- Enable experimental UI in neovim-nightly
-require('vim._extui').enable({})
+if not vim.g.is_purdue then
+  -- Enable experimental UI in neovim-nightly
+  require('vim._extui').enable({})
+end
