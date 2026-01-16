@@ -3,16 +3,10 @@
 --
 
 -- Get hostname
-local handle = io.popen("hostname")
-local hostname = handle:read("*a") or ""
-handle:close()
+local hostname = vim.fn.hostname()
 hostname = hostname:gsub("%s+", "")
 vim.g.hostname = hostname
-if string.match(hostname, "cs.purdue.edu") then
-  vim.g.is_purdue = true
-else
-  vim.g.is_purdue = false
-end
+vim.g.is_purdue = string.match(hostname, "cs.purdue.edu") ~= nil
 
 -- add required things to path
 if vim.g.is_purdue then
@@ -44,7 +38,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 -- File IO can be slow and this might help idk
 if vim.g.is_purdue then
-  vim.cmd("set noundofile") -- i forgor how to do this in lua so i didnt
+  vim.o.undofile = false
 end
 
 --
