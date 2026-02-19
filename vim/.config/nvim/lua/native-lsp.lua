@@ -77,6 +77,8 @@ vim.lsp.config('csharp-ls', {
 
 vim.lsp.enable("csharp-ls")
 
+vim.lsp.enable("asm-lsp")
+
 -- https://lsp-zero.netlify.app/blog/lsp-client-features.html
 
 vim.opt.completeopt = { 'menu', 'menuone', 'noselect', 'noinsert' }

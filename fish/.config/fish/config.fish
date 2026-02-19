@@ -50,9 +50,7 @@ if status is-interactive
 
   fish_config theme choose "Rosé Pine"
   starship init fish | source
-  if not string match -q "*purdue*" "$host"
-    zoxide init fish | source
-  end
+  zoxide init fish | source
 end
 
 alias setupidf "source /opt/esp/esp-idf/export.fish"
