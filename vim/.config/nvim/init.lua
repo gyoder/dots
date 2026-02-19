@@ -71,12 +71,23 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function()
     -- Line wrapping settings
     vim.opt_local.textwidth = 80
-    vim.opt_local.formatoptions = "atcqjnl"
+    vim.opt_local.formatoptions = "tcqjnl"
     vim.opt_local.wrap = true
     vim.opt_local.linebreak = true
-
     -- Show column guide
     vim.opt_local.colorcolumn = "80"
+
+    -- Toggle 'a' in formatoptions
+    vim.keymap.set("n", "<leader>a", function()
+      local fo = vim.opt_local.formatoptions:get()
+      if fo.a then
+        vim.opt_local.formatoptions:remove("a")
+        print("Auto-formatting disabled")
+      else
+        vim.opt_local.formatoptions:append("a")
+        print("Auto-formatting enabled")
+      end
+    end, { buffer = true, desc = "Toggle auto-formatting" })
   end,
 })
 -- Setup formatting on LSP attach

@@ -18,6 +18,7 @@ if string match -q "*turing*" "$host"
       /Users/scie/.platformio/penv/bin/ \
       /Users/scie/.cargo/bin \
       /Users/scie/.local/xonsh-env/xbin \
+      /Users/scie/go/bin \
       /usr/bin \
       /usr/local/bin \
       /usr/sbin \
@@ -53,3 +54,5 @@ if status is-interactive
     zoxide init fish | source
   end
 end
+
+alias setupidf "source /opt/esp/esp-idf/export.fish"

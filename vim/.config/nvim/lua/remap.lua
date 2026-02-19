@@ -44,6 +44,7 @@ vim.keymap.set('n', '<leader>fs', ts_builtins.lsp_workspace_symbols, { desc = 'T
 vim.keymap.set('n', '<leader>fts', ts_builtins.treesitter, { desc = 'Telescope find treesitter' })
 vim.keymap.set('n', '<leader>fd', ts_builtins.lsp_definitions, { desc = 'Telescope find definition' })
 vim.keymap.set('n', '<leader>ftd', ts_builtins.lsp_type_definitions, { desc = 'Telescope find type definition' })
+vim.keymap.set('n', '<leader>fr', ts_builtins.lsp_references, { desc = 'Telescope find references' })
 
 -- Undo Tree
 vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
@@ -52,18 +53,18 @@ vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
 
 local betterTerm = require('betterTerm')
 -- toggle firts term
-vim.keymap.set({"n", "t"}, "<leader>tt", betterTerm.open, { desc = "Open terminal"})
+vim.keymap.set({ "n", "t" }, "<leader>tt", betterTerm.open, { desc = "Open terminal" })
 -- Select term focus
 -- vim.keymap.set({"n"}, "<leader>tf", betterTerm.select, { desc = "Select terminal"})
 -- Create new term
 local current = 2
 vim.keymap.set(
-    {"n"}, "<leader>tn",
-    function()
-        betterTerm.open(current)
-        current = current + 1
-    end,
-    { desc = "New terminal"}
+  { "n" }, "<leader>tn",
+  function()
+    betterTerm.open(current)
+    current = current + 1
+  end,
+  { desc = "New terminal" }
 )
 
 -- Neotree
@@ -84,15 +85,11 @@ vim.keymap.set('n', '<C-b>', function()
     ntc.execute({
       action = "focus",          -- OPTIONAL, this is the default value
       source = "filesystem",     -- OPTIONAL, this is the default value
-      position = "right",         -- OPTIONAL, this is the default value
+      position = "right",        -- OPTIONAL, this is the default value
       reveal_file = reveal_file, -- path to file or folder to reveal
       reveal_force_cwd = true,   -- change cwd without asking if needed
       toggle = true,
-    })  end,
+    })
+  end,
   { desc = "Show Sidebar" }
 )
-
-
-
-
-
