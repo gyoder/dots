@@ -42,6 +42,8 @@ else if test "$host" = "lovelace"
       /snap/bin
 else if test "$host" = "lee"
   fish_add_path ~/.local/bin
+else if string match -q "dijkstra-*" $host
+  /home/linuxbrew/.linuxbrew/bin/brew shellenv
 end
 
 if status is-interactive
