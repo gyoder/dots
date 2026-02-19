@@ -59,7 +59,7 @@ if test -d /home/linuxbrew/.linuxbrew
   set -gx HOMEBREW_GITHUB_API_TOKEN {api token goes here, don't remember where that's created}
 end
 
-endif status is-interactive
+if status is-interactive
   set -g fish_greeting ""
   pfetch
 
