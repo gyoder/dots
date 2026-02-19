@@ -26,7 +26,7 @@ require("remap")
 
 
 if vim.g.is_purdue then
-  require("westwood-lint")
+  -- require("westwood-lint")
 end
 require("standard-lint")
 
