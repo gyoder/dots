@@ -42,11 +42,24 @@ else if test "$host" = "lovelace"
       /snap/bin
 else if test "$host" = "lee"
   fish_add_path ~/.local/bin
-else if string match -q "dijkstra-*" $host
-  /home/linuxbrew/.linuxbrew/bin/brew shellenv
+end
+if test -d /home/linuxbrew/.linuxbrew
+  # Homebrew is installed on Linux
+
+  set -gx HOMEBREW_PREFIX "/home/linuxbrew/.linuxbrew"
+  set -gx HOMEBREW_CELLAR "/home/linuxbrew/.linuxbrew/Cellar"
+  set -gx HOMEBREW_REPOSITORY "/home/linuxbrew/.linuxbrew/Homebrew"
+  set -gx PATH "/home/linuxbrew/.linuxbrew/bin" "/home/linuxbrew/.linuxbrew/sbin" $PATH
+  set -q MANPATH; or set MANPATH ''
+  set -gx MANPATH "/home/linuxbrew/.linuxbrew/share/man" $MANPATH
+  set -q INFOPATH; or set INFOPATH ''
+  set -gx INFOPATH "/home/linuxbrew/.linuxbrew/share/info" $INFOPATH
+
+  # Homebrew asked for this in order to `brew upgrade`
+  set -gx HOMEBREW_GITHUB_API_TOKEN {api token goes here, don't remember where that's created}
 end
 
-if status is-interactive
+endif status is-interactive
   set -g fish_greeting ""
   pfetch
 
