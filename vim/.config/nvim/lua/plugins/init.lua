@@ -37,7 +37,7 @@ return require('packer').startup(function(use)
 
   use {
     'nvim-treesitter/nvim-treesitter',
-    config = function() require("plugins/ts") end
+    -- config = function() require("plugins/ts") end
   }
 
   use 'mbbill/undotree'
