@@ -31,6 +31,12 @@ vim.keymap.set("n", "<leader>qf", vim.lsp.buf.format)
 vim.keymap.set("n", "<leader>dd", vim.diagnostic.open_float)
 
 
+vim.keymap.set("n", "yf", function()
+  local view = vim.fn.winsaveview()
+  vim.cmd("%y")
+  vim.fn.winrestview(view)
+end, { desc = "Yank entire file" })
+
 
 -------- PLUGINS -------
 
