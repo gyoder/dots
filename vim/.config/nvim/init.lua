@@ -153,11 +153,3 @@ end
 
 -- https://simondalvai.org/blog/godot-neovim/
 require("godot")
-
-
-
-
-if not vim.g.is_purdue then
-  -- Enable experimental UI in neovim-nightly
-  require('vim._extui').enable({})
-end
