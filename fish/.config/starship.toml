@@ -75,7 +75,7 @@ diverged = '⇕[\[](bg:overlay fg:iris)[⇡\(${ahead_count}\)](bg:overlay fg:foa
 behind = '[⇣\(${count}\)](bg:overlay fg:rose)'
 
 [custom.jj]
-command = 'jj-starship --git-symbol ""| sed "s/\x1b\[0m//g"'
+command = 'jj-starship --git-symbol "" --no-git-status | sed "s/\x1b\[0m//g"'
 when = "jj-starship detect"
 shell = ["sh"]
 format = "[](fg:overlay)[[ $output ](bg:overlay)]($style)[](fg:overlay) "
@@ -88,9 +88,13 @@ git status --porcelain | awk '
   /^\?\?/ { untracked++ }
   /^[D ]D/ || /^D/ { deleted++ }
   END {
-    if (modified)  printf "\033[38;2;246;193;119m%d ", modified
-    if (untracked) printf "\033[38;2;246;193;119m%d ", untracked
-    if (deleted)   printf "\033[38;2;235;111;146m󰆴%d ", deleted
+    if (modified + untracked + deleted == 0) {
+      printf "\033[38;2;196;167;231m✓"
+    } else {
+      if (modified)  printf "\033[38;2;246;193;119m%d ", modified
+      if (untracked) printf "\033[38;2;246;193;119m%d ", untracked
+      if (deleted)   printf "\033[38;2;235;111;146m󰆴%d ", deleted
+    }
   }
 '
 '''
