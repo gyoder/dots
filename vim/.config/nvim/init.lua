@@ -150,6 +150,11 @@ if vim.env.TMUX ~= nil then
 end
 
 
+if vim.treesitter.language.ft_to_lang == nil then
+  vim.treesitter.language.ft_to_lang = function(ft)
+    return ft
+  end
+end
 
 -- https://simondalvai.org/blog/godot-neovim/
 require("godot")
