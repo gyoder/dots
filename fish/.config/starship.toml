@@ -6,6 +6,8 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+${custom.jj}\
+${custom.git_status}\
 $fill\
 $c\
 $elixir\
@@ -52,12 +54,13 @@ style = "fg:overlay"
 symbol = " "
 
 [git_branch]
+disabled = true
 format = "[](fg:overlay)[ $symbol $branch ]($style)[](fg:overlay) "
 style = "bg:overlay fg:foam"
 symbol = ""
 
 [git_status]
-disabled = false
+disabled = true
 style = "bg:overlay fg:love"
 format = '[](fg:overlay)([$all_status$ahead_behind]($style))[](fg:overlay) '
 up_to_date = '[ ✓ ](bg:overlay fg:iris)'
@@ -70,6 +73,32 @@ staged = '[++\($count\)](bg:overlay fg:gold)'
 ahead = '[⇡\(${count}\)](bg:overlay fg:foam)'
 diverged = '⇕[\[](bg:overlay fg:iris)[⇡\(${ahead_count}\)](bg:overlay fg:foam)[⇣\(${behind_count}\)](bg:overlay fg:rose)[\]](bg:overlay fg:iris)'
 behind = '[⇣\(${count}\)](bg:overlay fg:rose)'
+
+[custom.jj]
+command = 'jj-starship --git-symbol ""| sed "s/\x1b\[0m//g"'
+when = "jj-starship detect"
+shell = ["sh"]
+format = "[](fg:overlay)[[ $output ](bg:overlay)]($style)[](fg:overlay) "
+style = "bg:overlay fg:rose"
+
+[custom.git_status]
+command = '''
+git status --porcelain | awk '
+  /^[MARC ][MD]/ || /^[MARC][MARC ]/ { modified++ }
+  /^\?\?/ { untracked++ }
+  /^[D ]D/ || /^D/ { deleted++ }
+  END {
+    if (modified)  printf "\033[38;2;246;193;119m%d ", modified
+    if (untracked) printf "\033[38;2;246;193;119m%d ", untracked
+    if (deleted)   printf "\033[38;2;235;111;146m󰆴%d ", deleted
+  }
+'
+'''
+when = 'test -d .git && ! test -d .jj'
+shell = ["sh"]
+format = "[](fg:overlay)[[ $output ](bg:overlay)]($style)[](fg:overlay) "
+style = "bg:overlay fg:love"
+
 
 [time]
 disabled = false

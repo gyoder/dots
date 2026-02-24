@@ -1,0 +1,520 @@
+[[2;34mTRACE[0m] - (starship): Parsed arguments: Cli {
+    command: Prompt {
+        right: false,
+        profile: None,
+        continuation: false,
+        properties: Properties {
+            status_code: None,
+            pipestatus: None,
+            terminal_width: 200,
+            path: None,
+            logical_path: None,
+            cmd_duration: None,
+            keymap: "viins",
+            jobs: 0,
+            shlvl: None,
+        },
+    },
+}
+[[2;34mTRACE[0m] - (starship::utils): Trying to read from "/Users/scie/.config/starship.toml"
+[[2;34mTRACE[0m] - (starship::utils): File read successfully
+[[2;34mTRACE[0m] - (starship::config): Config file content: "
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$hostname\
+$username\
+$directory\
+$git_branch\
+$git_status\
+${custom.jj}\
+$fill\
+$c\
+$elixir\
+$elm\
+$golang\
+$haskell\
+$java\
+$julia\
+$nodejs\
+$nim\
+$rust\
+$scala\
+$conda\
+$python\
+$time\n\
+[❯](fg:iris) \
+"""
+
+palette = "rose-pine"
+
+[palettes.rose-pine]
+overlay = '#26233a'
+love = '#eb6f92'
+gold = '#f6c177'
+rose = '#ebbcba'
+pine = '#31748f'
+foam = '#9ccfd8'
+iris = '#c4a7e7'
+
+[directory]
+format = "[](fg:overlay)[ $path ]($style)[](fg:overlay) "
+style = "bg:overlay fg:pine"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[directory.substitutions]
+Documents = "󰈙"
+Downloads = " "
+Music = " "
+Pictures = " "
+
+[fill]
+style = "fg:overlay"
+symbol = " "
+
+[git_branch]
+disabled = false
+format = "[](fg:overlay)[ $symbol $branch ]($style)[](fg:overlay) "
+style = "bg:overlay fg:foam"
+symbol = ""
+
+[git_status]
+disabled = false
+style = "bg:overlay fg:love"
+format = '[](fg:overlay)([$all_status$ahead_behind]($style))[](fg:overlay) '
+up_to_date = '[ ✓ ](bg:overlay fg:iris)'
+untracked = '[?\($count\)](bg:overlay fg:gold)'
+stashed = '[\$](bg:overlay fg:iris)'
+modified = '[!\($count\)](bg:overlay fg:gold)'
+renamed = '[»\($count\)](bg:overlay fg:iris)'
+deleted = '[✘\($count\)](style)'
+staged = '[++\($count\)](bg:overlay fg:gold)'
+ahead = '[⇡\(${count}\)](bg:overlay fg:foam)'
+diverged = '⇕[\[](bg:overlay fg:iris)[⇡\(${ahead_count}\)](bg:overlay fg:foam)[⇣\(${behind_count}\)](bg:overlay fg:rose)[\]](bg:overlay fg:iris)'
+behind = '[⇣\(${count}\)](bg:overlay fg:rose)'
+
+[custom.jj]
+when = "jj root >/dev/null 2>&1"
+shell = ["fish", "-c"]
+command = '''
+jj log -r @ --no-graph --ignore-working-copy --color=never \
+-T ' "󱗆 " ++ change_id.short()
+    ++ if(bookmarks.len() > 0,
+         " (" ++ bookmarks.join(", ") ++ ")",
+         ""
+       )
+    ++ if(conflict,
+         " [!]",
+         ""
+       )'
+'''
+format = "[](fg:overlay)[ $output ]($style)[](fg:overlay) "
+style = "bg:overlay fg:foam"
+[time]
+disabled = false
+format = " [](fg:overlay)[ $time 󰴈 ]($style)[](fg:overlay)"
+style = "bg:overlay fg:rose"
+time_format = "%I:%M%P"
+use_12hr = true
+
+
+[hostname]
+disabled = false
+ssh_only = false
+trim_at = ''
+format = "[](fg:overlay)[ 󰠧 $hostname$ssh_symbol ]($style)[](fg:overlay) "
+style = "bg:overlay fg:rose"
+ssh_symbol = ' '
+
+[username]
+disabled = false
+format = "[](fg:overlay)[ 󰧱 $user ]($style)[](fg:overlay) "
+show_always = true
+style_root = "bg:overlay fg:iris"
+style_user = "bg:overlay fg:iris"
+
+# Languages
+
+[c]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = " "
+
+[elixir]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = " "
+
+[elm]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = " "
+
+[golang]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = " "
+
+[haskell]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = " "
+
+[java]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = " "
+
+[julia]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = " "
+
+[nodejs]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = "󰎙 "
+
+[nim]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = "󰆥 "
+
+[rust]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = " "
+
+[scala]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = " "
+
+[python]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$version ]($style)[](fg:overlay)"
+disabled = false
+symbol = ' '
+
+[conda]
+style = "bg:overlay fg:pine"
+format = " [](fg:overlay)[ $symbol$environment ]($style)[](fg:overlay)"
+disabled = false
+symbol = '🅒 '
+"
+[[36mDEBUG[0m] - (starship::config): Config parsed: {"$schema": String("https://starship.rs/config-schema.json"), "format": String("$hostname$username$directory$git_branch$git_status${custom.jj}$fill$c$elixir$elm$golang$haskell$java$julia$nodejs$nim$rust$scala$conda$python$time\n[❯](fg:iris) "), "palette": String("rose-pine"), "palettes": Table({"rose-pine": Table({"overlay": String("#26233a"), "love": String("#eb6f92"), "gold": String("#f6c177"), "rose": String("#ebbcba"), "pine": String("#31748f"), "foam": String("#9ccfd8"), "iris": String("#c4a7e7")})}), "directory": Table({"format": String("[\u{e0b6}](fg:overlay)[ $path ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:pine"), "truncation_length": Integer(3), "truncation_symbol": String("…/"), "substitutions": Table({"Documents": String("\u{f0219}"), "Downloads": String("\u{f019} "), "Music": String("\u{f001} "), "Pictures": String("\u{f03e} ")})}), "fill": Table({"style": String("fg:overlay"), "symbol": String(" ")}), "git_branch": Table({"disabled": Boolean(false), "format": String("[\u{e0b6}](fg:overlay)[ $symbol $branch ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:foam"), "symbol": String("\u{f418}")}), "git_status": Table({"disabled": Boolean(false), "style": String("bg:overlay fg:love"), "format": String("[\u{e0b6}](fg:overlay)([$all_status$ahead_behind]($style))[\u{e0b4}](fg:overlay) "), "up_to_date": String("[ ✓ ](bg:overlay fg:iris)"), "untracked": String("[?\\($count\\)](bg:overlay fg:gold)"), "stashed": String("[\\$](bg:overlay fg:iris)"), "modified": String("[!\\($count\\)](bg:overlay fg:gold)"), "renamed": String("[»\\($count\\)](bg:overlay fg:iris)"), "deleted": String("[✘\\($count\\)](style)"), "staged": String("[++\\($count\\)](bg:overlay fg:gold)"), "ahead": String("[⇡\\(${count}\\)](bg:overlay fg:foam)"), "diverged": String("⇕[\\[](bg:overlay fg:iris)[⇡\\(${ahead_count}\\)](bg:overlay fg:foam)[⇣\\(${behind_count}\\)](bg:overlay fg:rose)[\\]](bg:overlay fg:iris)"), "behind": String("[⇣\\(${count}\\)](bg:overlay fg:rose)")}), "custom": Table({"jj": Table({"when": String("jj root >/dev/null 2>&1"), "shell": Array([String("fish"), String("-c")]), "command": String("jj log -r @ --no-graph --ignore-working-copy --color=never \\\n-T ' \"\u{f15c6} \" ++ change_id.short()\n    ++ if(bookmarks.len() > 0,\n         \" (\" ++ bookmarks.join(\", \") ++ \")\",\n         \"\"\n       )\n    ++ if(conflict,\n         \" [!]\",\n         \"\"\n       )'\n"), "format": String("[\u{e0b6}](fg:overlay)[ $output ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:foam")})}), "time": Table({"disabled": Boolean(false), "format": String(" [\u{e0b6}](fg:overlay)[ $time \u{f0d08} ]($style)[\u{e0b4}](fg:overlay)"), "style": String("bg:overlay fg:rose"), "time_format": String("%I:%M%P"), "use_12hr": Boolean(true)}), "hostname": Table({"disabled": Boolean(false), "ssh_only": Boolean(false), "trim_at": String(""), "format": String("[\u{e0b6}](fg:overlay)[ \u{f0827} $hostname$ssh_symbol ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:rose"), "ssh_symbol": String(" \u{f0ac}")}), "username": Table({"disabled": Boolean(false), "format": String("[\u{e0b6}](fg:overlay)[ \u{f09f1} $user ]($style)[\u{e0b4}](fg:overlay) "), "show_always": Boolean(true), "style_root": String("bg:overlay fg:iris"), "style_user": String("bg:overlay fg:iris")}), "c": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e61e} ")}), "elixir": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e275} ")}), "elm": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e62c} ")}), "golang": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e627} ")}), "haskell": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e777} ")}), "java": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e256} ")}), "julia": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e624} ")}), "nodejs": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{f0399} ")}), "nim": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{f01a5} ")}), "rust": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e7a8} ")}), "scala": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e737} ")}), "python": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e73c} ")}), "conda": Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$environment ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("🅒 ")})}
+[[2;34mTRACE[0m] - (starship::context): Received completed pipestatus of None
+[[36mDEBUG[0m] - (starship::config): Config found for "c": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e61e} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "c": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e61e} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "elixir": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e275} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "elixir": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e275} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "conda": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$environment ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("🅒 ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "conda": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$environment ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("🅒 ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "haskell": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e777} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "haskell": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e777} ")}))
+[[2;34mTRACE[0m] - (starship::config): No config found for "custom.jj": Option "custom.jj" not found
+[[36mDEBUG[0m] - (starship::config): Config found for "c": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e61e} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "directory": Some(Table({"format": String("[\u{e0b6}](fg:overlay)[ $path ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:pine"), "truncation_length": Integer(3), "truncation_symbol": String("…/"), "substitutions": Table({"Documents": String("\u{f0219}"), "Downloads": String("\u{f019} "), "Music": String("\u{f001} "), "Pictures": String("\u{f03e} ")})}))
+[[36mDEBUG[0m] - (starship::config): Config found for "elixir": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e275} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "nodejs": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{f0399} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "nodejs": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{f0399} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "elm": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e62c} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "elm": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e62c} ")}))
+[[36mDEBUG[0m] - (starship::config): Custom config found for "jj": Some(Table({"when": String("jj root >/dev/null 2>&1"), "shell": Array([String("fish"), String("-c")]), "command": String("jj log -r @ --no-graph --ignore-working-copy --color=never \\\n-T ' \"\u{f15c6} \" ++ change_id.short()\n    ++ if(bookmarks.len() > 0,\n         \" (\" ++ bookmarks.join(\", \") ++ \")\",\n         \"\"\n       )\n    ++ if(conflict,\n         \" [!]\",\n         \"\"\n       )'\n"), "format": String("[\u{e0b6}](fg:overlay)[ $output ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:foam")}))
+[[2;34mTRACE[0m] - (starship::context): Building HashSets of directory files, folders and extensions took 335.791µs
+[[36mDEBUG[0m] - (starship::config): Config found for "directory": Some(Table({"format": String("[\u{e0b6}](fg:overlay)[ $path ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:pine"), "truncation_length": Integer(3), "truncation_symbol": String("…/"), "substitutions": Table({"Documents": String("\u{f0219}"), "Downloads": String("\u{f019} "), "Music": String("\u{f001} "), "Pictures": String("\u{f03e} ")})}))
+[[2;34mTRACE[0m] - (starship::modules): Took 4.292µs to compute module "conda"
+[[36mDEBUG[0m] - (starship::config): Config found for "nodejs": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{f0399} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "haskell": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e777} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "elm": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e62c} ")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 1.539875ms to compute module "elm"
+[[36mDEBUG[0m] - (starship::config): Config found for "elm": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e62c} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "fill": Some(Table({"style": String("fg:overlay"), "symbol": String(" ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "fill": Some(Table({"style": String("fg:overlay"), "symbol": String(" ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "fill": Some(Table({"style": String("fg:overlay"), "symbol": String(" ")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 1.332458ms to compute module "nodejs"
+[[36mDEBUG[0m] - (starship::config): Config found for "nodejs": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{f0399} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "python": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e73c} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "python": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e73c} ")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 2.951958ms to compute module "elixir"
+[[36mDEBUG[0m] - (starship::config): Config found for "elixir": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e275} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "git_branch": Some(Table({"disabled": Boolean(false), "format": String("[\u{e0b6}](fg:overlay)[ $symbol $branch ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:foam"), "symbol": String("\u{f418}")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "git_branch": Some(Table({"disabled": Boolean(false), "format": String("[\u{e0b6}](fg:overlay)[ $symbol $branch ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:foam"), "symbol": String("\u{f418}")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 3.019125ms to compute module "haskell"
+[[36mDEBUG[0m] - (starship::config): Config found for "haskell": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e777} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "hostname": Some(Table({"disabled": Boolean(false), "ssh_only": Boolean(false), "trim_at": String(""), "format": String("[\u{e0b6}](fg:overlay)[ \u{f0827} $hostname$ssh_symbol ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:rose"), "ssh_symbol": String(" \u{f0ac}")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "hostname": Some(Table({"disabled": Boolean(false), "ssh_only": Boolean(false), "trim_at": String(""), "format": String("[\u{e0b6}](fg:overlay)[ \u{f0827} $hostname$ssh_symbol ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:rose"), "ssh_symbol": String(" \u{f0ac}")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "directory": Some(Table({"format": String("[\u{e0b6}](fg:overlay)[ $path ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:pine"), "truncation_length": Integer(3), "truncation_symbol": String("…/"), "substitutions": Table({"Documents": String("\u{f0219}"), "Downloads": String("\u{f019} "), "Music": String("\u{f001} "), "Pictures": String("\u{f03e} ")})}))
+[[36mDEBUG[0m] - (starship::config): Config found for "git_status": Some(Table({"disabled": Boolean(false), "style": String("bg:overlay fg:love"), "format": String("[\u{e0b6}](fg:overlay)([$all_status$ahead_behind]($style))[\u{e0b4}](fg:overlay) "), "up_to_date": String("[ ✓ ](bg:overlay fg:iris)"), "untracked": String("[?\\($count\\)](bg:overlay fg:gold)"), "stashed": String("[\\$](bg:overlay fg:iris)"), "modified": String("[!\\($count\\)](bg:overlay fg:gold)"), "renamed": String("[»\\($count\\)](bg:overlay fg:iris)"), "deleted": String("[✘\\($count\\)](style)"), "staged": String("[++\\($count\\)](bg:overlay fg:gold)"), "ahead": String("[⇡\\(${count}\\)](bg:overlay fg:foam)"), "diverged": String("⇕[\\[](bg:overlay fg:iris)[⇡\\(${ahead_count}\\)](bg:overlay fg:foam)[⇣\\(${behind_count}\\)](bg:overlay fg:rose)[\\]](bg:overlay fg:iris)"), "behind": String("[⇣\\(${count}\\)](bg:overlay fg:rose)")}))
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::modules::custom): Running 'jj root >/dev/null 2>&1'
+[[2;34mTRACE[0m] - (starship::utils): Creating Command for binary "fish"
+[[36mDEBUG[0m] - (starship::config): Config found for "hostname": Some(Table({"disabled": Boolean(false), "ssh_only": Boolean(false), "trim_at": String(""), "format": String("[\u{e0b6}](fg:overlay)[ \u{f0827} $hostname$ssh_symbol ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:rose"), "ssh_symbol": String(" \u{f0ac}")}))
+[[36mDEBUG[0m] - (starship::modules::directory): Home dir: "/Users/scie"
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: rose
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: rose defined as #ebbcba
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #ebbcba
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #ebbcba
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 235,188,186
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::modules): Took 5.010625ms to compute module "fill"
+[[36mDEBUG[0m] - (starship::config): Config found for "golang": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e627} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "golang": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e627} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "golang": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e627} ")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 213.916µs to compute module "golang"
+[[36mDEBUG[0m] - (starship::config): Config found for "scala": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e737} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "scala": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e737} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "scala": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e737} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "git_status": Some(Table({"disabled": Boolean(false), "style": String("bg:overlay fg:love"), "format": String("[\u{e0b6}](fg:overlay)([$all_status$ahead_behind]($style))[\u{e0b4}](fg:overlay) "), "up_to_date": String("[ ✓ ](bg:overlay fg:iris)"), "untracked": String("[?\\($count\\)](bg:overlay fg:gold)"), "stashed": String("[\\$](bg:overlay fg:iris)"), "modified": String("[!\\($count\\)](bg:overlay fg:gold)"), "renamed": String("[»\\($count\\)](bg:overlay fg:iris)"), "deleted": String("[✘\\($count\\)](style)"), "staged": String("[++\\($count\\)](bg:overlay fg:gold)"), "ahead": String("[⇡\\(${count}\\)](bg:overlay fg:foam)"), "diverged": String("⇕[\\[](bg:overlay fg:iris)[⇡\\(${ahead_count}\\)](bg:overlay fg:foam)[⇣\\(${behind_count}\\)](bg:overlay fg:rose)[\\]](bg:overlay fg:iris)"), "behind": String("[⇣\\(${count}\\)](bg:overlay fg:rose)")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "git_branch": Some(Table({"disabled": Boolean(false), "format": String("[\u{e0b6}](fg:overlay)[ $symbol $branch ]($style)[\u{e0b4}](fg:overlay) "), "style": String("bg:overlay fg:foam"), "symbol": String("\u{f418}")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 3.292666ms to compute module "c"
+[[36mDEBUG[0m] - (starship::config): Config found for "c": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e61e} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "java": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e256} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "java": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e256} ")}))
+[[36mDEBUG[0m] - (starship::modules::directory): Physical dir: "/Users/scie/dots"
+[[36mDEBUG[0m] - (starship::modules::directory): Display dir: "/Users/scie/dots"
+[[36mDEBUG[0m] - (starship::config): Config found for "git_status": Some(Table({"disabled": Boolean(false), "style": String("bg:overlay fg:love"), "format": String("[\u{e0b6}](fg:overlay)([$all_status$ahead_behind]($style))[\u{e0b4}](fg:overlay) "), "up_to_date": String("[ ✓ ](bg:overlay fg:iris)"), "untracked": String("[?\\($count\\)](bg:overlay fg:gold)"), "stashed": String("[\\$](bg:overlay fg:iris)"), "modified": String("[!\\($count\\)](bg:overlay fg:gold)"), "renamed": String("[»\\($count\\)](bg:overlay fg:iris)"), "deleted": String("[✘\\($count\\)](style)"), "staged": String("[++\\($count\\)](bg:overlay fg:gold)"), "ahead": String("[⇡\\(${count}\\)](bg:overlay fg:foam)"), "diverged": String("⇕[\\[](bg:overlay fg:iris)[⇡\\(${ahead_count}\\)](bg:overlay fg:foam)[⇣\\(${behind_count}\\)](bg:overlay fg:rose)[\\]](bg:overlay fg:iris)"), "behind": String("[⇣\\(${count}\\)](bg:overlay fg:rose)")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 2.517667ms to compute module "hostname"
+[[36mDEBUG[0m] - (starship::config): Config found for "python": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e73c} ")}))
+[[2;34mTRACE[0m] - (starship::utils): Using "/opt/homebrew/bin/fish" as "fish"
+[[36mDEBUG[0m] - (starship::config): Config found for "java": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e256} ")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 1.434708ms to compute module "java"
+[[36mDEBUG[0m] - (starship::config): Config found for "java": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e256} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "julia": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e624} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "julia": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e624} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "julia": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e624} ")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 230.958µs to compute module "julia"
+[[36mDEBUG[0m] - (starship::config): Config found for "nim": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{f01a5} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "nim": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{f01a5} ")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 8.428875ms to compute module "python"
+[[36mDEBUG[0m] - (starship::config): Config found for "python": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e73c} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "time": Some(Table({"disabled": Boolean(false), "format": String(" [\u{e0b6}](fg:overlay)[ $time \u{f0d08} ]($style)[\u{e0b4}](fg:overlay)"), "style": String("bg:overlay fg:rose"), "time_format": String("%I:%M%P"), "use_12hr": Boolean(true)}))
+[[36mDEBUG[0m] - (starship::config): Config found for "time": Some(Table({"disabled": Boolean(false), "format": String(" [\u{e0b6}](fg:overlay)[ $time \u{f0d08} ]($style)[\u{e0b4}](fg:overlay)"), "style": String("bg:overlay fg:rose"), "time_format": String("%I:%M%P"), "use_12hr": Boolean(true)}))
+[[2;34mTRACE[0m] - (starship::modules): Took 228.541µs to compute module "scala"
+[[36mDEBUG[0m] - (starship::config): Config found for "username": Some(Table({"disabled": Boolean(false), "format": String("[\u{e0b6}](fg:overlay)[ \u{f09f1} $user ]($style)[\u{e0b4}](fg:overlay) "), "show_always": Boolean(true), "style_root": String("bg:overlay fg:iris"), "style_user": String("bg:overlay fg:iris")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "username": Some(Table({"disabled": Boolean(false), "format": String("[\u{e0b6}](fg:overlay)[ \u{f09f1} $user ]($style)[\u{e0b4}](fg:overlay) "), "show_always": Boolean(true), "style_root": String("bg:overlay fg:iris"), "style_user": String("bg:overlay fg:iris")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "time": Some(Table({"disabled": Boolean(false), "format": String(" [\u{e0b6}](fg:overlay)[ $time \u{f0d08} ]($style)[\u{e0b4}](fg:overlay)"), "style": String("bg:overlay fg:rose"), "time_format": String("%I:%M%P"), "use_12hr": Boolean(true)}))
+[[36mDEBUG[0m] - (starship::config): Config found for "rust": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e7a8} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "rust": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e7a8} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "rust": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{e7a8} ")}))
+[[2;34mTRACE[0m] - (starship::modules): Took 172.708µs to compute module "rust"
+[[36mDEBUG[0m] - (starship::config): Config found for "nim": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{f01a5} ")}))
+[[36mDEBUG[0m] - (starship::config): Config found for "username": Some(Table({"disabled": Boolean(false), "format": String("[\u{e0b6}](fg:overlay)[ \u{f09f1} $user ]($style)[\u{e0b4}](fg:overlay) "), "show_always": Boolean(true), "style_root": String("bg:overlay fg:iris"), "style_user": String("bg:overlay fg:iris")}))
+[[2;34mTRACE[0m] - (starship::modules::time): Timer module is enabled with format string: %I:%M%P
+[[2;34mTRACE[0m] - (starship::modules): Took 2.325542ms to compute module "nim"
+[[36mDEBUG[0m] - (starship::config): Config found for "nim": Some(Table({"style": String("bg:overlay fg:pine"), "format": String(" [\u{e0b6}](fg:overlay)[ $symbol$version ]($style)[\u{e0b4}](fg:overlay)"), "disabled": Boolean(false), "symbol": String("\u{f01a5} ")}))
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: rose
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: rose defined as #ebbcba
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #ebbcba
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #ebbcba
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 235,188,186
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: iris
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: iris defined as #c4a7e7
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #c4a7e7
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #c4a7e7
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 196,167,231
+[[2;34mTRACE[0m] - (starship::modules::custom): non-zero exit code 'Some(1)'
+[[2;34mTRACE[0m] - (starship::modules::custom): stdout: 
+[[2;34mTRACE[0m] - (starship::modules::custom): stderr: fish: -c: option requires an argument
+
+
+[[2;34mTRACE[0m] - (starship::modules): Took 19.565583ms to compute module "custom.jj"
+[[2;34mTRACE[0m] - (starship::config): No config found for "custom.jj": Option "custom.jj" not found
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::modules): Took 4.504292ms to compute module "time"
+[[2;34mTRACE[0m] - (starship::modules): Took 4.212417ms to compute module "username"
+[[2;34mTRACE[0m] - (starship::context): Found git repo: Repository { kind: WorkTree { is_linked: false }, git_dir: "/Users/scie/dots/.git", workdir: Some("/Users/scie/dots") }, (trust: Full)
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: foam
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: foam defined as #9ccfd8
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #9ccfd8
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #9ccfd8
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 156,207,216
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: pine
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: pine defined as #31748f
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #31748f
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #31748f
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 49,116,143
+[[2;34mTRACE[0m] - (starship::modules): Took 23.9265ms to compute module "git_branch"
+[[36mDEBUG[0m] - (starship::modules::git_status): New repo status created
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::modules): Took 27.508625ms to compute module "directory"
+[[2;34mTRACE[0m] - (starship::utils): Creating Command for binary "git"
+[[2;34mTRACE[0m] - (starship::utils): Using "/usr/bin/git" as "git"
+[[2;34mTRACE[0m] - (starship::context): Executing git command: GIT_OPTIONAL_LOCKS="0" "/usr/bin/git" "-C" "/Users/scie/dots" "--git-dir" "/Users/scie/dots/.git" "-c" "core.fsmonitor=" "--work-tree" "/Users/scie/dots" "for-each-ref" "--format" "%(upstream) %(upstream:track)" "refs/heads/main"
+[[2;34mTRACE[0m] - (starship::utils): stdout: "refs/remotes/origin/main \n", stderr: "", exit code: "Some(0)", took 12.70225ms
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: iris
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: iris defined as #c4a7e7
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #c4a7e7
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #c4a7e7
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 196,167,231
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: gold
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: gold defined as #f6c177
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #f6c177
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #f6c177
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 246,193,119
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: gold
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: gold defined as #f6c177
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #f6c177
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #f6c177
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 246,193,119
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: love
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: love defined as #eb6f92
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #eb6f92
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #eb6f92
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 235,111,146
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: overlay
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: overlay defined as #26233a
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #26233a
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 38,35,58
+[[2;34mTRACE[0m] - (starship::modules): Took 34.624084ms to compute module "git_status"
+[[2;34mTRACE[0m] - (starship::config): Found color palette: rose-pine
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: iris
+[[2;34mTRACE[0m] - (starship::config): Read user-defined color string: iris defined as #c4a7e7
+[[2;34mTRACE[0m] - (starship::config): Parsing color_string: #c4a7e7
+[[2;34mTRACE[0m] - (starship::config): Attempting to read hexadecimal color string: #c4a7e7
+[[2;34mTRACE[0m] - (starship::config): Read RGB color string: 196,167,231
