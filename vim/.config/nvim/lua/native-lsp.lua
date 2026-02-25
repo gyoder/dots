@@ -78,6 +78,7 @@ vim.lsp.config('csharp-ls', {
 vim.lsp.enable("csharp-ls")
 
 vim.lsp.enable("asm-lsp")
+vim.lsp.enable("codebook")
 
 -- https://lsp-zero.netlify.app/blog/lsp-client-features.html
 
