@@ -1,0 +1,54 @@
+# Grace's Brew File
+tap "gyoder/graceful-tap"
+
+
+
+# Programming Languages
+brew "go"
+brew "rustup", postinstall: "${HOMEBREW_PREFIX}/opt/rustup/bin/rustup default stable && ${HOMEBREW_PREFIX}/opt/rustup/bin/rustup component add rust-analyzer"
+brew "uv"
+brew "llvm"
+brew "cmake"
+brew "make"
+brew "node"
+brew "npm"
+brew "typst"
+brew "zig"
+
+# Shell Stuff
+brew "fish"
+brew "fzf"
+brew "pfetch"
+brew "sesh"
+brew "starship"
+brew "gyoder/graceful-tap/jj-starship"
+brew "tmux"
+brew "zoxide"
+
+# Editor Stuff
+brew "gyoder/graceful-tap/neovim-nightly"
+brew "neovim", link: false # Just in case :)
+brew "tree-sitter"
+brew "tree-sitter-cli"
+
+# Language Servers
+brew "codebook-lsp"
+go "golang.org/x/tools/gopls"
+brew "tinymist"
+brew "zls"
+
+# Git Stuff
+brew "gh"
+brew "jj"
+
+
+
+brew "tailscale"
+brew "sqlite"
+brew "asciinema"
+
+# CLI Utils
+brew "ripgrep"
+brew "dust"
+brew "tree"
+brew "stow"
