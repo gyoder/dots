@@ -32,13 +32,55 @@ return require('packer').startup(function(use)
   }
   use {
     'nvim-telescope/telescope.nvim',
-    requires = { { 'nvim-lua/plenary.nvim' } }
+    requires = { { 'nvim-lua/plenary.nvim' } },
+    run = ":TSUpdate",
+    config = function()
+      require('telescope').setup({
+        defaults = {
+          vimgrep_arguments = {
+            "rg",
+            "--color=never",
+            "--no-heading",
+            "--with-filename",
+            "--line-number",
+            "--column",
+            "--smart-case",
+            "--glob=!node_modules/**",
+            "--glob=!build/**",
+          },
+          file_ignore_patterns = { "node_modules", "build" },
+        },
+      })
+    end,
   }
+
 
   use {
     'nvim-treesitter/nvim-treesitter',
-    -- config = function() require("plugins/ts") end
+    branch = 'main',
+    run = ':TSUpdate',
+    config = function()
+      require('nvim-treesitter').setup()
+
+      require('nvim-treesitter').install({
+        'c', 'lua', 'vim', 'vimdoc', 'query', 'markdown', 'markdown_inline', 'go'
+      }):wait()
+
+      -- enable highlighting
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function(args)
+          local max_filesize = 100 * 1024 -- 100 KB
+          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(args.buf))
+          if ok and stats and stats.size > max_filesize then
+            return
+          end
+          pcall(vim.treesitter.start)
+        end,
+      })
+    end
   }
+
+
 
   use 'mbbill/undotree'
   use 'mfussenegger/nvim-lint'
