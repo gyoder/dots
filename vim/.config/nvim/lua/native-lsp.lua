@@ -56,7 +56,7 @@ vim.lsp.enable("gopls")
 
 vim.lsp.enable("tinymist")
 
-vim.lsp.enable("cspell-ls")
+-- vim.lsp.enable("cspell-ls")
 
 vim.lsp.enable("astro")
 
