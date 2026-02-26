@@ -44,8 +44,6 @@ else if test "$host" = "lee"
   fish_add_path ~/.local/bin
 end
 
-source "$HOME/.cargo/env.fish" 2>/dev/null
-
 set -gx HOMEBREW_BUNDLE_FILE "~/.config/Brewfile"
 
 if test -d /home/linuxbrew/.linuxbrew

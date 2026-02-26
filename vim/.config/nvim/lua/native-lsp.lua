@@ -24,6 +24,7 @@ vim.lsp.config('ty', {
 })
 
 -- vim.lsp.enable("ty")
+vim.lsp.enable("ruff")
 
 
 
@@ -56,7 +57,7 @@ vim.lsp.enable("gopls")
 
 vim.lsp.enable("tinymist")
 
-vim.lsp.enable("cspell-ls")
+-- vim.lsp.enable("cspell-ls")
 
 vim.lsp.enable("astro")
 

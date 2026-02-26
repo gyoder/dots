@@ -5,7 +5,7 @@ tap "gyoder/graceful-tap"
 
 # Programming Languages
 brew "go"
-brew "rustup", postinstall: "${HOMEBREW_PREFIX}/opt/rustup/bin/rustup default stable && ${HOMEBREW_PREFIX}/opt/rustup/bin/rustup component add rust-analyzer"
+brew "rustup", postinstall: "${HOMEBREW_PREFIX}/opt/rustup/bin/rustup-init -y && ${HOMEBREW_PREFIX}/opt/rustup/bin/rustup component add rust-analyzer"
 brew "uv"
 brew "llvm"
 brew "cmake"
@@ -41,14 +41,15 @@ brew "zls"
 brew "gh"
 brew "jj"
 
-
-
-brew "tailscale"
-brew "sqlite"
-brew "asciinema"
-
 # CLI Utils
 brew "ripgrep"
 brew "dust"
 brew "tree"
 brew "stow"
+brew "btop"
+
+# Random
+brew "tailscale"
+brew "sqlite"
+brew "asciinema"
+
