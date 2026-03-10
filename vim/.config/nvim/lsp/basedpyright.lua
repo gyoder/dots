@@ -32,6 +32,7 @@ return {
     'Pipfile',
     'pyrightconfig.json',
     '.git',
+    '.jj'
   },
   settings = {
     basedpyright = {

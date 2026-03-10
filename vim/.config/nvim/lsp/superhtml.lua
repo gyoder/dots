@@ -18,5 +18,5 @@
 return {
   cmd = { 'superhtml', 'lsp' },
   filetypes = { 'superhtml', 'html', "htmldjango" },
-  root_markers = { '.git' },
+  root_markers = { '.git', '.jj' },
 }

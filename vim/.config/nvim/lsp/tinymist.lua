@@ -49,7 +49,7 @@ end
 return {
   cmd = { 'tinymist' },
   filetypes = { 'typst' },
-  root_markers = { '.git' },
+  root_markers = { '.git', '.jj' },
   on_attach = function(client, bufnr)
     for _, command in ipairs {
       'tinymist.exportSvg',

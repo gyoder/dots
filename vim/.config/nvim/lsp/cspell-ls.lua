@@ -7,6 +7,7 @@ return {
   filetypes = { "go", "rust", "js", "ts", "html", "css", "json", "yaml", "markdown", "gitcommit", "typst", "lua", "htmlua", "c", "cpp", "arduino" },
   root_markers = {
     '.git',
+    '.jj',
     'cspell.json',
     '.cspell.json',
     'cspell.json',
