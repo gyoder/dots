@@ -80,6 +80,13 @@ vim.lsp.enable("csharp-ls")
 
 vim.lsp.enable("asm-lsp")
 vim.lsp.enable("codebook")
+vim.lsp.enable("json")
+vim.lsp.enable("eslint")
+vim.lsp.enable("css")
+vim.lsp.enable("html")
+vim.lsp.enable("fish-lsp")
+
+
 
 -- https://lsp-zero.netlify.app/blog/lsp-client-features.html
 

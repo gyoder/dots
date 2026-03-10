@@ -12,6 +12,7 @@ brew "cmake"
 brew "make"
 brew "node"
 brew "npm"
+brew "typescript"
 brew "typst"
 brew "zig"
 
@@ -36,6 +37,9 @@ brew "codebook-lsp"
 go "golang.org/x/tools/gopls"
 brew "tinymist"
 brew "zls"
+brew "vscode-langservers-extracted"
+brew "typescript-language-server"
+brew "fish-lsp"
 
 # Git Stuff
 brew "gh"

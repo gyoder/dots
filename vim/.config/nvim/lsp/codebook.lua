@@ -36,5 +36,5 @@ return {
     'typst',
     'zig',
   },
-  root_markers = { '.git', 'codebook.toml', '.codebook.toml' },
+  root_markers = { '.git', '.jj', 'codebook.toml', '.codebook.toml' },
 }

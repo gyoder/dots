@@ -17,7 +17,9 @@ return {
     '.clang-format',
     'compile_commands.json',
     'compile_flags.txt',
-    'configure.ac' -- AutoTools
+    'configure.ac', -- AutoTools
+    '.git',
+    '.jj'
   },
   single_file_support = true,
   capabilities = {
