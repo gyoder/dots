@@ -15,6 +15,7 @@ brew "npm"
 brew "typescript"
 brew "typst"
 brew "zig"
+brew "python@3.13"
 
 # Shell Stuff
 brew "fish"
@@ -40,6 +41,7 @@ brew "zls"
 brew "vscode-langservers-extracted"
 brew "typescript-language-server"
 brew "fish-lsp"
+uv "ruff"
 
 # Git Stuff
 brew "gh"
@@ -51,6 +53,8 @@ brew "dust"
 brew "tree"
 brew "stow"
 brew "btop"
+brew "curl"
+brew "fd"
 
 # Random
 brew "tailscale"
