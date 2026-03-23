@@ -88,6 +88,10 @@ vim.lsp.enable("fish-lsp")
 
 
 
+vim.diagnostic.config({
+  virtual_text = { priority = 100 },
+})
+
 -- https://lsp-zero.netlify.app/blog/lsp-client-features.html
 
 vim.opt.completeopt = { 'menu', 'menuone', 'noselect', 'noinsert' }

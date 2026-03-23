@@ -26,8 +26,9 @@ require("remap")
 
 
 if vim.g.is_purdue then
-  -- require("westwood-lint")
+  require("westwood-lint")
 end
+
 require("standard-lint")
 
 vim.cmd("source ~/.vim/settings.vim")
@@ -118,17 +119,22 @@ vim.api.nvim_create_autocmd("TermOpen", {
 
 vim.o.clipboard = "unnamedplus"
 
-vim.g.clipboard = {
-  name = "OSC 52",
-  copy = {
-    ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
-    ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
-  },
-  paste = {
-    ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
-    ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
-  },
-}
+-- vim.g.clipboard = {
+--   name = "OSC 52",
+--   copy = {
+--     ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+--     ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+--   },
+--   paste = {
+--     ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
+--     ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
+--   },
+-- }
+vim.g.clipboard = "osc52"
+vim.keymap.set("n", "p", '"+p')
+vim.keymap.set("n", "P", '"+P')
+
+
 -- stupid hacky workaround to make it so i can paste from tmux with OSC52
 -- https://github.com/neovim/neovim/discussions/29350#discussioncomment-10299517
 -- tracking issue about tmux behavior: https://github.com/tmux/tmux/issues/4275

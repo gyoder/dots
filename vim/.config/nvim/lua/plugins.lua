@@ -1,39 +1,9 @@
-vim.cmd [[packadd packer.nvim]]
+-- vim.pack.update(nil, { target = 'lockfile' })
 
-local ensure_packer = function()
-  local fn = vim.fn
-  local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-  if fn.empty(fn.glob(install_path)) > 0 then
-    fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
-    vim.cmd [[packadd packer.nvim]]
-    return true
-  end
-  return false
-end
-
-local packer_bootstrap = ensure_packer()
-
-return require('packer').startup(function(use)
-  use 'wbthomason/packer.nvim'
-
-  -- use "neovim/nvim-lspconfig"
-
-  use {
-    'maxmx03/solarized.nvim',
-    config = function()
-      vim.o.background = 'dark'
-      ---@type solarized
-      local solarized = require('solarized')
-      vim.o.termguicolors = true
-      vim.o.background = 'dark'
-      solarized.setup({})
-      -- vim.cmd.colorscheme 'solarized'
-    end
-  }
+return require("packed").setup(function(use)
+  use 'nvim-lua/plenary.nvim'
   use {
     'nvim-telescope/telescope.nvim',
-    requires = { { 'nvim-lua/plenary.nvim' } },
-    run = ":TSUpdate",
     config = function()
       require('telescope').setup({
         defaults = {
@@ -58,7 +28,6 @@ return require('packer').startup(function(use)
   use {
     'nvim-treesitter/nvim-treesitter',
     branch = 'main',
-    run = ':TSUpdate',
     config = function()
       require('nvim-treesitter').setup()
 
@@ -83,41 +52,38 @@ return require('packer').startup(function(use)
 
 
   use 'mbbill/undotree'
+  use 'nvim-tree/nvim-web-devicons'
   use 'mfussenegger/nvim-lint'
   use {
     'nvim-lualine/lualine.nvim',
-    requires = { 'nvim-tree/nvim-web-devicons', opt = true },
-    config = function() require('plugins/lualine-config') end
+    config = function()
+      require('lualine').setup {
+        options = { theme = "rose-pine" }
+      }
+    end
   }
-  -- use {
-  --   'm4xshen/autoclose.nvim',
-  --   config = function() require("autoclose").setup() end
-  -- }
-  --
+
+  -- grrr why does neovim not have this?
   use {
     "windwp/nvim-autopairs",
-    event = "InsertEnter",
     config = function()
       require("nvim-autopairs").setup {}
     end
   }
 
-  use {
-    'CRAG666/betterTerm.nvim',
-    config = function() require('betterTerm').setup() end
-  }
-
+  use { "akinsho/toggleterm.nvim", config = function()
+    require("toggleterm").setup {
+      size = 30
+    }
+    vim.keymap.set({ "n", "t", "v" }, "<leader>tt", require("toggleterm").toggle, { desc = "Toggle terminal" })
+  end }
+  use { 'nvim-telescope/telescope.nvim' }
   use {
     'anurag3301/nvim-platformio.lua',
-    requires = {
-      { 'akinsho/nvim-toggleterm.lua' },
-      { 'nvim-telescope/telescope.nvim' },
-      { 'nvim-lua/plenary.nvim' },
-    },
     config = function()
       if not vim.g.is_purdue then
         require('platformio').setup({
-          lsp = "clangd" --default: ccls, other option: clangd
+          lsp = "ccls" --default: ccls, other option: clangd
           -- If you pick clangd, it also creates compile_commands.json
         })
       end
@@ -126,30 +92,26 @@ return require('packer').startup(function(use)
 
   use {
     "chentoast/marks.nvim",
-    config = function() require('plugins/marks-config') end
+    config = function() require('marks').setup() end
   }
 
-  use {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
-    requires = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-      "MunifTanjim/nui.nvim",
-      -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
-    }
-  }
-
-
-  use { "nvim-tree/nvim-web-devicons" }
-  use { "MunifTanjim/nui.nvim" }
+  -- use { "MunifTanjim/nui.nvim" }
 
   use { 'rafamadriz/friendly-snippets' }
   use {
     'saghen/blink.cmp',
-    run = 'cargo build --release',
+    version = 'v1.10.1',
     config = function()
-      require("plugins/blink_config")
+      require("blink.cmp").setup({
+        fuzzy = {
+          implementation = "prefer_rust_with_warning",
+          prebuilt_binaries = {
+            download = true,
+            force_version = "v1.*"
+          },
+        },
+        keymap = { preset = "enter" },
+      })
     end
   }
 
@@ -162,17 +124,6 @@ return require('packer').startup(function(use)
     end
   }
 
-  -- use {
-  --   'mrcjkb/rustaceanvim',
-  --   config = function() require('plugins/rust-config') end
-  -- }
-
-  use {
-    "NeogitOrg/neogit",
-    config = function()
-      require("neogit").setup {}
-    end
-  }
 
   use {
     "mfussenegger/nvim-dap",
@@ -180,12 +131,12 @@ return require('packer').startup(function(use)
     config = function()
       local dap = require("dap")
 
-      require('dap.ext.vscode').load_launchjs(nil, {
-        node = { 'javascript', 'typescript' },
-        python = { 'python' },
-        go = { 'go' },
-        codelldb = { 'c', 'cpp', 'rust' }
-      })
+      -- require('dap.ext.vscode').load_launchjs(nil, {
+      --   node = { 'javascript', 'typescript' },
+      --   python = { 'python' },
+      --   go = { 'go' },
+      --   codelldb = { 'c', 'cpp', 'rust' }
+      -- })
 
       vim.keymap.set('n', '<M-u>', function() dap.continue() end, { desc = 'DAP: Continue' })
       vim.keymap.set('n', '<M-i>', function() dap.step_into() end, { desc = 'DAP: Step Into' })
@@ -224,9 +175,9 @@ return require('packer').startup(function(use)
     config = function() require('overseer').setup() end
   }
   use 'theHamsta/nvim-dap-virtual-text'
+  use "nvim-neotest/nvim-nio"
   use {
     "rcarriga/nvim-dap-ui",
-    requires = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
     config = function()
       local dap, dapui = require("dap"), require("dapui")
       dapui.setup()
@@ -247,10 +198,6 @@ return require('packer').startup(function(use)
 
   use { "geigerzaehler/tree-sitter-jinja2" }
 
-  use "echasnovski/mini.base16"
-
-  use 'rktjmp/lush.nvim'
-
   use {
     "rose-pine/neovim",
     as = "rose-pine",
@@ -264,56 +211,32 @@ return require('packer').startup(function(use)
 
   use {
     'chomosuke/typst-preview.nvim',
-    tag = 'v1.*',
     config = function()
       require 'typst-preview'.setup {}
     end,
   }
 
-  -- use "folke/which-key.nvim"
-
-  use({
-    "andrewferrier/wrapping.nvim",
-    config = function()
-      require("wrapping").setup()
-    end,
-  })
 
   use({
     "iamcco/markdown-preview.nvim",
-    run = function() vim.fn["mkdp#util#install"]() end,
+    config = function()
+      vim.api.nvim_create_user_command("MDPreviewInstall", function()
+        vim.vim.fn["mkdp#util#install"]()
+      end, {})
+    end,
   })
 
 
-  -- use {
-  --   'preservim/vim-pencil',
-  --   config = function()
-  --     vim.cmd([[
-  --     augroup PencilSetup
-  --     autocmd!
-  --     autocmd FileType markdown,text,tex,gitcommit setlocal formatoptions+=t
-  --     autocmd FileType markdown,text,tex,gitcommit PencilHard
-  --     augroup END       augroup END
-  --     ]])
-  --   end
-  -- }
-
   use {
     'LukasPietzschmann/telescope-tabs',
-    requires = { 'nvim-telescope/telescope.nvim' },
     config = function()
       require 'telescope-tabs'.setup {
         -- Your custom config :^)
       }
     end
   }
-
   use "HiPhish/rainbow-delimiters.nvim"
 
 
   ------------------------
-
-  if packer_bootstrap then
-    require('packer').sync()
-  end
 end)
