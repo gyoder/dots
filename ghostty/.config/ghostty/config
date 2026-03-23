@@ -4,14 +4,18 @@ clipboard-read = allow
 clipboard-write = allow
 copy-on-select = true
 theme = Rose Pine
-font-family = "ComicCode Nerd Font"
+font-family = "ComicCode Nerd Font SemiBold"
 font-style-italic = "ComicCode Nerd Font Light"
 macos-option-as-alt = left
-macos-icon = microchip
+macos-icon = blueprint
 font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
 
+cursor-click-to-move = true
+
 keybind = global:cmd+grave_accent=toggle_quick_terminal
 quick-terminal-position = center
 quick-terminal-animation-duration = .1
+
+keybind = alt+i=inspector:toggle
