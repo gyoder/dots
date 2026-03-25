@@ -60,4 +60,5 @@ brew "fd"
 brew "tailscale"
 brew "sqlite"
 brew "asciinema"
+brew "node_exporter", restart_service: true
 
