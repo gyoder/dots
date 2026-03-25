@@ -29,7 +29,7 @@ return require("packed").setup(function(use)
     'nvim-treesitter/nvim-treesitter',
     branch = 'main',
     config = function()
-      local parser_path = vim.fn.expand("~/.local/share/nvim/site")
+      local parser_path = vim.fn.expand("~/.local/share/nvim/site/parser")
       vim.opt.runtimepath:append(parser_path)
 
       require("nvim-treesitter").setup({})
