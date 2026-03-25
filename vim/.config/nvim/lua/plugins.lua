@@ -78,17 +78,17 @@ return require("packed").setup(function(use)
     vim.keymap.set({ "n", "t", "v" }, "<leader>tt", require("toggleterm").toggle, { desc = "Toggle terminal" })
   end }
   use { 'nvim-telescope/telescope.nvim' }
-  use {
-    'anurag3301/nvim-platformio.lua',
-    config = function()
-      if vim.g.hostname == "turing" then
+  if vim.g.hostname == "turing" then
+    use {
+      'anurag3301/nvim-platformio.lua',
+      config = function()
         require('platformio').setup({
           lsp = "ccls" --default: ccls, other option: clangd
           -- If you pick clangd, it also creates compile_commands.json
         })
       end
-    end
-  }
+    }
+  end
 
   use {
     "chentoast/marks.nvim",
