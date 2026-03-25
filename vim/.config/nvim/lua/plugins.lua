@@ -81,7 +81,7 @@ return require("packed").setup(function(use)
   use {
     'anurag3301/nvim-platformio.lua',
     config = function()
-      if not vim.g.is_purdue then
+      if vim.g.hostname == "turing" then
         require('platformio').setup({
           lsp = "ccls" --default: ccls, other option: clangd
           -- If you pick clangd, it also creates compile_commands.json
