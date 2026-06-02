@@ -1,0 +1,17 @@
+[user]
+name = "Grace Yoder"
+email = "grace_yoder@outlook.com"
+
+[signing]
+sign-all = true
+backend = "ssh"
+key = "~/.ssh/id_ed25519"
+
+[remotes.origin]
+auto-track-bookmarks = "*"
+
+[remotes.github]
+auto-track-bookmarks = "*"
+
+[aliases]
+tug = ["bookmark", "advance"]

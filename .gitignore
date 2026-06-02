@@ -4,6 +4,11 @@ fish/.config/fish/fish_variables
 tmux/.tmux/plugins
 fish/.config/fish/fishd.tmp*
 
+zellij/.config/zellij/config.kdl.bak*
+zellij/.config/zellij/config.kdl.bak
+
+jj/.config/jj/repos/
+
 # Compiled Lua sources
 luac.out
 
