@@ -15,11 +15,18 @@ return require("packed").setup(function(use)
             "--line-number",
             "--column",
             "--smart-case",
+            "--hidden",
+            "--glob=!.git/*",
             "--glob=!node_modules/**",
             "--glob=!build/**",
           },
-          file_ignore_patterns = { "node_modules", "build" },
+          file_ignore_patterns = { "node_modules", "^build/", "^.git/" },
         },
+        pickers = {
+          find_files = {
+            hidden = true,
+          }
+        }
       })
     end,
   }
@@ -181,14 +188,6 @@ return require("packed").setup(function(use)
   use 'mbbill/undotree'
   use 'nvim-tree/nvim-web-devicons'
   use 'mfussenegger/nvim-lint'
-  use {
-    'nvim-lualine/lualine.nvim',
-    config = function()
-      require('lualine').setup {
-        options = { theme = "rose-pine" }
-      }
-    end
-  }
 
   -- grrr why does neovim not have this?
   use {
@@ -364,6 +363,59 @@ return require("packed").setup(function(use)
   }
   use "HiPhish/rainbow-delimiters.nvim"
 
+  use {
+    'diogo464/hotreload.nvim',
+    config = function()
+      require('hotreload').setup({
+        interval = 500,
+      })
+    end
+  }
+
+  use {
+    "lukas-reineke/indent-blankline.nvim",
+    config = function()
+      require("ibl").setup {
+        indent = { highlight = { "Comment" }, char = "▏" },
+        scope = { highlight = { "@variable" }, show_start = false, show_end = false },
+      }
+    end
+  }
+
+  use {
+    "https://tangled.org/bpavuk.neocities.org/jj-log.nvim.git",
+    config = function()
+      require('jj-log').setup {
+        out_waiting = "...",
+        out_no_jj_repo = "~no_jj_repo~",
+        out_no_desc = "~no_desc~",
+        max_desc_length = 47,
+        full_desc = false,
+      }
+    end
+  }
+
+  use {
+    'nvim-lualine/lualine.nvim',
+    config = function()
+      require('lualine').setup {
+        options = { theme = "rose-pine" },
+        sections = {
+          lualine_a = {'mode'},
+          lualine_b = {
+            function()
+              return vim.b.jj_desc or "~no desc~"
+            end,
+            'diff',
+            'diagnostics'},
+          lualine_c = {'filename'},
+          lualine_x = {'encoding', 'fileformat', 'filetype'},
+          lualine_y = {'progress'},
+          lualine_z = {'location'}
+        },
+      }
+    end
+  }
 
   ------------------------
 end)

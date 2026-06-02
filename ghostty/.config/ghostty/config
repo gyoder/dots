@@ -19,3 +19,4 @@ quick-terminal-position = center
 quick-terminal-animation-duration = .1
 
 keybind = alt+i=inspector:toggle
+keybind = super+t=unbind
