@@ -1,5 +1,5 @@
 # Grace's Brew File
-tap "gyoder/graceful-tap"
+tap "gyoder/graceful-tap", trusted: true
 
 
 
@@ -10,6 +10,7 @@ brew "uv"
 brew "llvm"
 brew "cmake"
 brew "make"
+brew "just"
 brew "node"
 brew "npm"
 brew "typescript"
@@ -20,16 +21,16 @@ brew "python@3.13"
 # Shell Stuff
 brew "fish"
 brew "fzf"
-brew "pfetch"
+brew "pfetch-rs"
 brew "sesh"
 brew "starship"
 brew "gyoder/graceful-tap/jj-starship"
 brew "tmux"
 brew "zoxide"
+brew "zellij"
 
 # Editor Stuff
 brew "gyoder/graceful-tap/neovim-nightly"
-brew "neovim", link: false # Just in case :)
 brew "tree-sitter"
 brew "tree-sitter-cli"
 
@@ -42,6 +43,7 @@ brew "vscode-langservers-extracted"
 brew "typescript-language-server"
 brew "fish-lsp"
 uv "ruff"
+uv "pyright"
 
 # Git Stuff
 brew "gh"
@@ -55,10 +57,20 @@ brew "stow"
 brew "btop"
 brew "curl"
 brew "fd"
+brew "uutils-coreutils"
+brew "wget"
+brew "jq"
+brew "yq"
+brew "yj"
+brew "most"
 
 # Random
 brew "tailscale"
 brew "sqlite"
 brew "asciinema"
-brew "node_exporter", restart_service: true
+brew "bash"
+brew "openssh"
+brew "openssl"
+brew "container", postinstall: "container system start" if OS.mac?
+brew "podman"
 
