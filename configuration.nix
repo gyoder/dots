@@ -19,6 +19,10 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
-    users.${config.system.primaryUser} = import ./home.nix;
+    users.${config.system.primaryUser} = {
+      imports = [ ./home.nix ];
+      home.username = config.system.primaryUser;
+      home.homeDirectory = "/Users/${config.system.primaryUser}";
+    };
   };
 }
