@@ -1,0 +1,5 @@
+[package]
+name = "grace-personal-template"
+version = "0.1.0"
+entrypoint = "grace_personal_template.typ"
+authors = ["Grace Yoder"]
