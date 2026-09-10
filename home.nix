@@ -1,12 +1,14 @@
 {
   lib,
-  osConfig ? null,
   ...
 }:
 
 let
   detectedHostname =
-    if osConfig != null then osConfig.networking.hostName else builtins.getEnv "HOSTNAME";
+    if builtins.match ".*-darwin" builtins.currentSystem != null then
+      "turing"
+    else
+      builtins.getEnv "HOSTNAME";
   detectedUsername = builtins.getEnv "USER";
   detectedHome =
     let
