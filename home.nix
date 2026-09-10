@@ -1,10 +1,12 @@
 {
   lib,
+  osConfig ? null,
   ...
 }:
 
 let
-  detectedHostname = builtins.getEnv "HOSTNAME";
+  detectedHostname =
+    if osConfig != null then osConfig.networking.hostName else builtins.getEnv "HOSTNAME";
   detectedUsername = builtins.getEnv "USER";
   detectedHome =
     let

@@ -28,7 +28,6 @@ in
     settings = {
       theme = "grace_rose_pine";
       editor = {
-        clipboard-provider = "termcode";
         bufferline = "multiple";
         color-modes = true;
         default-yank-register = "+";

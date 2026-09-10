@@ -15,7 +15,7 @@
           email = "grace_yoder@outlook.com";
         };
         signing = {
-          sign-all = true;
+          behavior = "own";
           backend = "ssh";
           key = "~/.ssh/id_ed25519";
         };

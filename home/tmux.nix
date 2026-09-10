@@ -6,7 +6,7 @@
     mouse = true;
     keyMode = "vi";
     baseIndex = 1;
-    prefix = "C-\\";
+    prefix = "C-b";
     terminal = "xterm-ghostty";
     plugins = with pkgs.tmuxPlugins; [
       sensible
@@ -27,13 +27,19 @@
     ];
     extraConfig = ''
       set -g status-position top
-      set -g set-clipboard on
+      set -s set-clipboard on
+      set -s get-clipboard both
       set -g set-titles on
       set -g set-titles-string "#{session_name}"
       setw -g pane-base-index 1
       set -g allow-passthrough all
       set -as terminal-features ",xterm-ghostty:hyperlinks"
       set -ga terminal-overrides ",xterm-ghostty:Tc"
+
+      unbind C-b
+      set -g prefix C-\\
+      bind -N "Send the prefix key through to the application" C-\\ send-prefix
+      bind -N "Refresh system clipboard via OSC 52" Y refresh-client -l
 
       bind v split-window -h -c "#{pane_current_path}"
       bind b split-window -v -c "#{pane_current_path}"
