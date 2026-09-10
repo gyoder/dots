@@ -7,6 +7,10 @@
 
 let
   dots = toString ./..;
+  tpbSrc = builtins.fetchGit {
+    url = "https://git.gae.moe/grace/tpb.git";
+    ref = "refs/heads/main";
+  };
 in
 {
   home.packages = with pkgs; [
@@ -28,6 +32,10 @@ in
     bash
     openssh
     openssl
+
+    (import "${tpbSrc}/default.nix" {
+      inherit pkgs;
+    })
   ];
 
   xdg.configFile."fish/themes/rose_pine.theme".source =

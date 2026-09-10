@@ -30,6 +30,11 @@ in
       editor = {
         bufferline = "multiple";
         color-modes = true;
+        cursor-shape = {
+          insert = "bar";
+          normal = "block";
+          select = "underline";
+        };
         default-yank-register = "+";
         cursorline = true;
         cursorcolumn = true;
