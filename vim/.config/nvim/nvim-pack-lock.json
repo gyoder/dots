@@ -61,6 +61,10 @@
       "rev": "21f5324bfac14e22ba26553caf69ec76ae8a7662",
       "src": "https://github.com/nvim-neotest/nvim-nio"
     },
+    "nvim-platformio.lua": {
+      "rev": "d5143c88698f78ce35fb5083b3668c94ea047a01",
+      "src": "https://github.com/anurag3301/nvim-platformio.lua"
+    },
     "nvim-treesitter": {
       "rev": "6620ae1c44dfa8623b22d0cbf873a9e8d073b849",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter",

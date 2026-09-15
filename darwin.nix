@@ -1,9 +1,13 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
-  paneru = builtins.getFlake
-    "github:karinushka/paneru/bcf248ef60aa4c0b49002161b97bc6e268b05aa7";
-  hostName = "turing";
+  paneru = builtins.getFlake "github:karinushka/paneru/bcf248ef60aa4c0b49002161b97bc6e268b05aa7";
+  hostName = import ./host.nix;
   primaryUser = if lib.hasSuffix "cs.purdue.edu" hostName then "yoder177" else "grace";
 in
 {
@@ -13,7 +17,10 @@ in
   nixpkgs.hostPlatform = "aarch64-darwin";
   networking.hostName = hostName;
 
-  environment.systemPackages = [ pkgs.raycast pkgs.thaw ];
+  environment.systemPackages = [
+    pkgs.raycast
+    pkgs.thaw
+  ];
 
   system = {
     primaryUser = primaryUser;
@@ -39,7 +46,11 @@ in
 
         animation_speed = 12.0;
 
-        preset_column_widths = [ 0.45 0.65 0.9 ];
+        preset_column_widths = [
+          0.45
+          0.65
+          0.9
+        ];
         window_resize_cycle = true;
         create_virtual_workspace_automatically = true;
         virtual_workspace_animations = true;

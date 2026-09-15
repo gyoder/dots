@@ -101,9 +101,15 @@ in
           t = ":new";
           v = "vsplit";
         };
+        "C-k" = "page_cursor_half_up";
+        "C-j" = "page_cursor_half_down";
+        "K" = "hover";
+        "ret" = "goto_word";
       };
       keys.select = {
         "C-w" = "no_op";
+        "C-k" = "page_cursor_half_up";
+        "C-j" = "page_cursor_half_down";
       };
     };
 
