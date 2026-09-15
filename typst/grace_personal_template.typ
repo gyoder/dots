@@ -131,7 +131,17 @@
   show math.equation: set text(font: "Fira Math", fallback: false)
 
   set raw(theme: rose-pine-moon.codeThemePath)
-  show raw: it => [
+  show raw.where(block: false): it => [
+    #set text(fill: rose-pine-moon.text)
+    #set text(top-edge: "ascender", bottom-edge: "descender")
+    #box(
+      fill: rose-pine-moon.overlay,
+      inset: (x: 3pt, y: 2pt),
+      radius: 3pt,
+      it
+    )
+  ]
+  show raw.where(block: true): it => [
     #set text(fill: rose-pine-moon.text)
     #block(
       fill: rose-pine-moon.overlay,
