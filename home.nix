@@ -4,23 +4,12 @@
 }:
 
 let
-  detectedHostname =
-    if builtins.match ".*-darwin" builtins.currentSystem != null then
-      "turing"
-    else
-      builtins.getEnv "HOSTNAME";
-  detectedUsername = builtins.getEnv "USER";
-  detectedHome =
-    let
-      envHome = builtins.getEnv "HOME";
-    in
-    # Will not work on cs.purdue.edu
-    if envHome != "" then envHome else "/home/${detectedUsername}";
+  host = import ./host.nix;
 in
 {
   home = {
-    username = lib.mkDefault detectedUsername;
-    homeDirectory = lib.mkDefault detectedHome;
+    username = host.user;
+    homeDirectory = host.home;
   };
 
   imports = [
@@ -32,14 +21,13 @@ in
     ./home/langs.nix
     ./home/vcs.nix
   ]
-  ++ lib.optionals (detectedHostname == "turing") [
+  ++ lib.optionals (host.name == "turing") [
     ./home/packages.nix
     ./home/typst.nix
     ./home/pkgs_mac.nix
     ./home/ghostty.nix
   ]
-  ++ lib.optionals (lib.hasSuffix "cs.purdue.edu" detectedHostname) [
+  ++ lib.optionals (lib.hasSuffix "cs.purdue.edu" host.name) [
     ./home/cs_purdue.nix
-    ./home/ghostty.nix
   ];
 }

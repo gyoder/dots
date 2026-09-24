@@ -11,7 +11,7 @@ in
   ];
 
   imports = [
-    ./darwin.nix
+    ../darwin.nix
     "${home-manager}/nix-darwin"
   ];
 
@@ -20,7 +20,7 @@ in
     useUserPackages = true;
     backupFileExtension = "backup";
     users.${config.system.primaryUser} = {
-      imports = [ ./home.nix ];
+      imports = [ ../home.nix ];
       home.username = config.system.primaryUser;
       home.homeDirectory = "/Users/${config.system.primaryUser}";
     };

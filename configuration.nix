@@ -1,8 +1,7 @@
-{ config, ... }:
+{ ... }:
 let
-  host = import ./. + "/host.nix";
-  conf = import ./. + "/hosts/${host.name}.nix";
+  host = import ./host.nix;
 in
 {
-  config = conf;
+  imports = [ (./hosts + "/${host.name}.nix") ];
 }

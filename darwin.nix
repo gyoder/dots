@@ -6,16 +6,15 @@
 }:
 
 let
-  paneru = builtins.getFlake "github:karinushka/paneru/bcf248ef60aa4c0b49002161b97bc6e268b05aa7";
-  hostName = import ./host.nix;
-  primaryUser = if lib.hasSuffix "cs.purdue.edu" hostName then "yoder177" else "grace";
+  paneru = builtins.getFlake "github:karinushka/paneru/5a033bc3a59f752ae72944f06945ab13cc570e04";
+  host = import ./host.nix;
 in
 {
   imports = [ paneru.darwinModules.paneru ];
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.hostPlatform = "aarch64-darwin";
-  networking.hostName = hostName;
+  networking.hostName = host.name;
 
   environment.systemPackages = [
     pkgs.raycast
@@ -23,7 +22,7 @@ in
   ];
 
   system = {
-    primaryUser = primaryUser;
+    primaryUser = host.user;
     stateVersion = 7;
   };
 
