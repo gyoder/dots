@@ -29,5 +29,6 @@ in
   ]
   ++ lib.optionals (lib.hasSuffix "cs.purdue.edu" host.name) [
     ./home/cs_purdue.nix
+    ./home/typst.nix
   ];
 }
