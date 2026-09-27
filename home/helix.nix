@@ -1,10 +1,12 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
 
 let
+  isPurdueCS = lib.hasSuffix "cs.purdue.edu" (import ../host.nix).name;
   nhx = builtins.fetchTarball {
     url = "https://github.com/Ra77a3l3-jar/nhx/archive/0f11db8ed173522b73c7323e03d8fbe604594b13.tar.gz";
     sha256 = "0dcnjw7fw1nsylqpjcrl825yq1plw5aqnnqd21zl2pshn8px51b7";
@@ -46,7 +48,7 @@ in
       lsp.enable = true;
     };
 
-    plugins = {
+    plugins = lib.mkIf (!isPurdueCS) {
       oil.enable = true;
       juju.enable = true;
       who.enable = true;

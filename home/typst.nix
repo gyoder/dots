@@ -1,7 +1,11 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   dots = toString ./..;
+  packagePath = "typst/packages/local/grace-personal-template/0.1.0";
+  template = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dots}/typst";
+  };
 in
 {
   fonts.fontconfig.enable = true;
@@ -15,6 +19,11 @@ in
 
   home.sessionVariables.TYPST_FONT_PATHS = "${config.home.profileDirectory}/share/fonts";
 
-  home.file."Library/Application Support/typst/packages/local/grace-personal-template/0.1.0".source =
-    config.lib.file.mkOutOfStoreSymlink "${dots}/typst";
+  home.file = lib.optionalAttrs pkgs.stdenv.isDarwin {
+    "Library/Application Support/${packagePath}" = template;
+  };
+
+  xdg.dataFile = lib.optionalAttrs pkgs.stdenv.isLinux {
+    "${packagePath}" = template;
+  };
 }
