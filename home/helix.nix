@@ -1,16 +1,10 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
 
 let
-  isPurdueCS = lib.hasSuffix "cs.purdue.edu" (import ../host.nix).name;
-  nhx = builtins.fetchTarball {
-    url = "https://github.com/Ra77a3l3-jar/nhx/archive/0f11db8ed173522b73c7323e03d8fbe604594b13.tar.gz";
-    sha256 = "0dcnjw7fw1nsylqpjcrl825yq1plw5aqnnqd21zl2pshn8px51b7";
-  };
   wRoots =
     roots:
     roots
@@ -21,10 +15,6 @@ let
 
 in
 {
-  imports = [
-    "${nhx}/modules"
-  ];
-
   home.packages = [
     pkgs.nerd-fonts.symbols-only
   ];
@@ -38,26 +28,6 @@ in
   '';
 
   xdg.configFile."helix/runtime/queries/rust".source = "${pkgs.helix.runtime}/queries/rust";
-
-  programs.nhx = {
-    enable = true;
-    package = null;
-
-    steel = {
-      enable = true;
-      lsp.enable = true;
-    };
-
-    plugins = lib.mkIf (!isPurdueCS) {
-      oil.enable = true;
-      juju.enable = true;
-      who.enable = true;
-      # zen-mode.enable = true;
-      breadcrumbs.enable = true;
-      helix-file-watcher.enable = true;
-      smooth-scroll.enable = true;
-    };
-  };
 
   programs.helix = {
     enable = true;
@@ -141,8 +111,6 @@ in
           t = ":new";
           v = "vsplit";
         };
-        # "C-k" = "half-page-up-smooth";
-        # "C-j" = "half-page-down-smooth";
         "K" = "hover";
         "ret" = "goto_word";
       };
@@ -275,6 +243,15 @@ in
           command = "${pkgs.astro-language-server}/bin/astro-ls";
           args = [ "--stdio" ];
           config.typescript.tsdk = "./node_modules/typescript/lib";
+        };
+
+        steel = {
+          command = "${pkgs.steel-language-server}";
+
+          environment = {
+            STEEL_HOME = "${config.xdg.dataHome}/steel";
+          };
+
         };
       };
 
@@ -576,6 +553,15 @@ in
           language-servers = [ "fish" ];
           roots = wRoots [
             "config.fish"
+          ];
+        }
+        {
+          name = "scheme";
+          file-types = [ "scm" ];
+          scope = "source.scm";
+          language-servers = [ "steel" ];
+          roots = wRoots [
+            "init.scm"
           ];
         }
       ];
