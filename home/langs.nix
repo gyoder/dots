@@ -12,6 +12,7 @@
 
     # Build and language-specific tooling.
     cmake
+    bear
     gnumake
     just
     uv
