@@ -22,12 +22,25 @@ in
     ./home/vcs.nix
   ]
   ++ lib.optionals (host.name == "turing") [
+    (import ./home/ssh.nix {
+      principals = [
+        "t:human"
+        "h:turing"
+      ];
+    })
     ./home/packages.nix
     ./home/typst.nix
     ./home/pkgs_mac.nix
     ./home/ghostty.nix
+
   ]
   ++ lib.optionals (lib.hasSuffix "cs.purdue.edu" host.name) [
+    (import ./home/ssh.nix {
+      principals = [
+        "t:human"
+        "h:purdue"
+      ];
+    })
     ./home/cs_purdue.nix
     ./home/typst.nix
   ];

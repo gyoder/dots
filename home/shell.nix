@@ -33,19 +33,22 @@ in
     openssh
     openssl
 
-    ((import "${tpbSrc}/default.nix" {
-      inherit pkgs;
-    }).overrideAttrs (_: {
-      unpackPhase = ''
-        mkdir source
-        tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
-          -C "$src" -cf - . \
-          | tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
-            -C source -xf -
-        chmod -R u+w source
-        sourceRoot=source
-      '';
-    }))
+    (
+      (import "${tpbSrc}/default.nix" {
+        inherit pkgs;
+      }).overrideAttrs
+      (_: {
+        unpackPhase = ''
+          mkdir source
+          tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
+            -C "$src" -cf - . \
+            | tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
+              -C source -xf -
+          chmod -R u+w source
+          sourceRoot=source
+        '';
+      })
+    )
   ];
 
   xdg.configFile."fish/themes/rose_pine.theme".source =
@@ -170,6 +173,108 @@ in
           command nix $argv
         '';
       };
+
+      sshsignkey = ''
+        argparse \
+          't/tag=+' \
+          'h/host=' \
+          'u/user=' \
+          'I/identity=' \
+          'V/validity=' \
+          -- $argv
+        or return 2
+
+        if test (count $argv) -ne 1
+          echo "usage: sshsignkey [-t TAG ...] [-h HOST] [-u USER] [-I ID] [-V VALIDITY] 'PUBLIC KEY'" >&2
+          return 2
+        end
+
+        set -l ca_pub ~/.ssh/ssh-ca.pub
+        set -l principals
+
+        for tag in $_flag_tag
+          set -a principals "t:$tag"
+        end
+
+        if set -q _flag_host
+          set -a principals "h:$_flag_host"
+        end
+
+        if set -q _flag_user
+          set -a principals "u:$_flag_user"
+        end
+
+        if test (count $principals) -eq 0
+          echo "sshsignkey: at least one principal is required" >&2
+          return 2
+        end
+
+        if set -q _flag_identity
+          set -l identity "$_flag_identity"
+        else if set -q _flag_user; and set -q _flag_host
+          set -l identity "$_flag_user@$_flag_host"
+        else if set -q _flag_user
+          set -l identity "$_flag_user"
+        else if set -q _flag_host
+          set -l identity "$_flag_host"
+        else
+          set -l identity "ssh-cert"
+        end
+
+        if not test -f "$ca_pub"
+          echo "sshsignkey: CA public key not found: $ca_pub" >&2
+          return 1
+        end
+
+        set -l pivroot (dirname (dirname "${pkgs.yubico-piv-tool}/bin/yubico-piv-tool"))
+
+        set -l ykcs11 (
+          ${pkgs.findutils}/bin/find "$pivroot" \
+            -name 'libykcs11.dylib' \
+            -o -name 'libykcs11.so' \
+            | ${pkgs.coreutils}/bin/head -n1
+        )
+
+        if test -z "$ykcs11"
+          echo "sshsignkey: could not find libykcs11" >&2
+          return 1
+        end
+
+        set -l tmpdir (${pkgs.coreutils}/bin/mktemp -d)
+        or return 1
+
+        set -l pubfile "$tmpdir/key.pub"
+        printf '%s\n' "$argv[1]" > "$pubfile"
+
+        set -l ssh_args \
+          -s "$ca_pub" \
+          -D "$ykcs11" \
+          -I "$identity" \
+          -n (string join ',' $principals)
+
+        if set -q _flag_validity
+          set -a ssh_args -V "$_flag_validity"
+        end
+
+        set -lx SSH_ASKPASS_REQUIRE force
+        set -lx SSH_ASKPASS ${pkgs.writeShellScript "yubikey-verify-none" ''
+          printf '%s\n' VERIFY_NONE
+        ''}
+
+        echo "Touch your YubiKey to sign the SSH certificate..." >&2
+
+        ${pkgs.openssh}/bin/ssh-keygen $ssh_args "$pubfile" >/dev/null
+        set -l rc $status
+
+        if test $rc -ne 0
+          ${pkgs.coreutils}/bin/rm -rf "$tmpdir"
+          return $rc
+        end
+
+        ${pkgs.coreutils}/bin/cat "$tmpdir/key-cert.pub"
+
+        ${pkgs.coreutils}/bin/rm -rf "$tmpdir"
+      '';
     };
 
     interactiveShellInit = ''
