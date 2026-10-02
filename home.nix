@@ -35,12 +35,7 @@ in
 
   ]
   ++ lib.optionals (lib.hasSuffix "cs.purdue.edu" host.name) [
-    (import ./home/ssh.nix {
-      principals = [
-        "t:human"
-        "h:purdue"
-      ];
-    })
+    # Symlinked items from nix store are bad and do not work for ssh
     ./home/cs_purdue.nix
     ./home/typst.nix
   ];
