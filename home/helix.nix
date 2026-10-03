@@ -31,8 +31,8 @@ in
 
   programs.helix = {
     enable = true;
-    package = pkgs.steelix;
-    extraPackages = [ pkgs.steel ];
+    package = pkgs.helix;
+    # extraPackages = [ pkgs.steel ];
     defaultEditor = false;
     settings = {
       theme = "grace_rose_pine";
@@ -45,7 +45,7 @@ in
           select = "underline";
         };
         default-yank-register = "+";
-        clipboard-provider = if (import ../host.nix).name == "turing" then "pasteboard" else "termcode";
+        clipboard-provider = if (import ../hosts.nix).name == "turing" then "pasteboard" else "termcode";
         cursorline = true;
         cursorcolumn = true;
         continue-comments = false;
@@ -171,6 +171,11 @@ in
         tinymist = {
           command = "${pkgs.tinymist}/bin/tinymist";
           config.tinymist.formatterMode = "typstyle";
+          typstExtraArgs = [
+            "--features"
+            "bundle,html"
+            "site.typ"
+          ];
         };
 
         rust-analyzer = {
