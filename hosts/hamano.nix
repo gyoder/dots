@@ -8,7 +8,6 @@ in
     ../hardware-configuration.nix
     ../modules/dns.nix
     ../modules/caddy.nix
-    ../modules/auto-update.nix
     ../modules/tailscale.nix
     ../modules/users.nix
   ];
