@@ -1,15 +1,20 @@
 { ... }:
 
 let
-  host = import ../host.nix;
+  host = import ../hosts.nix;
 in
 {
   imports = [
-    ../hardware-configuration.nix
     ../modules/dns.nix
     ../modules/caddy.nix
+    ../modules/gitsrv.nix
     ../modules/tailscale.nix
     ../modules/users.nix
+  ];
+
+  nix.settings.trusted-users = [
+    "root"
+    "grace"
   ];
 
   nix.settings.experimental-features = [
@@ -17,7 +22,10 @@ in
     "flakes"
   ];
 
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.grub = {
+    enable = true;
+    device = "/dev/vda";
+  };
   networking.hostName = host.name;
 
   services.openssh = {

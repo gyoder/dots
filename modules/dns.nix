@@ -1,13 +1,11 @@
 { pkgs, ... }:
 
 let
-  serial = "2026100201";
+  serial = "2026100401";
 
   public = {
-    hamano = "152.44.39.247";
     lee = "152.44.40.91";
-    knuth = "x.x.x.x";
-    unused = "x.x.x.x";
+    knuth = "209.50.50.6";
   };
 
   tailnet = import ../tailnet.nix;
@@ -110,9 +108,10 @@ in
         # https://github.com/tailscale/tailscale/issues/1543#issuecomment-4703759447
         file = mkPrimaryZone {
           domain = "gae.moe";
-          address = public.hamano;
+          address = public.knuth;
           extraRecords = ''
-            ns1 IN A ${public.hamano}
+            ns1 IN A ${public.knuth}
+            _hi 3600 IN TXT "hi :3"
 
             ${tailnetRecords}
           '';
@@ -126,6 +125,9 @@ in
         file = mkPrimaryZone {
           domain = "grace.pink";
           address = public.lee;
+          extraRecords = ''
+            _atproto 3600 IN TXT "did=did:plc:rtokeh2dsmapicefqxkefbfn"
+          '';
         };
       };
 
@@ -135,7 +137,7 @@ in
 
         file = mkPrimaryZone {
           domain = "words.gay";
-          address = public.unused;
+          address = public.lee;
         };
       };
     }

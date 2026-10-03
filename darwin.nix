@@ -7,13 +7,11 @@
 
 let
   paneru = builtins.getFlake "github:karinushka/paneru/5a033bc3a59f752ae72944f06945ab13cc570e04";
-  host = import ./host.nix;
+  host = import ./hosts.nix;
 in
 {
   imports = [ paneru.darwinModules.paneru ];
 
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.hostPlatform = "aarch64-darwin";
   networking.hostName = host.name;
 
   environment.systemPackages = [
@@ -28,7 +26,7 @@ in
 
   users.users.${config.system.primaryUser} = {
     name = config.system.primaryUser;
-    home = "/Users/${config.system.primaryUser}";
+    home = host.home;
     shell = pkgs.fish;
   };
 

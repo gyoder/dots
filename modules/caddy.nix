@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}:
+{ config, ... }:
 
 let
   tailnet = import ../tailnet.nix;
@@ -15,32 +11,37 @@ in
     443
   ];
 
+  # TCP forwarding lives here alongside Caddy's HTTP/HTTPS reverse proxies.
+  systemd.sockets.git-ssh-proxy = {
+    wantedBy = [ "sockets.target" ];
+    listenStreams = [ "0.0.0.0:22" ];
+  };
+
+  systemd.services.git-ssh-proxy = {
+    description = "TCP proxy for Git SSH";
+    requires = [ "git-ssh-proxy.socket" ];
+    serviceConfig = {
+      ExecStart = "${config.systemd.package}/lib/systemd/systemd-socket-proxyd ${tailnet.dijkstra-git}:22";
+      DynamicUser = true;
+    };
+  };
+
+  systemd.sockets.minecraft-proxy = {
+    wantedBy = [ "sockets.target" ];
+    listenStreams = [ "0.0.0.0:25565" ];
+  };
+
+  systemd.services.minecraft-proxy = {
+    description = "TCP proxy for Minecraft";
+    requires = [ "minecraft-proxy.socket" ];
+    serviceConfig = {
+      ExecStart = "${config.systemd.package}/lib/systemd/systemd-socket-proxyd ${tailnet.dijkstra}:25565";
+      DynamicUser = true;
+    };
+  };
+
   services.caddy = {
     enable = true;
-
-    package = pkgs.caddy.withPlugins {
-      plugins = [
-        "github.com/mholt/caddy-l4@v0.1.2"
-      ];
-
-      hash = lib.fakeHash;
-    };
-
-    globalConfig = ''
-      layer4 {
-        0.0.0.0:22 {
-          route {
-            proxy ${tailnet.dijkstra-git}:22
-          }
-        }
-
-        0.0.0.0:25565 {
-          route {
-            proxy ${tailnet.dijkstra}:25565
-          }
-        }
-      }
-    '';
 
     extraConfig = ''
       # TODO: make it nice
