@@ -18,6 +18,7 @@ in
     "flakes"
   ];
 
+  boot.loader.systemd-boot.enable = true;
   networking.hostName = host.name;
 
   services.openssh = {
