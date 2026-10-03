@@ -11,11 +11,12 @@ in
   networking.firewall.allowedTCPPorts = [
     22
     25565
+    80
+    443
   ];
 
   services.caddy = {
     enable = true;
-    openFirewall = true;
 
     package = pkgs.caddy.withPlugins {
       plugins = [
