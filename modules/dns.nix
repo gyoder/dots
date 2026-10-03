@@ -4,8 +4,8 @@ let
   serial = "2026100201";
 
   public = {
-    hamano = "x.x.x.x";
-    lee = "x.x.x.x";
+    hamano = "152.44.39.247";
+    lee = "152.44.40.91";
     knuth = "x.x.x.x";
     unused = "x.x.x.x";
   };
