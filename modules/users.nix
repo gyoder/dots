@@ -1,15 +1,21 @@
 { pkgs, ... }:
 
 let
+  host = import ../hosts.nix;
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
-  host = import ../host.nix;
 in
 {
   imports = [ "${home-manager}/nixos" ];
 
-  users.users.grace = {
+  nix.settings.trusted-users = [
+    "root"
+    "grace"
+  ];
+
+  users.users.${host.user} = {
     isNormalUser = true;
-    description = "grace";
+    description = host.user;
+    home = host.home;
     extraGroups = [
       "wheel"
       "networkmanager"
@@ -23,11 +29,11 @@ in
   security.sudo.wheelNeedsPassword = false;
 
   home-manager = {
-    useGlobalPkgs = true;
+    useGlobalPkgs = false;
     useUserPackages = true;
     backupFileExtension = "backup";
 
-    users.grace = {
+    users.${host.user} = {
       imports = [ ../home.nix ];
 
       home.username = host.user;
