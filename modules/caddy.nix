@@ -5,26 +5,25 @@ let
 in
 {
   networking.firewall.allowedTCPPorts = [
-    22
+    # 22
     25565
     80
     443
   ];
 
-  # TCP forwarding lives here alongside Caddy's HTTP/HTTPS reverse proxies.
-  systemd.sockets.git-ssh-proxy = {
-    wantedBy = [ "sockets.target" ];
-    listenStreams = [ "0.0.0.0:22" ];
-  };
+  # systemd.sockets.git-ssh-proxy = {
+  #   wantedBy = [ "sockets.target" ];
+  #   listenStreams = [ "0.0.0.0:22" ];
+  # };
 
-  systemd.services.git-ssh-proxy = {
-    description = "TCP proxy for Git SSH";
-    requires = [ "git-ssh-proxy.socket" ];
-    serviceConfig = {
-      ExecStart = "${config.systemd.package}/lib/systemd/systemd-socket-proxyd ${tailnet.dijkstra-git}:22";
-      DynamicUser = true;
-    };
-  };
+  # systemd.services.git-ssh-proxy = {
+  #   description = "TCP proxy for Git SSH";
+  #   requires = [ "git-ssh-proxy.socket" ];
+  #   serviceConfig = {
+  #     ExecStart = "${config.systemd.package}/lib/systemd/systemd-socket-proxyd ${tailnet.dijkstra-git}:22";
+  #     DynamicUser = true;
+  #   };
+  # };
 
   systemd.sockets.minecraft-proxy = {
     wantedBy = [ "sockets.target" ];

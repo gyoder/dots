@@ -11,10 +11,11 @@ in
     ../modules/tailscale.nix
     ../modules/users.nix
   ];
+
   nix.settings.trusted-users = [
-  "root"
-  "grace"
-];
+    "root"
+    "grace"
+  ];
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -31,7 +32,7 @@ in
     enable = true;
     openFirewall = true;
 
-    ports = [ 2222 ];
+    ports = [ 22 2222 ];
 
     settings = {
       PermitRootLogin = "no";

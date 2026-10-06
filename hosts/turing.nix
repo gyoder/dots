@@ -1,7 +1,7 @@
 { config, ... }:
 
 let
-
+  # TODO: make this use the home manager in nix-path? set in system.nix
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
 in
 {

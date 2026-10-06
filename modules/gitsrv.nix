@@ -94,6 +94,23 @@ let
     root-title=Private repositories
     remove-suffix=1
 
+    enable-git-config=1
+
+    readme=:README.md
+    readme=:README
+    about-filter=${pkgs.writeShellScript "cgit-about-filter" ''
+      case "$1" in
+        *.md)
+          exec ${pkgs.pandoc}/bin/pandoc \
+            --from=gfm \
+            --to=html
+          ;;
+        *)
+          exec ${pkgs.coreutils}/bin/cat
+          ;;
+      esac
+    ''}
+
     scan-path=${cgitPriv}
   '';
 in
@@ -276,7 +293,7 @@ in
     # "L+ ${cgitPub}/person - - - - ${gitDir}/repositories/person"
 
     "L+ ${cgitPriv}/private - - - - ${gitDir}/repositories/private"
-    "L+ ${cgitPriv}/school - - - - ${gitDir}/repositories/school"
+    "L+ ${cgitPriv}/classes - - - - ${gitDir}/repositories/classes"
 
   ];
 
