@@ -161,8 +161,8 @@ in
 
     text = ''
       command="${pkgs.gitolite}/bin/gitolite-shell grace",restrict t:dev
-      command="${pkgs.gitolite}/bin/gitolite-shell grace-read",restrict u:grace
       command="${pkgs.gitolite}/bin/gitolite-shell root",restrict u:root
+      command="${pkgs.gitolite}/bin/gitolite-shell grace-read",restrict u:grace
     '';
   };
 

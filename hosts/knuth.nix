@@ -5,11 +5,12 @@ let
 in
 {
   imports = [
-    ../modules/dns.nix
     ../modules/caddy.nix
     ../modules/gitsrv.nix
+    ../modules/wafrn.nix
     ../modules/tailscale.nix
     ../modules/users.nix
+    ../modules/dns.nix # does better when last?
   ];
 
   nix.settings.trusted-users = [
