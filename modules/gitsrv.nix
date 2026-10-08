@@ -6,16 +6,21 @@
 }:
 
 let
-  # TODO: make this use the home manager in nix-path? set in system.nix
-  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
-
   gitDir = "/mnt/ext/git";
-  cgitPriv = "${gitDir}/cgitpriv";
-  cgitPub = "${gitDir}/cgitpub";
+
+  wwwDir = "${gitDir}/www";
+  wwwPub = "${wwwDir}/public";
+  wwwPriv = "${wwwDir}/private";
+
+  srvDir = "${gitDir}/srv";
+  srvPub = "${srvDir}/public";
+  srvPriv = "${srvDir}/private";
+
+  mirrorDir = "${gitDir}/repositories/mirrors";
+
   gitoliteKeys = {
     gitolite-admin = [
       "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIA6Eq2yVsZrCH8so7f3ygH0UWp6WkOxbhLNFC9QewKwoAAAABHNzaDo= grace_yoder@outlook.com"
-      # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINySDE+jaYpuAWUdPQf/JcAWETeHgmh+T5Y4GUa7MfeM grace@turing"
     ];
 
     grace = [ ];
@@ -36,83 +41,41 @@ let
       )
     );
 
-  fixGitolitePermissions = pkgs.writeShellScript "fix-gitolite-permissions" ''
-    set -eu
+  mirrors = [
+    {
+      url = "https://github.com/gyoder/fun_alloc.git";
+      path = "${mirrorDir}/gyoder/fun_alloc.git";
+    }
+    {
+      url = "https://github.com/gyoder/oxipodder.git";
+      path = "${mirrorDir}/gyoder/oxipodder.git";
+    }
+    {
+      url = "https://github.com/gyoder/gracegit.git";
+      path = "${mirrorDir}/gyoder/gracegit.git";
+    }
+    {
+      url = "https://github.com/gyoder/ColBoy.git";
+      path = "${mirrorDir}/gyoder/ColBoy.git";
+    }
+    {
+      url = "https://github.com/gyoder/CircuitPython_4x7_Segment_Display.git";
+      path = "${mirrorDir}/gyoder/CircuitPython_4x7_Segment_Display.git";
+    }
+    {
+      url = "https://github.com/gyoder/SpanishAltoidKeyboard.git";
+      path = "${mirrorDir}/very_old/gyoder/SpanishAltoidKeyboard.git";
+    }
+    {
+      url = "https://github.com/gyoder/ap_lights.git";
+      path = "${mirrorDir}/very_old/gyoder/ap_lights.git";
+    }
+    {
+      url = "https://github.com/Autonomous-Motorsports-Purdue/AMP_Zeus.git";
+      path = "${mirrorDir}/Autonomous-Motorsports-Purdue/AMP_Zeus.git";
+    }
+  ];
 
-    ${pkgs.coreutils}/bin/mkdir -p ${gitDir}/.ssh
-
-    ${pkgs.coreutils}/bin/chown git:git ${gitDir}
-    ${pkgs.coreutils}/bin/chmod 0750 ${gitDir}
-
-    ${pkgs.coreutils}/bin/chown git:git ${gitDir}/.ssh
-    ${pkgs.coreutils}/bin/chmod 0700 ${gitDir}/.ssh
-
-    if [ -e ${gitDir}/.ssh/authorized_keys ]; then
-      ${pkgs.coreutils}/bin/chown git:git \
-        ${gitDir}/.ssh/authorized_keys
-
-      ${pkgs.coreutils}/bin/chmod 0600 \
-        ${gitDir}/.ssh/authorized_keys
-    fi
-  '';
-  publicCgitrc = pkgs.writeText "cgit-public.rc" ''
-    virtual-root=/
-
-    css=/cgit.css
-    logo=/cgit.png
-    favicon=/favicon.ico
-
-    root-title=git.gae.moe
-    remove-suffix=1
-
-    enable-git-config=1
-
-    readme=:README.md
-    readme=:README
-    about-filter=${pkgs.writeShellScript "cgit-about-filter" ''
-      case "$1" in
-        *.md)
-          exec ${pkgs.pandoc}/bin/pandoc \
-            --from=gfm \
-            --to=html
-          ;;
-        *)
-          exec ${pkgs.coreutils}/bin/cat
-          ;;
-      esac
-    ''}
-
-    scan-path=${cgitPub}
-  '';
-  privateCgitrc = pkgs.writeText "cgit-private.rc" ''
-    virtual-root=/
-
-    css=/cgit.css
-    logo=/cgit.png
-    favicon=/favicon.ico
-
-    root-title=Private repositories
-    remove-suffix=1
-
-    enable-git-config=1
-
-    readme=:README.md
-    readme=:README
-    about-filter=${pkgs.writeShellScript "cgit-about-filter" ''
-      case "$1" in
-        *.md)
-          exec ${pkgs.pandoc}/bin/pandoc \
-            --from=gfm \
-            --to=html
-          ;;
-        *)
-          exec ${pkgs.coreutils}/bin/cat
-          ;;
-      esac
-    ''}
-
-    scan-path=${cgitPriv}
-  '';
 in
 {
   services.gitolite = {
@@ -121,27 +84,20 @@ in
     user = "git";
     group = "git";
 
-    dataDir = "${gitDir}";
+    dataDir = gitDir;
 
     adminPubkey =
       "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIA6Eq2yVsZrCH8so7f3ygH0UWp6WkOxbhLNFC9QewKwoAAAABHNzaDo= grace_yoder@outlook.com";
+
     extraGitoliteRc = ''
       $RC{GIT_CONFIG_KEYS} = 'gitweb\.owner gitweb\.description gitweb\.category';
     '';
   };
-  # home-manager.users.git.home.stateVersion = "26.11";
-  # home-manager.users.git.programs.git = {
-  #   lfs.enable = true;
-  #   # TODO: set repos. can use wildcards?
-  #   maintenance.enable = true;
-  #   settings.init.defaultBranch = "main";
-  # };
-  programs.git = {
-  enable = true;
-  
-  config.init.defaultBranch = "main";
-};
 
+  programs.git = {
+    enable = true;
+    config.init.defaultBranch = "main";
+  };
 
 
   environment.etc."ssh/git-user-ca.pub" = {
@@ -176,6 +132,7 @@ in
 
   services.openssh = {
     enable = true;
+
     extraConfig = ''
       Match User git
         TrustedUserCAKeys /etc/ssh/git-user-ca.pub
@@ -193,8 +150,11 @@ in
     '';
   };
 
+
+  users.users.caddy.extraGroups = [ "git" ];
+
   services.fcgiwrap.instances = {
-    cgit-public = {
+    git-public = {
       process = {
         user = "git";
         group = "git";
@@ -207,7 +167,7 @@ in
       };
     };
 
-    cgit-private = {
+    git-private = {
       process = {
         user = "git";
         group = "git";
@@ -221,64 +181,61 @@ in
     };
   };
 
+
   services.caddy = {
     enable = true;
 
     virtualHosts."beta.git.gae.moe".extraConfig = ''
-      @cgitStatic path \
-        /cgit.css \
-        /cgit.js \
-        /cgit.png \
-        /favicon.ico \
-        /robots.txt
+      @gitFetch path_regexp gitFetch ^/.+\.git/(HEAD|info/refs|objects/.*|git-upload-pack)$
 
-      handle @cgitStatic {
-        root * ${pkgs.cgit}/cgit
-        file_server
-      }
-
-      handle {
-        reverse_proxy unix/${config.services.fcgiwrap.instances.cgit-public.socket.address} {
+      handle @gitFetch {
+        reverse_proxy unix/${config.services.fcgiwrap.instances.git-public.socket.address} {
           transport fastcgi {
-            env SCRIPT_FILENAME ${pkgs.cgit}/cgit/cgit.cgi
+            env SCRIPT_FILENAME ${pkgs.git}/bin/git-http-backend
             env SCRIPT_NAME /
             env PATH_INFO {http.request.uri.path}
-            env CGIT_CONFIG ${publicCgitrc}
+
+            env GIT_PROJECT_ROOT ${srvPub}
+            env GIT_HTTP_EXPORT_ALL 1
+
             capture_stderr
           }
         }
       }
+
+      handle {
+        root * ${wwwPub}
+        file_server
+      }
     '';
 
-    virtualHosts."git.k.gae.moe".extraConfig = ''
+    virtualHosts."igit.k.gae.moe".extraConfig = ''
       @notTailscale {
         not remote_ip 100.64.0.0/10 fd7a:115c:a1e0::/48
       }
 
       abort @notTailscale
 
-      @cgitStatic path \
-        /cgit.css \
-        /cgit.js \
-        /cgit.png \
-        /favicon.ico \
-        /robots.txt
+      @gitFetch path_regexp gitFetch ^/.+\.git/(HEAD|info/refs|objects/.*|git-upload-pack)$
 
-      handle @cgitStatic {
-        root * ${pkgs.cgit}/cgit
-        file_server
-      }
-
-      handle {
-        reverse_proxy unix/${config.services.fcgiwrap.instances.cgit-private.socket.address} {
+      handle @gitFetch {
+        reverse_proxy unix/${config.services.fcgiwrap.instances.git-private.socket.address} {
           transport fastcgi {
-            env SCRIPT_FILENAME ${pkgs.cgit}/cgit/cgit.cgi
+            env SCRIPT_FILENAME ${pkgs.git}/bin/git-http-backend
             env SCRIPT_NAME /
             env PATH_INFO {http.request.uri.path}
-            env CGIT_CONFIG ${privateCgitrc}
+
+            env GIT_PROJECT_ROOT ${srvPriv}
+            env GIT_HTTP_EXPORT_ALL 1
+
             capture_stderr
           }
         }
+      }
+
+      handle {
+        root * ${wwwPriv}
+        file_server
       }
     '';
   };
@@ -287,15 +244,56 @@ in
     "d ${gitDir} 0750 git git -"
     "d ${gitDir}/.ssh 0700 git git -"
 
-    "d ${cgitPub} 0755 git git -"
-    "d ${cgitPriv} 0755 git git -"
+    "d ${wwwDir} 0750 git git -"
+    "d ${wwwPub} 0750 git git -"
+    "d ${wwwPriv} 0750 git git -"
 
-    "L+ ${cgitPub}/grace - - - - ${gitDir}/repositories/grace"
-    # "L+ ${cgitPub}/person - - - - ${gitDir}/repositories/person"
+    "d ${srvDir} 0750 git git -"
+    "d ${srvPub} 0750 git git -"
+    "d ${srvPriv} 0750 git git -"
 
-    "L+ ${cgitPriv}/private - - - - ${gitDir}/repositories/private"
-    "L+ ${cgitPriv}/classes - - - - ${gitDir}/repositories/classes"
+    "L+ ${srvPub}/grace - - - - ${gitDir}/repositories/grace"
 
+    "L+ ${srvPriv}/private - - - - ${gitDir}/repositories/private"
+    "L+ ${srvPriv}/classes - - - - ${gitDir}/repositories/classes"
+    "L+ ${srvPriv}/mirrors - - - - ${mirrorDir}"
   ];
 
+
+  systemd.services.git-mirrors = {
+    description = "Mirror Git repos";
+
+    path = [
+      pkgs.git
+      pkgs.coreutils
+    ];
+
+    serviceConfig = {
+      Type = "oneshot";
+      User = "git";
+      Group = "git";
+    };
+
+    script = lib.concatMapStringsSep "\n" (repo: ''
+      mkdir -p "$(dirname ${lib.escapeShellArg repo.path})"
+
+      if [ -d ${lib.escapeShellArg repo.path} ]; then
+        git -C ${lib.escapeShellArg repo.path} fetch --prune
+      else
+        git clone --mirror \
+          ${lib.escapeShellArg repo.url} \
+          ${lib.escapeShellArg repo.path}
+      fi
+    '') mirrors;
+  };
+
+  systemd.timers.git-mirrors = {
+    wantedBy = [ "timers.target" ];
+
+    timerConfig = {
+      OnBootSec = "2min";
+      OnUnitActiveSec = "15min";
+      Persistent = true;
+    };
+  };
 }
