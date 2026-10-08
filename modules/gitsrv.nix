@@ -91,8 +91,16 @@ in
 
     extraGitoliteRc = ''
       $RC{GIT_CONFIG_KEYS} = 'gitweb\.owner gitweb\.description gitweb\.category';
+      $RC{LOCAL_CODE} = "$ENV{HOME}/.gitolite/local";
     '';
   };
+
+  environment.systemPackages = with pkgs; [
+    bash
+    coreutils
+    util-linux
+  ];
+
 
   programs.git = {
     enable = true;
