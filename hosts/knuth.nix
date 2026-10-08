@@ -27,14 +27,20 @@ in
     device = "/dev/vda";
   };
 
-  networking.nameservers = [ "1.1.1.1" "9.9.9.9" ];
+  networking.nameservers = [
+    "1.1.1.1"
+    "9.9.9.9"
+  ];
   networking.hostName = host.name;
 
   services.openssh = {
     enable = true;
     openFirewall = true;
 
-    ports = [ 22 2222 ];
+    ports = [
+      22
+      2222
+    ];
 
     settings = {
       PermitRootLogin = "no";

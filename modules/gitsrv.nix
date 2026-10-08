@@ -28,18 +28,11 @@ let
   };
 
   mkGitoliteKey =
-    user: key:
-    ''command="${pkgs.gitolite}/bin/gitolite-shell ${user}",restrict ${key}'';
+    user: key: ''command="${pkgs.gitolite}/bin/gitolite-shell ${user}",restrict ${key}'';
 
-  gitoliteAuthorizedKeys =
-    lib.concatStringsSep "\n" (
-      lib.flatten (
-        lib.mapAttrsToList (
-          user: keys:
-          map (mkGitoliteKey user) keys
-        ) gitoliteKeys
-      )
-    );
+  gitoliteAuthorizedKeys = lib.concatStringsSep "\n" (
+    lib.flatten (lib.mapAttrsToList (user: keys: map (mkGitoliteKey user) keys) gitoliteKeys)
+  );
 
   mirrors = [
     {
@@ -86,8 +79,7 @@ in
 
     dataDir = gitDir;
 
-    adminPubkey =
-      "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIA6Eq2yVsZrCH8so7f3ygH0UWp6WkOxbhLNFC9QewKwoAAAABHNzaDo= grace_yoder@outlook.com";
+    adminPubkey = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIA6Eq2yVsZrCH8so7f3ygH0UWp6WkOxbhLNFC9QewKwoAAAABHNzaDo= grace_yoder@outlook.com";
 
     extraGitoliteRc = ''
       $RC{GIT_CONFIG_KEYS} = 'gitweb\.owner gitweb\.description gitweb\.category';
@@ -101,12 +93,10 @@ in
     util-linux
   ];
 
-
   programs.git = {
     enable = true;
     config.init.defaultBranch = "main";
   };
-
 
   environment.etc."ssh/git-user-ca.pub" = {
     mode = "0644";
@@ -158,7 +148,6 @@ in
     '';
   };
 
-
   users.users.caddy.extraGroups = [ "git" ];
 
   services.fcgiwrap.instances = {
@@ -188,7 +177,6 @@ in
       };
     };
   };
-
 
   services.caddy = {
     enable = true;
@@ -266,7 +254,6 @@ in
     "L+ ${srvPriv}/classes - - - - ${gitDir}/repositories/classes"
     "L+ ${srvPriv}/mirrors - - - - ${mirrorDir}"
   ];
-
 
   systemd.services.git-mirrors = {
     description = "Mirror Git repos";
