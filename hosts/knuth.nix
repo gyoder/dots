@@ -8,6 +8,7 @@ in
     ../modules/dns.nix
     ../modules/caddy.nix
     ../modules/gitsrv.nix
+    ../modules/url.nix
     ../modules/tailscale.nix
     ../modules/users.nix
   ];
