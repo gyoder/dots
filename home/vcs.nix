@@ -22,6 +22,14 @@
         remotes.origin.auto-track-bookmarks = "*";
         remotes.github.auto-track-bookmarks = "*";
         aliases = {
+          megasquash = [
+            "squash"
+            "--from"
+            "heads(bookmarks() & ::@-)..@-"
+            "--into"
+            "@"
+          ];
+
           tug = [
             "bookmark"
             "advance"

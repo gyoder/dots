@@ -4,6 +4,117 @@ let
   tailnet = import ../tailnet.nix;
 in
 {
+  services.authelia.instances.main = {
+    enable = true;
+    secrets = {
+      jwtSecretFile = "/etc/secrets/authelia/jwt";
+      storageEncryptionKeyFile = "/etc/secrets/authelia/storage";
+      sessionSecretFile = "/etc/secrets/authelia/session";
+      oidcHmacSecretFile = "/etc/secrets/authelia/oidc-hmac";
+      oidcIssuerPrivateKeyFile = "/etc/secrets/authelia/oidc-key.pem";
+    };
+    settings = {
+      theme = "dark";
+      log.level = "info";
+      server.address = "tcp://127.0.0.1:9091/";
+      server.endpoints.authz = {
+        forward-auth = {
+          implementation = "ForwardAuth";
+          authn_strategies = [ { name = "CookieSession"; } ];
+        };
+        git = {
+          implementation = "AuthRequest";
+          authn_strategies = [
+            {
+              name = "HeaderAuthorization";
+              schemes = [ "Basic" ];
+            }
+          ];
+        };
+      };
+      authentication_backend = {
+        password_reset.disable = true;
+        password_change.disable = true;
+        file.path = "/run/credentials/authelia-main.service/users.yml";
+      };
+      access_control = {
+        default_policy = "deny";
+        rules = [
+          {
+            domain = [
+              "files.gae.moe"
+              "books.gae.moe"
+              "term.gae.moe"
+              "i.git.gae.moe"
+            ];
+            policy = "one_factor";
+            subject = [ "group:users" ];
+          }
+        ];
+      };
+      session.cookies = [
+        {
+          domain = "gae.moe";
+          authelia_url = "https://auth.gae.moe";
+          default_redirection_url = "https://files.gae.moe";
+        }
+      ];
+      storage.local.path = "/var/lib/authelia-main/db.sqlite3";
+      notifier.filesystem.filename = "/var/lib/authelia-main/notifications.txt";
+      identity_providers.oidc.clients = [
+        {
+          client_id = "immich";
+          client_name = "Immich";
+          client_secret = ''{{ secret (printf "%s/immich-client-secret" (mustEnv "CREDENTIALS_DIRECTORY")) | trim }}'';
+          public = false;
+          authorization_policy = "one_factor";
+          require_pkce = true;
+          pkce_challenge_method = "S256";
+          redirect_uris = [
+            "https://img.gae.moe/auth/login"
+            "https://img.gae.moe/user-settings"
+            "app.immich:///oauth-callback"
+          ];
+          scopes = [
+            "openid"
+            "profile"
+            "email"
+          ];
+          response_types = [ "code" ];
+          grant_types = [ "authorization_code" ];
+          token_endpoint_auth_method = "client_secret_basic";
+          userinfo_signed_response_alg = "none";
+        }
+        {
+          client_id = "jellyfin";
+          client_name = "Jellyfin";
+          client_secret = ''{{ secret (printf "%s/jellyfin-client-secret" (mustEnv "CREDENTIALS_DIRECTORY")) | trim }}'';
+          public = false;
+          authorization_policy = "one_factor";
+          require_pkce = true;
+          pkce_challenge_method = "S256";
+          redirect_uris = [ "https://fin.gae.moe/sso/OID/redirect/authelia" ];
+          scopes = [
+            "openid"
+            "profile"
+            "groups"
+          ];
+          response_types = [ "code" ];
+          grant_types = [ "authorization_code" ];
+          token_endpoint_auth_method = "client_secret_post";
+          userinfo_signed_response_alg = "none";
+        }
+      ];
+    };
+  };
+
+  systemd.services.authelia-main.serviceConfig.LoadCredential = [
+    "users.yml:/etc/secrets/authelia/users.yml"
+    "immich-client-secret:/etc/secrets/authelia/immich-client-secret"
+    "jellyfin-client-secret:/etc/secrets/authelia/jellyfin-client-secret"
+  ];
+  environment.systemPackages = [ config.services.authelia.instances.main.package ];
+
   networking.firewall.allowedTCPPorts = [
     # 22
     25565
@@ -43,6 +154,30 @@ in
     enable = true;
 
     extraConfig = ''
+      (authelia) {
+        request_header -Remote-User
+        request_header -Remote-Groups
+        request_header -Remote-Email
+        request_header -Remote-Name
+        forward_auth 127.0.0.1:9091 {
+          uri /api/authz/forward-auth
+          copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
+        }
+      }
+
+      (authelia_git) {
+        request_header -Remote-User
+        request_header -Remote-Groups
+        request_header -Remote-Email
+        request_header -Remote-Name
+        forward_auth 127.0.0.1:9091 {
+          uri /api/authz/git
+          header_up X-Original-URL {scheme}://{host}{uri}
+          header_up X-Original-Method {method}
+          copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
+        }
+      }
+
       # TODO: make it nice
       (offline_page) {
         handle_errors {
@@ -88,6 +223,10 @@ in
           }
         )
         {
+          "auth.gae.moe".extraConfig = ''
+            reverse_proxy 127.0.0.1:9091
+          '';
+
           "map.mc.gae.moe".extraConfig = ''
             reverse_proxy ${tailnet.dijkstra}:8101
           '';
@@ -113,7 +252,12 @@ in
               max_size 10GB
             }
 
-            reverse_proxy ${tailnet.dijkstra}:8080 {
+            route {
+              import authelia
+              reverse_proxy ${tailnet.dijkstra}:8080 {
+              header_up X-Forwarded-For {http.request.remote.host}
+              header_up X-Forwarded-Host {host}
+              header_up X-Forwarded-Proto {scheme}
               transport http {
                 read_buffer 16KiB
                 write_buffer 16KiB
@@ -121,33 +265,12 @@ in
                 response_header_timeout 300s
                 keepalive 60s
               }
+            }
             }
           '';
 
           "img.gae.moe".extraConfig = ''
             reverse_proxy ${tailnet.dijkstra}:2283
-          '';
-
-          "git.gae.moe, git.tools.grace.pink".extraConfig = ''
-            request_body {
-              max_size 10GB
-            }
-
-            reverse_proxy http://${tailnet.dijkstra-git}:3000 {
-              flush_interval -1
-
-              header_up X-Real-IP {remote_host}
-              header_up X-Forwarded-For {remote_host}
-              header_up X-Forwarded-Proto {scheme}
-
-              transport http {
-                read_buffer 16KiB
-                write_buffer 16KiB
-                dial_timeout 10s
-                response_header_timeout 300s
-                keepalive 60s
-              }
-            }
           '';
 
           "ci.gae.moe".extraConfig = ''
@@ -158,15 +281,25 @@ in
             reverse_proxy ${tailnet.dijkstra-git}:5555
           '';
 
+          "*.nate.gae.moe".extraConfig = ''
+            reverse_proxy ${tailnet.nate-fedora}:80
+          '';
+
           "books.gae.moe".extraConfig = ''
-            reverse_proxy localhost:6822
+            route {
+              import authelia
+              reverse_proxy localhost:6822
+            }
           '';
 
           "term.gae.moe".extraConfig = ''
-            reverse_proxy ${tailnet.dijkstra}:8082 {
+            route {
+              import authelia
+              reverse_proxy ${tailnet.dijkstra}:8082 {
               transport http {
                 tls_insecure_skip_verify
               }
+            }
             }
           '';
 
@@ -213,6 +346,15 @@ in
               reverse_proxy http://${tailnet.lee}:8642
             }
           '';
+
+          # wtf
+          "beta.grace.pink.gae.moe".extraConfig = ''
+            handle {
+              root * /mnt/ext/git/www/build/private/grace.pink/beta
+              file_server
+            }
+          '';
+
         };
   };
 }

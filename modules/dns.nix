@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  serial = "2026100601";
+  serial = "2026101101";
 
   public = {
     lee = "152.44.40.91";
@@ -11,7 +11,9 @@ let
   tailnet = import ../tailnet.nix;
 
   tailnetRecords = builtins.concatStringsSep "\n" (
-    builtins.map (name: "${name}.i IN A ${tailnet.${name}}\n*.${name}.i IN A ${tailnet.${name}}") (builtins.attrNames tailnet)
+    builtins.map (name: "${name}.i IN A ${tailnet.${name}}\n*.${name}.i IN A ${tailnet.${name}}") (
+      builtins.attrNames tailnet
+    )
   );
 
   mafiaSecondaries = [

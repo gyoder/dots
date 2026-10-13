@@ -6,11 +6,12 @@
 }:
 
 let
-  dots = toString ./..;
-  tpbSrc = builtins.fetchGit {
-    url = "https://git.gae.moe/grace/tpb.git";
-    ref = "refs/heads/main";
-  };
+  /*
+    tpbSrc = builtins.fetchGit {
+      url = "https://git.gae.moe/grace/tpb.git";
+      ref = "refs/heads/main";
+    };
+  */
 in
 {
   home.packages = with pkgs; [
@@ -33,26 +34,27 @@ in
     openssh
     openssl
 
-    (
-      (import "${tpbSrc}/default.nix" {
-        inherit pkgs;
-      }).overrideAttrs
-        (_: {
-          unpackPhase = ''
-            mkdir source
-            tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
-              -C "$src" -cf - . \
-              | tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
-                -C source -xf -
-            chmod -R u+w source
-            sourceRoot=source
-          '';
-        })
-    )
+    /*
+      (
+        (import "${tpbSrc}/default.nix" {
+          inherit pkgs;
+        }).overrideAttrs
+          (_: {
+            unpackPhase = ''
+              mkdir source
+              tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
+                -C "$src" -cf - . \
+                | tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
+                  -C source -xf -
+              chmod -R u+w source
+              sourceRoot=source
+            '';
+          })
+      )
+    */
   ];
 
-  xdg.configFile."fish/themes/rose_pine.theme".source =
-    config.lib.file.mkOutOfStoreSymlink "${dots}/fish/rose_pine.theme";
+  xdg.configFile."fish/themes/rose_pine.theme".source = ../fish/rose_pine.theme;
 
   programs.fish = {
     enable = true;
@@ -65,6 +67,18 @@ in
     };
 
     functions = {
+      nixos-target = {
+        description = "Build and deploy a local NixOS configuration to a remote host";
+        body = ''
+          set -lx NIX_HOST $argv[1]
+          ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch \
+            --file ./system.nix \
+            --build-host builder@dijkstra.i.gae.moe \
+            --target-host "grace@$NIX_HOST.i.gae.moe" \
+            --elevate sudo
+        '';
+      };
+
       ask = {
         description = "Ask for input and respond with input";
         body = ''

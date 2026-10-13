@@ -84,8 +84,15 @@ in
     extraGitoliteRc = ''
       $RC{GIT_CONFIG_KEYS} = 'gitweb\.owner gitweb\.description gitweb\.category';
       $RC{LOCAL_CODE} = "$ENV{HOME}/.gitolite/local";
+
+      push( @{$RC{ENABLE}}, 'repo-specific-hooks' );
     '';
+    #       push( @{$RC{ENABLE}}, 'repo-specific-hooks' );
+
   };
+
+  users.users.git.extraGroups = [ "caddy" ];
+  users.users.caddy.extraGroups = [ "git" ];
 
   environment.systemPackages = with pkgs; [
     bash
@@ -103,9 +110,7 @@ in
     user = "root";
     group = "root";
 
-    text = ''
-      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEuc4HCdyEMu4uiYhlokSXmu+68hkm7j6CqVwjDkCeSj grace.pink
-    '';
+    source = ../ssh-ca.pub;
   };
 
   environment.etc."ssh/git-principals" = {
@@ -148,8 +153,6 @@ in
     '';
   };
 
-  users.users.caddy.extraGroups = [ "git" ];
-
   services.fcgiwrap.instances = {
     git-public = {
       process = {
@@ -180,8 +183,9 @@ in
 
   services.caddy = {
     enable = true;
+    globalConfig = "debug";
 
-    virtualHosts."beta.git.gae.moe".extraConfig = ''
+    virtualHosts."git.gae.moe".extraConfig = ''
       @gitFetch path_regexp gitFetch ^/.+\.git/(HEAD|info/refs|objects/.*|git-upload-pack)$
 
       handle @gitFetch {
@@ -205,17 +209,13 @@ in
       }
     '';
 
-    virtualHosts."igit.k.gae.moe".extraConfig = ''
-      @notTailscale {
-        not remote_ip 100.64.0.0/10 fd7a:115c:a1e0::/48
-      }
-
-      abort @notTailscale
-
+    virtualHosts."i.git.gae.moe".extraConfig = ''
       @gitFetch path_regexp gitFetch ^/.+\.git/(HEAD|info/refs|objects/.*|git-upload-pack)$
 
       handle @gitFetch {
+        import authelia_git
         reverse_proxy unix/${config.services.fcgiwrap.instances.git-private.socket.address} {
+          header_up -Authorization
           transport fastcgi {
             env SCRIPT_FILENAME ${pkgs.git}/bin/git-http-backend
             env SCRIPT_NAME /
@@ -231,18 +231,24 @@ in
 
       handle {
         root * ${wwwPriv}
+        import authelia
         file_server
       }
     '';
   };
 
   systemd.tmpfiles.rules = [
+    "d ${gitDir}/.gitolite/local/hooks/repo-specific 0750 git git -"
+
     "d ${gitDir} 0750 git git -"
     "d ${gitDir}/.ssh 0700 git git -"
 
     "d ${wwwDir} 0750 git git -"
     "d ${wwwPub} 0750 git git -"
     "d ${wwwPriv} 0750 git git -"
+
+    "d /mnt/ext/git/www 2750 git git -"
+    "d /mnt/ext/git/www/build 2750 git git -"
 
     "d ${srvDir} 0750 git git -"
     "d ${srvPub} 0750 git git -"

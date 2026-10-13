@@ -1,22 +1,24 @@
+{
+  configuration ? if (import ./hosts.nix).type == "home" then ./home.nix else ./configuration.nix,
+}:
+
 let
-  nixpkgs = builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/master.tar.gz";
-  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+  sources = import ./sources.nix;
+  host = import ./hosts.nix;
 in
-  import "${nixpkgs}/nixos" {
-  #  home-manager = home-manager;
-
-    configuration = {
-      
-      imports = [ ./configuration.nix ];
-
-      nix.nixPath = [
-        "nixpkgs=${nixpkgs}"
-        "home-manager=${home-manager}"
-        "nixos-config=${toString ./configuration.nix}"
-        "darwin-config=${toString ./configuration.nix}"
-        "/nix/var/nix/profiles/per-user/root/channels"
-      ];
-
-      nixpkgs.config.allowUnfree = true;
-    };
+if host.type == "home" then
+  import "${sources.home-manager}/modules" {
+    inherit configuration;
+    pkgs = import sources.nixpkgs { system = host.system; };
+  }
+else if host.type == "darwin" then
+  import <darwin> {
+    inherit configuration;
+    nixpkgs = sources.nixpkgs;
+    system = host.system;
+  }
+else
+  import "${sources.nixpkgs}/nixos" {
+    inherit configuration;
+    system = host.system;
   }

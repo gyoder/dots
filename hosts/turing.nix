@@ -1,11 +1,14 @@
 { config, ... }:
 
 let
-  # TODO: make this use the home manager in nix-path? set in system.nix
-  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+  home-manager = (import ../sources.nix).home-manager;
 in
 {
-  nixpkgs.config.allowUnfree = true;
+  nix.settings.trusted-users = [
+    "root"
+    config.system.primaryUser
+  ];
+
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
@@ -22,8 +25,6 @@ in
     backupFileExtension = "backup";
     users.${config.system.primaryUser} = {
       imports = [ ../home.nix ];
-      home.username = config.system.primaryUser;
-      home.homeDirectory = config.users.users.${config.system.primaryUser}.home;
     };
   };
 }

@@ -2,15 +2,12 @@
 
 let
   host = import ../hosts.nix;
-  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+  home-manager = (import ../sources.nix).home-manager;
 in
 {
   imports = [ "${home-manager}/nixos" ];
 
-  nix.settings.trusted-users = [
-    "root"
-    "grace"
-  ];
+  nix.settings.trusted-users = [ host.user ];
 
   users.users.${host.user} = {
     isNormalUser = true;
@@ -22,6 +19,7 @@ in
     ];
 
     shell = pkgs.fish;
+    openssh.authorizedKeys.keys = import ../ssh-keys.nix { inherit host; };
   };
 
   programs.fish.enable = true;
@@ -36,8 +34,6 @@ in
     users.${host.user} = {
       imports = [ ../home.nix ];
 
-      home.username = host.user;
-      home.homeDirectory = host.home;
     };
   };
 }

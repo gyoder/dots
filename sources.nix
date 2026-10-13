@@ -1,0 +1,10 @@
+{
+  nixpkgs = builtins.fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/ac6b2166e7a9375683b8e98f860f273222337b16.tar.gz";
+    sha256 = "0k6m5apwzg36qkm3wil1pf4q0lv1hp7r2imx4nfz9bfssnk9gj5w";
+  };
+  home-manager = builtins.fetchTarball {
+    url = "https://github.com/nix-community/home-manager/archive/6b88c12cc6d234de4888f5d21076fb11199d0844.tar.gz";
+    sha256 = "1nsm7hqv48ll552x3jac06nc74kpxxsljqzq9r0jnk71d0p65ig6";
+  };
+}

@@ -1,7 +1,7 @@
 {
   turing = "100.125.142.54";
-  dijkstra = "100.100.238.79";
-  d = "100.100.238.79"; # im so lazy
+  dijkstra = "100.77.33.35";
+  d = "100.77.33.35"; # im so lazy
   dijkstra-agent-testing = "100.99.247.51";
   dijkstra-minecraft = "100.71.208.59";
   gen-pad = "100.107.122.73";
@@ -15,4 +15,6 @@
 
   dijkstra-git = "100.77.126.51";
   lovelace = "100.96.79.32";
+  portable = "100.83.97.6";
+  nate-fedora = "100.82.209.30";
 }
