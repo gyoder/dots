@@ -14,7 +14,5 @@
     ];
   };
 
-  services.caddy.virtualHosts."l.gae.moe".extraConfig = ''
-    reverse_proxy 127.0.0.1:4567
-  '';
+  services.nginx.virtualHosts."l.gae.moe".locations."/".proxyPass = "http://127.0.0.1:4567";
 }

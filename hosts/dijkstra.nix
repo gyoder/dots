@@ -13,6 +13,7 @@ in
     ../modules/immich.nix
     ../modules/jellyfin.nix
     ../modules/samba.nix
+    ../modules/backups.nix
     ../modules/copyparty.nix
     ../modules/hotspot.nix
     ../modules/fedora-vm.nix

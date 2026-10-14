@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  serial = "2026101101";
+  serial = "2026101501";
 
   public = {
     lee = "152.44.40.91";
@@ -129,6 +129,17 @@ in
           address = public.lee;
           extraRecords = ''
             _atproto 3600 IN TXT "did=did:plc:rtokeh2dsmapicefqxkefbfn"
+
+            @ IN TXT "purelymail_ownership_proof=c083dcd542b6a981ce2cda4010f07a6cc6789b717458229dddebb6cb482cbc5231efdca56f447af364d124031ce81bf5398a97cbb0d3412dfb5c90b89101fca9"
+            @ IN MX 50 mailserver.purelymail.com.
+            @ IN TXT "v=spf1 include:_spf.purelymail.com ~all"
+
+            purelymail1._domainkey IN CNAME key1.dkimroot.purelymail.com.
+            purelymail2._domainkey IN CNAME key2.dkimroot.purelymail.com.
+            purelymail3._domainkey IN CNAME key3.dkimroot.purelymail.com.
+            _dmarc IN CNAME dmarcroot.purelymail.com.
+            autoconfig IN CNAME autoconfig.purelymail.com.
+            _autodiscover._tcp IN SRV 0 0 443 autodiscover.purelymail.com.
           '';
         };
       };

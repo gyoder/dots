@@ -1,0 +1,19 @@
+
+:root {
+  --bg-col: #191724;
+  --bg-col-2: #1f1d2e;
+  --bg-col-3: #26233a;
+  --fg-col: #e0def4;
+  --fg-col-mute: #908caa;
+  --accent-col: #ebbcba;
+  --accent-col-mute-1: #c4a7e7;
+  --accent-col-mute-2: #403d52;
+  --accent-col-fade-1: #f6c177;
+  --hl-comment: #6e6a86;
+  --hl-keyword: #31748f;
+  --hl-builtin: #eb6f92;
+  --hl-string: #f6c177;
+  --hl-ident: #9ccfd8;
+  --hl-number: #c4a7e7;
+}
+::selection { background-color: #524f67; }

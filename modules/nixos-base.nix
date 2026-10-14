@@ -4,6 +4,8 @@ let
   host = import ../hosts.nix;
 in
 {
+  imports = [ ./switch-notify.nix ];
+
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"

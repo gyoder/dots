@@ -1,5 +1,24 @@
 { pkgs, ... }:
 
+let
+  seshPicker = pkgs.writeShellScript "sesh-picker" ''
+    export PATH=${pkgs.lib.makeBinPath [ pkgs.sesh pkgs.fzf pkgs.tmux pkgs.zoxide pkgs.fd ]}:"$PATH"
+    selection=$(sesh list --icons | fzf-tmux -p 80%,70% \
+      --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
+      --header '  ^a all ^t tmux ^g configs ^x zoxide ^d tmux kill ^f find' \
+      --bind 'tab:down,btab:up' \
+      --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
+      --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t --icons)' \
+      --bind 'ctrl-g:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
+      --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
+      --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
+      --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
+      --preview-window 'right:55%' \
+      --preview 'sesh preview {}') || exit 0
+    [ -n "$selection" ] || exit 0
+    sesh connect "$selection"
+  '';
+in
 {
   programs.tmux = {
     enable = true;
@@ -40,6 +59,7 @@
       set -g prefix C-\\
       bind -N "Send the prefix key through to the application" C-\\ send-prefix
       bind -N "Refresh system clipboard via OSC 52" Y refresh-client -l
+      bind -N "Pick a sesh session" T run-shell "${seshPicker}"
 
       bind v split-window -h -c "#{pane_current_path}"
       bind b split-window -v -c "#{pane_current_path}"

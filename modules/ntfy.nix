@@ -14,7 +14,9 @@
     };
   };
 
-  services.caddy.virtualHosts."ntfy.gae.moe".extraConfig = ''
-    reverse_proxy 127.0.0.1:2586
-  '';
+  services.nginx.virtualHosts."ntfy.gae.moe".locations."/" = {
+    proxyPass = "http://127.0.0.1:2586";
+    proxyWebsockets = true;
+    extraConfig = "proxy_read_timeout 1h;";
+  };
 }

@@ -1,151 +1,151 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ lib, pkgs, ... }:
 
 let
   gitDir = "/mnt/ext/git";
+  sorcery = import ../pkgs/sorcery.nix { inherit pkgs; };
+  auth = import ./nginx-auth.nix { };
+  instances = {
+    public = {
+      domain = "git.gae.moe";
+      exports = "${gitDir}/srv/public";
+      repositories = {
+        grace = "${gitDir}/grace";
+      };
+    };
+    private = {
+      domain = "i.git.gae.moe";
+      exports = "${gitDir}/srv/private";
+      repositories = {
+        private = "${gitDir}/private";
+        classes = "${gitDir}/classes";
+        mirror-gyoder = "${gitDir}/mirrors/gyoder";
+        mirror-very-old = "${gitDir}/mirrors/very_old/gyoder";
+        mirror-autonomous = "${gitDir}/mirrors/Autonomous-Motorsports-Purdue";
+      };
+    };
+  };
+  sshCommand = pkgs.writeShellScript "sorcery-ssh-command" ''
+    export PATH=${pkgs.git}/bin:$PATH
+    export SORCERY_REPOSITORIES=${instances.public.exports}
+    export SORCERY_INSTANCE_NAME=git.gae.moe
+    export SORCERY_CLONE_URL_BASE=https://git.gae.moe
+    umask 0007
+    exec ${sorcery.sshPackage}/bin/sorcery-ssh
+  '';
 
-  wwwDir = "${gitDir}/www";
-  wwwPub = "${wwwDir}/public";
-  wwwPriv = "${wwwDir}/private";
-
-  srvDir = "${gitDir}/srv";
-  srvPub = "${srvDir}/public";
-  srvPriv = "${srvDir}/private";
-
-  mirrorDir = "${gitDir}/repositories/mirrors";
-
-  gitoliteKeys = {
-    gitolite-admin = [
-      "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIA6Eq2yVsZrCH8so7f3ygH0UWp6WkOxbhLNFC9QewKwoAAAABHNzaDo= grace_yoder@outlook.com"
+  mkService = name: instance: {
+    description = "Sorcery ${name} Git server";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "systemd-tmpfiles-setup.service" ];
+    unitConfig.RequiresMountsFor = gitDir;
+    path = [
+      pkgs.git
+      pkgs.coreutils
     ];
-
-    grace = [ ];
-    grace-read = [ ];
+    environment = {
+      SORCERY_REPOSITORIES = "/run/sorcery-${name}/repositories";
+      SORCERY_CACHE = "/var/cache/sorcery-${name}";
+      SORCERY_SOCKET = "/run/sorcery-${name}/sock";
+      SORCERY_INSTANCE_NAME = instance.domain;
+      SORCERY_CLONE_URL_BASE = "https://${instance.domain}";
+    };
+    preStart = ''
+      mkdir -p /var/cache/sorcery-${name}/.arborium/${sorcery.grammarVersion}
+      cp -L --remove-destination ${sorcery.grammars}/*.wasm /var/cache/sorcery-${name}/.arborium/${sorcery.grammarVersion}/
+    '';
+    serviceConfig = {
+      ExecStart = "${sorcery.package}/bin/sorceryd";
+      User = "git";
+      Group = "git";
+      UMask = "0007";
+      RuntimeDirectory = "sorcery-${name}";
+      RuntimeDirectoryMode = "0750";
+      CacheDirectory = "sorcery-${name}";
+      CacheDirectoryMode = "0750";
+      BindPaths = lib.mapAttrsToList (
+        namespace: path: "-${path}:/run/sorcery-${name}/repositories/${namespace}"
+      ) instance.repositories;
+      Restart = "on-failure";
+      RestartSec = 2;
+      NoNewPrivileges = true;
+      PrivateTmp = true;
+      ProtectSystem = "strict";
+      ProtectHome = "read-only";
+    };
   };
 
-  mkGitoliteKey =
-    user: key: ''command="${pkgs.gitolite}/bin/gitolite-shell ${user}",restrict ${key}'';
-
-  gitoliteAuthorizedKeys = lib.concatStringsSep "\n" (
-    lib.flatten (lib.mapAttrsToList (user: keys: map (mkGitoliteKey user) keys) gitoliteKeys)
-  );
-
-  mirrors = [
-    {
-      url = "https://github.com/gyoder/fun_alloc.git";
-      path = "${mirrorDir}/gyoder/fun_alloc.git";
-    }
-    {
-      url = "https://github.com/gyoder/oxipodder.git";
-      path = "${mirrorDir}/gyoder/oxipodder.git";
-    }
-    {
-      url = "https://github.com/gyoder/gracegit.git";
-      path = "${mirrorDir}/gyoder/gracegit.git";
-    }
-    {
-      url = "https://github.com/gyoder/ColBoy.git";
-      path = "${mirrorDir}/gyoder/ColBoy.git";
-    }
-    {
-      url = "https://github.com/gyoder/CircuitPython_4x7_Segment_Display.git";
-      path = "${mirrorDir}/gyoder/CircuitPython_4x7_Segment_Display.git";
-    }
-    {
-      url = "https://github.com/gyoder/SpanishAltoidKeyboard.git";
-      path = "${mirrorDir}/very_old/gyoder/SpanishAltoidKeyboard.git";
-    }
-    {
-      url = "https://github.com/gyoder/ap_lights.git";
-      path = "${mirrorDir}/very_old/gyoder/ap_lights.git";
-    }
-    {
-      url = "https://github.com/Autonomous-Motorsports-Purdue/AMP_Zeus.git";
-      path = "${mirrorDir}/Autonomous-Motorsports-Purdue/AMP_Zeus.git";
-    }
-  ];
-
+  mkHost = name: instance: {
+    locations =
+      (lib.optionalAttrs (name == "private") auth.locations)
+      // {
+        "/" = {
+          proxyPass = "http://unix:/run/sorcery-${name}/sock";
+          extraConfig = lib.optionalString (name == "private") auth.browser;
+        };
+        "~ ^/_sorcery/(.+/(?:refs|ref/.+/blob/.+))$".extraConfig = ''
+          internal;
+          auth_request off;
+          alias /var/cache/sorcery-${name}/$1;
+          types { }
+          default_type text/html;
+        '';
+        "/_sorcery/".extraConfig = ''
+          internal;
+          auth_request off;
+          alias /var/cache/sorcery-${name}/;
+        '';
+        "/_sorcery-git/".extraConfig = ''
+          internal;
+          auth_request off;
+          alias ${instance.exports}/;
+        '';
+      }
+      // lib.optionalAttrs (name == "private") {
+        "~ ^/[^/]+/[^/]+/(info/refs|git-upload-pack)$" = {
+          proxyPass = "http://unix:/run/sorcery-private/sock";
+          extraConfig = auth.git;
+        };
+      };
+  };
 in
 {
-  services.gitolite = {
-    enable = true;
 
-    user = "git";
-    group = "git";
-
-    dataDir = gitDir;
-
-    adminPubkey = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIA6Eq2yVsZrCH8so7f3ygH0UWp6WkOxbhLNFC9QewKwoAAAABHNzaDo= grace_yoder@outlook.com";
-
-    extraGitoliteRc = ''
-      $RC{GIT_CONFIG_KEYS} = 'gitweb\.owner gitweb\.description gitweb\.category';
-      $RC{LOCAL_CODE} = "$ENV{HOME}/.gitolite/local";
-
-      push( @{$RC{ENABLE}}, 'repo-specific-hooks' );
-    '';
-    #       push( @{$RC{ENABLE}}, 'repo-specific-hooks' );
-
-  };
-
-  users.users.git.extraGroups = [ "caddy" ];
-  users.users.caddy.extraGroups = [ "git" ];
-
-  environment.systemPackages = with pkgs; [
-    bash
-    coreutils
-    util-linux
-  ];
-
+  imports = [ ./githooks.nix ];
   programs.git = {
     enable = true;
     config.init.defaultBranch = "main";
   };
-
-  environment.etc."ssh/git-user-ca.pub" = {
-    mode = "0644";
-    user = "root";
-    group = "root";
-
-    source = ../ssh-ca.pub;
+  users.groups.git = { };
+  users.users.git = {
+    isSystemUser = true;
+    group = "git";
+    home = gitDir;
+    shell = pkgs.bashInteractive;
   };
+  users.users.nginx.extraGroups = [ "git" ];
 
-  environment.etc."ssh/git-principals" = {
-    mode = "0644";
-    user = "root";
-    group = "root";
-
-    text = ''
-      command="${pkgs.gitolite}/bin/gitolite-shell grace",restrict t:dev
-      command="${pkgs.gitolite}/bin/gitolite-shell grace-read",restrict u:grace
-      command="${pkgs.gitolite}/bin/gitolite-shell root",restrict u:root
-    '';
-  };
-
-  environment.etc."ssh/git-authorized-keys" = {
-    mode = "0644";
-    user = "root";
-    group = "root";
-
-    text = gitoliteAuthorizedKeys + "\n";
-  };
-
+  environment.etc."ssh/git-user-ca.pub".source = ../ssh-ca.pub;
+  environment.etc."ssh/git-principals".text = ''
+    t:dev
+    u:grace
+    u:root
+  '';
+  environment.etc."ssh/git-principals".mode = "0644";
+  environment.etc."ssh/git-authorized-keys".text = ''
+    restrict sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIA6Eq2yVsZrCH8so7f3ygH0UWp6WkOxbhLNFC9QewKwoAAAABHNzaDo= grace_yoder@outlook.com
+  '';
+  environment.etc."ssh/git-authorized-keys".mode = "0644";
   services.openssh = {
     enable = true;
-
     extraConfig = ''
       Match User git
         TrustedUserCAKeys /etc/ssh/git-user-ca.pub
         AuthorizedPrincipalsFile /etc/ssh/git-principals
         AuthorizedKeysFile /etc/ssh/git-authorized-keys
-
+        ForceCommand ${sshCommand}
         PubkeyAuthentication yes
         PasswordAuthentication no
         KbdInteractiveAuthentication no
-
         DisableForwarding yes
         PermitTTY no
         PermitUserRC no
@@ -153,148 +153,27 @@ in
     '';
   };
 
-  services.fcgiwrap.instances = {
-    git-public = {
-      process = {
-        user = "git";
-        group = "git";
-      };
-
-      socket = {
-        user = "caddy";
-        group = "caddy";
-        mode = "0600";
-      };
-    };
-
-    git-private = {
-      process = {
-        user = "git";
-        group = "git";
-      };
-
-      socket = {
-        user = "caddy";
-        group = "caddy";
-        mode = "0600";
-      };
-    };
-  };
-
-  services.caddy = {
-    enable = true;
-    globalConfig = "debug";
-
-    virtualHosts."git.gae.moe".extraConfig = ''
-      @gitFetch path_regexp gitFetch ^/.+\.git/(HEAD|info/refs|objects/.*|git-upload-pack)$
-
-      handle @gitFetch {
-        reverse_proxy unix/${config.services.fcgiwrap.instances.git-public.socket.address} {
-          transport fastcgi {
-            env SCRIPT_FILENAME ${pkgs.git}/bin/git-http-backend
-            env SCRIPT_NAME /
-            env PATH_INFO {http.request.uri.path}
-
-            env GIT_PROJECT_ROOT ${srvPub}
-            env GIT_HTTP_EXPORT_ALL 1
-
-            capture_stderr
-          }
-        }
-      }
-
-      handle {
-        root * ${wwwPub}
-        file_server
-      }
-    '';
-
-    virtualHosts."i.git.gae.moe".extraConfig = ''
-      @gitFetch path_regexp gitFetch ^/.+\.git/(HEAD|info/refs|objects/.*|git-upload-pack)$
-
-      handle @gitFetch {
-        import authelia_git
-        reverse_proxy unix/${config.services.fcgiwrap.instances.git-private.socket.address} {
-          header_up -Authorization
-          transport fastcgi {
-            env SCRIPT_FILENAME ${pkgs.git}/bin/git-http-backend
-            env SCRIPT_NAME /
-            env PATH_INFO {http.request.uri.path}
-
-            env GIT_PROJECT_ROOT ${srvPriv}
-            env GIT_HTTP_EXPORT_ALL 1
-
-            capture_stderr
-          }
-        }
-      }
-
-      handle {
-        root * ${wwwPriv}
-        import authelia
-        file_server
-      }
-    '';
-  };
-
   systemd.tmpfiles.rules = [
-    "d ${gitDir}/.gitolite/local/hooks/repo-specific 0750 git git -"
-
     "d ${gitDir} 0750 git git -"
-    "d ${gitDir}/.ssh 0700 git git -"
+    "d ${gitDir}/mirrors 0750 git git -"
+    "d ${gitDir}/mirrors/very_old 0750 git git -"
+    "d ${gitDir}/srv 0750 git git -"
+  ]
+  ++ lib.concatLists (
+    lib.mapAttrsToList (
+      _: instance:
+      [ "d ${instance.exports} 0750 git git -" ]
+      ++ lib.mapAttrsToList (_: path: "d ${path} 0750 git git -") instance.repositories
+      ++ lib.mapAttrsToList (
+        namespace: path: "L+ ${instance.exports}/${namespace} - - - - ${path}"
+      ) instance.repositories
+    ) instances
+  );
 
-    "d ${wwwDir} 0750 git git -"
-    "d ${wwwPub} 0750 git git -"
-    "d ${wwwPriv} 0750 git git -"
-
-    "d /mnt/ext/git/www 2750 git git -"
-    "d /mnt/ext/git/www/build 2750 git git -"
-
-    "d ${srvDir} 0750 git git -"
-    "d ${srvPub} 0750 git git -"
-    "d ${srvPriv} 0750 git git -"
-
-    "L+ ${srvPub}/grace - - - - ${gitDir}/repositories/grace"
-
-    "L+ ${srvPriv}/private - - - - ${gitDir}/repositories/private"
-    "L+ ${srvPriv}/classes - - - - ${gitDir}/repositories/classes"
-    "L+ ${srvPriv}/mirrors - - - - ${mirrorDir}"
-  ];
-
-  systemd.services.git-mirrors = {
-    description = "Mirror Git repos";
-
-    path = [
-      pkgs.git
-      pkgs.coreutils
-    ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      User = "git";
-      Group = "git";
-    };
-
-    script = lib.concatMapStringsSep "\n" (repo: ''
-      mkdir -p "$(dirname ${lib.escapeShellArg repo.path})"
-
-      if [ -d ${lib.escapeShellArg repo.path} ]; then
-        git -C ${lib.escapeShellArg repo.path} fetch --prune
-      else
-        git clone --mirror \
-          ${lib.escapeShellArg repo.url} \
-          ${lib.escapeShellArg repo.path}
-      fi
-    '') mirrors;
-  };
-
-  systemd.timers.git-mirrors = {
-    wantedBy = [ "timers.target" ];
-
-    timerConfig = {
-      OnBootSec = "2min";
-      OnUnitActiveSec = "15min";
-      Persistent = true;
-    };
-  };
+  systemd.services = lib.mapAttrs' (
+    name: instance: lib.nameValuePair "sorcery-${name}" (mkService name instance)
+  ) instances;
+  services.nginx.virtualHosts = lib.mapAttrs' (
+    name: instance: lib.nameValuePair instance.domain (mkHost name instance)
+  ) instances;
 }

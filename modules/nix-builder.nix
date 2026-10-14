@@ -11,7 +11,7 @@ in
     createHome = true;
     shell = pkgs.bashInteractive;
     openssh.authorizedKeys.keys = [
-      "cert-authority,principals=\"t:server,t:human\",restrict ${certificateAuthority}"
+      "cert-authority,principals=\"t:server,t:human,t:build\",restrict ${certificateAuthority}"
     ];
   };
 
