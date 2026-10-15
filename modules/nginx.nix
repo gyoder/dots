@@ -8,6 +8,53 @@
 let
   tailnet = import ../tailnet.nix;
   auth = import ./nginx-auth.nix { };
+  staticSite = root: {
+    inherit root;
+    extraConfig = ''
+      error_page 404 /404.html;
+
+      # Redirect old homepage URLs to /.
+      if ($request_uri ~ "^/index\.(?:html|htmlua|php)(?:\?|$)") {
+        return 301 /$is_args$args;
+      }
+
+      # Redirect explicit page extensions to clean URLs.
+      if ($request_uri ~ "^/([^?]+)\.(?:html|htmlua|php)(?:\?|$)") {
+        return 301 /$1$is_args$args;
+      }
+    '';
+    locations = {
+      "/".tryFiles = "$uri $uri.html $uri/ =404";
+      "~ \\.wasm$" = {
+        tryFiles = "$uri =404";
+        extraConfig = ''
+          types {}
+          default_type application/wasm;
+        '';
+      };
+      "~ /rss\\.xml$" = {
+        tryFiles = "$uri =404";
+        extraConfig = ''
+          types {}
+          default_type application/rss+xml;
+        '';
+      };
+      "= /site.webmanifest" = {
+        tryFiles = "$uri =404";
+        extraConfig = ''
+          types {}
+          default_type application/manifest+json;
+        '';
+      };
+      "^~ /.well-known/" = {
+        tryFiles = "$uri =404";
+        extraConfig = ''
+          types {}
+          default_type text/plain;
+        '';
+      };
+    };
+  };
   proxy = address: {
     locations."/" = {
       proxyPass = address;
@@ -101,59 +148,8 @@ in
       "grace.pds.gae.moe".locations = pdsLocations;
       "art.pds.gae.moe".locations = pdsLocations;
 
-      "beta.grace.pink.gae.moe" = {
-        root = "/mnt/ext/git/www/private/grace.pink/beta";
-
-        extraConfig = ''
-          error_page 404 /404.html;
-
-          # Redirect old homepage URLs to /.
-          if ($request_uri ~ "^/index\.(?:html|htmlua|php)(?:\?|$)") {
-            return 301 /$is_args$args;
-          }
-
-          # Redirect explicit page extensions to clean URLs.
-          if ($request_uri ~ "^/([^?]+)\.(?:html|htmlua|php)(?:\?|$)") {
-            return 301 /$1$is_args$args;
-          }
-        '';
-
-        locations."/" = {
-          tryFiles = "$uri $uri.html $uri/ =404";
-        };
-
-        locations."= /3d/pink3d_bg.wasm" = {
-          tryFiles = "$uri =404";
-          extraConfig = ''
-            types {}
-            default_type application/wasm;
-          '';
-        };
-
-        locations."~ ^/(?:blog|art)/rss\\.xml$" = {
-          tryFiles = "$uri =404";
-          extraConfig = ''
-            types {}
-            default_type application/rss+xml;
-          '';
-        };
-
-        locations."= /site.webmanifest" = {
-          tryFiles = "$uri =404";
-          extraConfig = ''
-            types {}
-            default_type application/manifest+json;
-          '';
-        };
-
-        locations."^~ /.well-known/" = {
-          tryFiles = "$uri =404";
-          extraConfig = ''
-            types {}
-            default_type text/plain;
-          '';
-        };
-      };
+      "grace.pink" = staticSite "/mnt/ext/git/www/private/grace.pink/main";
+      "beta.grace.pink" = staticSite "/mnt/ext/git/www/private/grace.pink/beta";
     };
   };
 

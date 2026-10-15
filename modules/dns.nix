@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  serial = "2026101501";
+  serial = "2026101502";
 
   public = {
     lee = "152.44.40.91";
@@ -126,7 +126,7 @@ in
 
         file = mkPrimaryZone {
           domain = "grace.pink";
-          address = public.lee;
+          address = public.knuth;
           extraRecords = ''
             _atproto 3600 IN TXT "did=did:plc:rtokeh2dsmapicefqxkefbfn"
 

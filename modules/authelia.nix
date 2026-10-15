@@ -60,6 +60,21 @@
       notifier.filesystem.filename = "/var/lib/authelia-main/notifications.txt";
       identity_providers.oidc.clients = [
         {
+          client_id = "zipline";
+          client_name = "Zipline";
+          client_secret = ''{{ secret (printf "%s/zipline-client-secret" (mustEnv "CREDENTIALS_DIRECTORY")) | trim }}'';
+          public = false;
+          authorization_policy = "one_factor";
+          require_pkce = true;
+          pkce_challenge_method = "S256";
+          redirect_uris = [ "https://l.gae.moe/api/auth/oauth/oidc" ];
+          scopes = [ "openid" "profile" "email" "offline_access" ];
+          response_types = [ "code" ];
+          grant_types = [ "authorization_code" "refresh_token" ];
+          token_endpoint_auth_method = "client_secret_post";
+          userinfo_signed_response_alg = "none";
+        }
+        {
           client_id = "immich";
           client_name = "Immich";
           client_secret = ''{{ secret (printf "%s/immich-client-secret" (mustEnv "CREDENTIALS_DIRECTORY")) | trim }}'';
@@ -106,6 +121,7 @@
   };
 
   systemd.services.authelia-main.serviceConfig.LoadCredential = [
+    "zipline-client-secret:/etc/secrets/authelia/zipline-client-secret"
     "users.yml:/etc/secrets/authelia/users.yml"
     "immich-client-secret:/etc/secrets/authelia/immich-client-secret"
     "jellyfin-client-secret:/etc/secrets/authelia/jellyfin-client-secret"

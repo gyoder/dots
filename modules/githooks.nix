@@ -30,10 +30,8 @@ let
       rm -rf "$tmp"
       if [ "$status" -eq 0 ]; then
         outcome=succeeded
-        tag=white_check_mark
       else
         outcome=failed
-        tag=x
       fi
       credentials=/var/lib/git-build-notify/credentials.curl
       if [ -r "$credentials" ]; then
@@ -42,7 +40,7 @@ let
           ${pkgs.curl}/bin/curl --config "$credentials" \
             --fail --silent --show-error --connect-timeout 3 --max-time 10 \
             --header "Title: Git build/deploy $outcome" \
-            --header "Tags: $tag" --data-binary @- --output /dev/null \
+            --data-binary @- --output /dev/null \
             https://ntfy.gae.moe/githooks || true
       fi
       exit "$status"
