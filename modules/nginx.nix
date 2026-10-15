@@ -75,24 +75,6 @@ let
         };
       };
     };
-  pdsLocations = {
-    "/" = {
-      proxyPass = "http://${tailnet.lee}:8642";
-      proxyWebsockets = true;
-      extraConfig = "proxy_read_timeout 86400s;";
-    };
-    "= /.well-known/webfinger" = {
-      proxyPass = "https://atlogin.net/helpers/webfinger";
-      recommendedProxySettings = false;
-      extraConfig = ''
-        proxy_set_header Host atlogin.net;
-        proxy_ssl_server_name on;
-        proxy_ssl_name atlogin.net;
-        proxy_ssl_verify on;
-        proxy_ssl_trusted_certificate ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt;
-      '';
-    };
-  };
 in
 {
   imports = [
@@ -129,24 +111,18 @@ in
     '';
 
     virtualHosts = {
+      # all of these should be in their respective modules
       "auth.gae.moe" = proxy "http://127.0.0.1:9091";
-      "map.mc.gae.moe" = proxy "http://${tailnet.dijkstra}:8101";
       "fin.gae.moe" = proxy "http://${tailnet.dijkstra}:8096";
       "files.gae.moe" = protectedProxy "http://${tailnet.dijkstra}:8080";
       "img.gae.moe" = proxy "http://${tailnet.dijkstra}:2283";
-      "ci.gae.moe" = proxy "http://${tailnet.dijkstra-git}:8000";
-      "knot.gae.moe" = proxy "http://${tailnet.dijkstra-git}:5555";
-      "books.gae.moe" = protectedProxy "http://127.0.0.1:6822";
-      "term.gae.moe" = protectedProxy "https://${tailnet.dijkstra}:8082";
+
+      "map.mc.gae.moe" = proxy "http://${tailnet.dijkstra}:8101";
 
       "*.nate.gae.moe" = (proxy "http://${tailnet.nate-fedora}:80") // {
         enableACME = false;
         forceSSL = false;
       };
-
-      "pds.gae.moe".locations = pdsLocations;
-      "grace.pds.gae.moe".locations = pdsLocations;
-      "art.pds.gae.moe".locations = pdsLocations;
 
       "grace.pink" = staticSite "/mnt/ext/git/www/private/grace.pink/main";
       "beta.grace.pink" = staticSite "/mnt/ext/git/www/private/grace.pink/beta";
