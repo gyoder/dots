@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  serial = "2026101502";
+  serial = "2026101503";
 
   public = {
     lee = "152.44.40.91";
@@ -150,7 +150,7 @@ in
 
         file = mkPrimaryZone {
           domain = "words.gay";
-          address = public.lee;
+          address = public.knuth;
         };
       };
     }

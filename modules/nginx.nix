@@ -126,6 +126,9 @@ in
 
       "grace.pink" = staticSite "/mnt/ext/git/www/private/grace.pink/main";
       "beta.grace.pink" = staticSite "/mnt/ext/git/www/private/grace.pink/beta";
+
+      "some.words.gay" = staticSite "/mnt/ext/git/www/private/some.words.gay/main";
+      "beta.some.words.gay" = staticSite "/mnt/ext/git/www/private/some.words.gay/beta";
     };
   };
 

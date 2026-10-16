@@ -44,11 +44,15 @@ in
     ./home/langs.nix
     ./home/linux.nix
   ]
+  ++ lib.optionals (host.name == "dijkstra") [
+    ./home/langs.nix
+    ./home/linux.nix
+    ./home/typst.nix
+  ]
   ++
     lib.optionals
       (builtins.elem host.name [
         "knuth"
-        "dijkstra"
         "portable"
       ])
       [
