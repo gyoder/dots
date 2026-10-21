@@ -25,22 +25,33 @@ assert lib.assertMsg (
     "darwin-config=/etc/nix-darwin/configuration.nix"
   ];
 
-  nix.distributedBuilds = host.name != "dijkstra";
-  nix.buildMachines = lib.optional (host.name != "dijkstra") {
-    hostName = "dijkstra.i.gae.moe";
-    sshUser = "builder";
-    sshKey = "/root/.ssh/id_ed25519";
-    protocol = "ssh-ng";
-    systems = [ "x86_64-linux" ];
-    maxJobs = 8;
-    speedFactor = 1;
-    supportedFeatures = [
-      "kvm"
-      "big-parallel"
-      "nixos-test"
-      "benchmark"
-    ];
-  };
+  nix.distributedBuilds = true;
+  nix.buildMachines = lib.filter (m: m != { }) [
+    (lib.optionalAttrs (host.name != "dijkstra") {
+      hostName = "dijkstra.i.gae.moe";
+      sshUser = "builder";
+      sshKey = "/root/.ssh/id_ed25519";
+      protocol = "ssh-ng";
+      systems = [ "x86_64-linux" ];
+      maxJobs = 8;
+      speedFactor = 4;
+      supportedFeatures = [
+        "kvm"
+        "big-parallel"
+        "nixos-test"
+        "benchmark"
+      ];
+    })
+    {
+      hostName = "vulcan.moe";
+      sshUser = "scie";
+      sshKey = "/root/.ssh/id_ed25519";
+      protocol = "ssh-ng";
+      systems = [ "x86_64-linux" ];
+      maxJobs = 8;
+      speedFactor = 1;
+    }
+  ];
   nix.settings.builders-use-substitutes = true;
   nix.gc = {
     automatic = true;
@@ -65,6 +76,17 @@ assert lib.assertMsg (
       "d.i.gae.moe"
     ];
     publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEAQ463pWxkNc6IxhKMxKaQmvswnkO4UytR0v38ZL0v0";
+  };
+  programs.ssh.knownHosts.knuth = {
+    hostNames = [
+      "knuth.i.gae.moe"
+      "k.i.gae.moe"
+    ];
+    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ9mXbG9oj+uGSYVwxR9eedbZbdDJ6N+vnaOJfT6dkK0";
+  };
+  programs.ssh.knownHosts.vulcan = {
+    hostNames = [ "vulcan.moe" ];
+    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFbrncs13r5yxwPZreDwgRJg0t9ngRSw9rCnYl9cN8fk";
   };
 
   security.sudo.extraConfig = ''

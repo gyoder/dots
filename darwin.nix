@@ -11,6 +11,9 @@ in
   networking.hostName = host.name;
 
   environment.systemPackages = [
+    (pkgs.writeShellScriptBin "rebuild.sh" ''
+      exec /etc/nix-darwin/rebuild.sh "$@"
+    '')
     pkgs.raycast
     pkgs.thaw
   ];

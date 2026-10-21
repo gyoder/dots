@@ -15,17 +15,19 @@ let
     if [ "''${1:-}" = failed ]; then
       outcome="rebuild failed"
       message="NixOS rebuild failed (exit status ''${2:-unknown})"
+      host="''${3:-${lib.escapeShellArg config.networking.hostName}}"
     else
       outcome="switch succeeded"
       message="Successfully switched to $(${pkgs.coreutils}/bin/readlink -f /run/current-system)"
+      host=${lib.escapeShellArg config.networking.hostName}
     fi
 
-    printf '%s: %s\n' ${lib.escapeShellArg config.networking.hostName} "$message" |
+    printf '%s: %s\n' "$host" "$message" |
       ${pkgs.curl}/bin/curl \
         --config "$credentials" \
         --fail --silent --show-error \
         --connect-timeout 3 --max-time 10 \
-        --header "Title: "${lib.escapeShellArg config.networking.hostName}": NixOS $outcome" \
+        --header "Title: $host: NixOS $outcome" \
         --data-binary @- \
         --output /dev/null \
         https://ntfy.gae.moe/nixos

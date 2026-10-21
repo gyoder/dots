@@ -59,6 +59,8 @@ in
       ...
     }:
     {
+      imports = [ ./microvm-compat.nix ];
+
       microvm = {
         hypervisor = "qemu";
         vcpu = 2;
