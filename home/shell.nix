@@ -8,7 +8,7 @@
 let
   tpbSrc = builtins.fetchGit {
     url = "https://git.gae.moe/grace/tpb.git";
-    ref = "refs/heads/main";
+    ref = "refs/tags/0.1.3";
   };
 in
 {

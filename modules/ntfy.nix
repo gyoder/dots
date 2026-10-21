@@ -11,6 +11,9 @@
       enable-login = true;
       enable-signup = false;
       upstream-base-url = "https://ntfy.sh";
+      auth-access = [
+        "*:say_hi:wo"
+      ];
     };
   };
 
