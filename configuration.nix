@@ -42,15 +42,6 @@ assert lib.assertMsg (
         "benchmark"
       ];
     })
-    {
-      hostName = "vulcan.moe";
-      sshUser = "scie";
-      sshKey = "/root/.ssh/id_ed25519";
-      protocol = "ssh-ng";
-      systems = [ "x86_64-linux" ];
-      maxJobs = 8;
-      speedFactor = 1;
-    }
   ];
   nix.settings.builders-use-substitutes = true;
   nix.gc = {

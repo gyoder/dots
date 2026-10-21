@@ -170,7 +170,7 @@ let
     exec 9>"$XDG_RUNTIME_DIR/git-deploy/$lock-mirror.lock"
     flock 9
 
-    for remote in tangled github forgejo; do
+    for remote in tangled github codeberg; do
       git -C "$repo" remote get-url --push "$remote" &>/dev/null || continue
       echo "Pushing $repo to $remote..." >&2
       failed=0

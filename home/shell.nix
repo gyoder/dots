@@ -31,22 +31,24 @@ in
     bash
     openssh
     openssl
+    net-tools
+    dig
 
     (
       (import "${tpbSrc}/default.nix" {
         inherit pkgs;
       }).overrideAttrs
-      (_: {
-        unpackPhase = ''
-          mkdir source
-          tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
-            -C "$src" -cf - . \
-            | tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
-              -C source -xf -
-          chmod -R u+w source
-          sourceRoot=source
-        '';
-      })
+        (_: {
+          unpackPhase = ''
+            mkdir source
+            tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
+              -C "$src" -cf - . \
+              | tar --no-same-owner --no-same-permissions --no-overwrite-dir --mode=0755 \
+                -C source -xf -
+            chmod -R u+w source
+            sourceRoot=source
+          '';
+        })
     )
   ];
 
