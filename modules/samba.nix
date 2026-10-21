@@ -5,7 +5,6 @@
 
   services.samba = {
     enable = true;
-    openFirewall = true;
     nmbd.enable = false;
     winbindd.enable = false;
     settings = {

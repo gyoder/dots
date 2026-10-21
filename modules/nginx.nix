@@ -102,8 +102,6 @@ in
     clientMaxBodySize = "10g";
     proxyTimeout = "300s";
     appendHttpConfig = ''
-      proxy_buffering off;
-      proxy_request_buffering off;
       proxy_set_header Remote-User "";
       proxy_set_header Remote-Groups "";
       proxy_set_header Remote-Email "";
@@ -111,11 +109,22 @@ in
     '';
 
     virtualHosts = {
-      # all of these should be in their respective modules
       "auth.gae.moe" = proxy "http://127.0.0.1:9091";
-      "fin.gae.moe" = proxy "http://${tailnet.dijkstra}:8096";
-      "files.gae.moe" = protectedProxy "http://${tailnet.dijkstra}:8080";
-      "img.gae.moe" = proxy "http://${tailnet.dijkstra}:2283";
+      "fin.gae.moe" = (proxy "http://${tailnet.dijkstra}:8096") // {
+        extraConfig = "proxy_buffering off;";
+      };
+      "files.gae.moe" = (protectedProxy "http://${tailnet.dijkstra}:8080") // {
+        extraConfig = ''
+          proxy_buffering off;
+          proxy_request_buffering off;
+        '';
+      };
+      "img.gae.moe" = (proxy "http://${tailnet.dijkstra}:2283") // {
+        extraConfig = ''
+          proxy_buffering off;
+          proxy_request_buffering off;
+        '';
+      };
 
       "map.mc.gae.moe" = proxy "http://${tailnet.dijkstra}:8101";
 
@@ -127,8 +136,9 @@ in
       "grace.pink" = staticSite "/mnt/ext/git/www/private/grace.pink/main";
       "beta.grace.pink" = staticSite "/mnt/ext/git/www/private/grace.pink/beta";
 
-      "some.words.gay" = staticSite "/mnt/ext/git/www/private/some.words.gay/main";
-      "beta.some.words.gay" = staticSite "/mnt/ext/git/www/private/some.words.gay/beta";
+      "words.gay" = staticSite "/mnt/ext/git/www/private/words.gay/words.gay";
+      "some.words.gay" = staticSite "/mnt/ext/git/www/private/words.gay/some.words.gay";
+      "little.words.gay" = staticSite "/mnt/ext/git/www/private/words.gay/little.words.gay";
     };
   };
 

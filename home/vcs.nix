@@ -12,7 +12,7 @@
       settings = {
         user = {
           name = "Grace Yoder";
-          email = "grace_yoder@outlook.com";
+          email = "git@grace.pink";
         };
         signing = {
           behavior = "own";
@@ -75,7 +75,7 @@
             ""
           ];
 
-          sp = [
+          oops = [
             "util"
             "exec"
             "--"

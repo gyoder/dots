@@ -17,7 +17,6 @@ in
           forceSSL = lib.mkDefault true;
           extraConfig = ''
             error_page 502 503 504 /_offline.html;
-            proxy_intercept_errors on;
           '';
           locations."= /_offline.html" = {
             root = offlinePage;

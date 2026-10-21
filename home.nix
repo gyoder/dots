@@ -1,6 +1,5 @@
 {
   lib,
-  config,
   ...
 }:
 
@@ -18,44 +17,41 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
+  nix.gc = lib.mkIf (host.type == "home") {
+    automatic = true;
+    dates = "weekly";
+    randomizedDelaySec = "1h";
+    options = "--delete-older-than 30d";
+  };
+
   imports = [
     ./home/base.nix
     ./home/shell.nix
+    ./home/nixos-target.nix
     ./home/helix.nix
     ./home/tmux.nix
     ./home/vim.nix
     ./home/vcs.nix
   ]
-  ++ lib.optional (host.type != "nixos") (import ./home/ssh.nix { })
+  ++ lib.optional (host.type != "nixos") ./home/ssh.nix
+  ++ lib.optional (lib.hasSuffix "-linux" host.system) ./home/linux.nix
+  ++ lib.optional (builtins.elem host.name [
+    "turing"
+    "cs.purdue.edu"
+    "vulcan"
+    "dijkstra"
+  ]) ./home/langs.nix
+  ++ lib.optional (builtins.elem host.name [
+    "turing"
+    "cs.purdue.edu"
+    "dijkstra"
+  ]) ./home/typst.nix
   ++ lib.optionals (host.name == "turing") [
-    ./home/langs.nix
     ./home/packages.nix
-    ./home/typst.nix
     ./home/pkgs_mac.nix
     ./home/ghostty.nix
   ]
   ++ lib.optionals (host.name == "cs.purdue.edu") [
-    ./home/langs.nix
     ./home/cs_purdue.nix
-    ./home/typst.nix
-    ./home/linux.nix
-  ]
-  ++ lib.optionals (host.name == "vulcan") [
-    ./home/langs.nix
-    ./home/linux.nix
-  ]
-  ++ lib.optionals (host.name == "dijkstra") [
-    ./home/langs.nix
-    ./home/linux.nix
-    ./home/typst.nix
-  ]
-  ++
-    lib.optionals
-      (builtins.elem host.name [
-        "knuth"
-        "portable"
-      ])
-      [
-        ./home/linux.nix
-      ];
+  ];
 }

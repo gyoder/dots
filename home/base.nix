@@ -6,8 +6,6 @@
 
     sessionVariables = {
       XDG_CONFIG_HOME = "${config.home.homeDirectory}/.config";
-      EDITOR = "hx";
-      VISUAL = "hx";
     };
   };
 

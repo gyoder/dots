@@ -43,6 +43,7 @@
               "books.gae.moe"
               "term.gae.moe"
               "i.git.gae.moe"
+              "i.artifacts.gae.moe"
             ];
             policy = "one_factor";
             subject = [ "group:users" ];
@@ -68,9 +69,17 @@
           require_pkce = true;
           pkce_challenge_method = "S256";
           redirect_uris = [ "https://l.gae.moe/api/auth/oauth/oidc" ];
-          scopes = [ "openid" "profile" "email" "offline_access" ];
+          scopes = [
+            "openid"
+            "profile"
+            "email"
+            "offline_access"
+          ];
           response_types = [ "code" ];
-          grant_types = [ "authorization_code" "refresh_token" ];
+          grant_types = [
+            "authorization_code"
+            "refresh_token"
+          ];
           token_endpoint_auth_method = "client_secret_post";
           userinfo_signed_response_alg = "none";
         }

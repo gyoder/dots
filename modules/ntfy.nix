@@ -17,6 +17,10 @@
   services.nginx.virtualHosts."ntfy.gae.moe".locations."/" = {
     proxyPass = "http://127.0.0.1:2586";
     proxyWebsockets = true;
-    extraConfig = "proxy_read_timeout 1h;";
+    extraConfig = ''
+      proxy_read_timeout 1h;
+      proxy_buffering off;
+      proxy_request_buffering off;
+    '';
   };
 }

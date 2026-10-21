@@ -51,6 +51,10 @@ in
   ];
 
   xdg.configFile."fish/themes/rose_pine.theme".source = ../fish/rose_pine.theme;
+  xdg.configFile."fish/functions" = {
+    source = ../fish/fish-helix/functions;
+    recursive = true;
+  };
 
   programs.fish = {
     enable = true;
@@ -60,21 +64,10 @@ in
       pysource = "source .venv/bin/activate.fish";
       tcl = "clear && clear";
       tclear = "clear && clear";
+      nixfish = "nix-shell --run fish";
     };
 
     functions = {
-      nixos-target = {
-        description = "Build and deploy a local NixOS configuration to a remote host";
-        body = ''
-          set -lx NIX_HOST $argv[1]
-          ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch \
-            --file ./system.nix \
-            --build-host builder@dijkstra.i.gae.moe \
-            --target-host "grace@$NIX_HOST.i.gae.moe" \
-            --elevate sudo
-        '';
-      };
-
       ask = {
         description = "Ask for input and respond with input";
         body = ''
@@ -219,16 +212,17 @@ in
           return 2
         end
 
+        set -l identity
         if set -q _flag_identity
-          set -l identity "$_flag_identity"
+          set identity "$_flag_identity"
         else if set -q _flag_user; and set -q _flag_host
-          set -l identity "$_flag_user@$_flag_host"
+          set identity "$_flag_user@$_flag_host"
         else if set -q _flag_user
-          set -l identity "$_flag_user"
+          set identity "$_flag_user"
         else if set -q _flag_host
-          set -l identity "$_flag_host"
+          set identity "$_flag_host"
         else
-          set -l identity "ssh-cert"
+          set identity "ssh-cert"
         end
 
         if not test -f "$ca_pub"
@@ -289,7 +283,7 @@ in
 
     interactiveShellInit = ''
       set -g fish_greeting ""
-      fish_vi_key_bindings
+      fish_helix_key_bindings
       fish_config theme choose rose_pine
       pfetch
     '';

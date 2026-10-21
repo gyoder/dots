@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   ...
 }:
@@ -19,21 +18,17 @@ in
     pkgs.nerd-fonts.symbols-only
   ];
 
-  home.sessionVariables.STEEL_HOME = "${config.xdg.dataHome}/steel";
-
-  xdg.configFile."helix/ignore".text = ''
-    .git/
-    node_modules/
-    build/
-  '';
-
   xdg.configFile."helix/runtime/queries/rust".source = "${pkgs.helix.runtime}/queries/rust";
 
   programs.helix = {
     enable = true;
     package = pkgs.helix;
-    # extraPackages = [ pkgs.steel ];
-    defaultEditor = false;
+    defaultEditor = true;
+    ignores = [
+      ".git/"
+      "node_modules/"
+      "build/"
+    ];
     settings = {
       theme = "grace_rose_pine";
       editor = {
@@ -126,9 +121,6 @@ in
         nixd = {
           command = "${pkgs.nixd}/bin/nixd";
         };
-        nil = {
-          command = "${pkgs.nil}/bin/nil";
-        };
         luals = {
           command = "${pkgs.lua-language-server}/bin/lua-language-server";
         };
@@ -155,8 +147,6 @@ in
           args = [
             "--background-index"
             "--offset-encoding=utf-8"
-            "--query-driver=/Users/scie/.platformio/packages/toolchain-xtensa-esp32/**"
-            "--query-driver=/Users/scie/.platformio/packages/framework-arduinoststm32/**"
           ];
         };
 
@@ -170,12 +160,13 @@ in
 
         tinymist = {
           command = "${pkgs.tinymist}/bin/tinymist";
-          config.tinymist.formatterMode = "typstyle";
-          typstExtraArgs = [
-            "--features"
-            "bundle,html"
-            "site.typ"
-          ];
+          config = {
+            formatterMode = "typstyle";
+            typstExtraArgs = [
+              "--features"
+              "bundle,html"
+            ];
+          };
         };
 
         rust-analyzer = {
@@ -217,6 +208,11 @@ in
           args = [ "--stdio" ];
         };
 
+        typescript-language-server = {
+          command = "${pkgs.typescript-language-server}/bin/typescript-language-server";
+          args = [ "--stdio" ];
+        };
+
         css = {
           command = "${pkgs.vscode-langservers-extracted}/bin/vscode-css-language-server";
           args = [ "--stdio" ];
@@ -250,14 +246,6 @@ in
           config.typescript.tsdk = "./node_modules/typescript/lib";
         };
 
-        steel = {
-          command = "${pkgs.steel-language-server}";
-
-          environment = {
-            STEEL_HOME = "${config.xdg.dataHome}/steel";
-          };
-
-        };
       };
 
       language = [
@@ -267,7 +255,6 @@ in
           file-types = [ "nix" ];
           language-servers = [
             "nixd"
-            "nil"
             "codebook"
           ];
           formatter.command = "${pkgs.nixfmt}/bin/nixfmt";
@@ -474,11 +461,11 @@ in
           scope = "source.js";
           file-types = [
             "js"
-            "jsx"
             "mjs"
             "cjs"
           ];
           language-servers = [
+            "typescript-language-server"
             "eslint"
             "tailwindcss"
             "codebook"
@@ -492,11 +479,37 @@ in
           scope = "source.ts";
           file-types = [
             "ts"
-            "tsx"
             "mts"
             "cts"
           ];
           language-servers = [
+            "typescript-language-server"
+            "eslint"
+            "tailwindcss"
+            "codebook"
+          ];
+          roots = wRoots [
+            "package.json"
+            "tsconfig.json"
+          ];
+        }
+        {
+          name = "jsx";
+          language-servers = [
+            "typescript-language-server"
+            "eslint"
+            "tailwindcss"
+            "codebook"
+          ];
+          roots = wRoots [
+            "package.json"
+            "jsconfig.json"
+          ];
+        }
+        {
+          name = "tsx";
+          language-servers = [
+            "typescript-language-server"
             "eslint"
             "tailwindcss"
             "codebook"
@@ -558,15 +571,6 @@ in
           language-servers = [ "fish" ];
           roots = wRoots [
             "config.fish"
-          ];
-        }
-        {
-          name = "scheme";
-          file-types = [ "scm" ];
-          scope = "source.scm";
-          language-servers = [ "steel" ];
-          roots = wRoots [
-            "init.scm"
           ];
         }
       ];

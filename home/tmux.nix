@@ -2,7 +2,15 @@
 
 let
   seshPicker = pkgs.writeShellScript "sesh-picker" ''
-    export PATH=${pkgs.lib.makeBinPath [ pkgs.sesh pkgs.fzf pkgs.tmux pkgs.zoxide pkgs.fd ]}:"$PATH"
+    export PATH=${
+      pkgs.lib.makeBinPath [
+        pkgs.sesh
+        pkgs.fzf
+        pkgs.tmux
+        pkgs.zoxide
+        pkgs.fd
+      ]
+    }:"$PATH"
     selection=$(sesh list --icons | fzf-tmux -p 80%,70% \
       --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
       --header '  ^a all ^t tmux ^g configs ^x zoxide ^d tmux kill ^f find' \
@@ -25,7 +33,7 @@ in
     mouse = true;
     keyMode = "vi";
     baseIndex = 1;
-    prefix = "C-b";
+    prefix = "C-\\";
     terminal = "xterm-ghostty";
     plugins = with pkgs.tmuxPlugins; [
       sensible
@@ -55,9 +63,6 @@ in
       set -as terminal-features ",xterm-ghostty:hyperlinks"
       set -ga terminal-overrides ",xterm-ghostty:Tc"
 
-      unbind C-b
-      set -g prefix C-\\
-      bind -N "Send the prefix key through to the application" C-\\ send-prefix
       bind -N "Refresh system clipboard via OSC 52" Y refresh-client -l
       bind -N "Pick a sesh session" T run-shell "${seshPicker}"
 
@@ -68,6 +73,16 @@ in
       bind -n M-j select-pane -D
       bind -n M-k select-pane -U
       bind -n M-l select-pane -R
+      # Alt+1–9: select a window without the tmux prefix.
+      bind -n M-1 select-window -t :1
+      bind -n M-2 select-window -t :2
+      bind -n M-3 select-window -t :3
+      bind -n M-4 select-window -t :4
+      bind -n M-5 select-window -t :5
+      bind -n M-6 select-window -t :6
+      bind -n M-7 select-window -t :7
+      bind -n M-8 select-window -t :8
+      bind -n M-9 select-window -t :9
     '';
   };
 

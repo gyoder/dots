@@ -40,7 +40,6 @@ in
     "d /mnt/data/copyparty 0700 copyparty share -"
   ];
 
-  networking.firewall.allowedTCPPorts = [ 8080 ];
   environment.etc."copyparty/config.conf".source = configuration;
   environment.systemPackages = [ pkgs.copyparty ];
 

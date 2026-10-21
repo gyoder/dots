@@ -1,17 +1,24 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   services.immich = {
     enable = true;
     host = "0.0.0.0";
     port = 2283;
-    openFirewall = true;
     mediaLocation = "/mnt/data/immich/media";
     accelerationDevices = [ "/dev/dri/renderD128" ];
     environment.IMMICH_MEDIA_LOCATION = lib.mkForce "/data";
   };
 
-  users.users.immich.extraGroups = [ "video" "render" ];
+  users.users.immich.extraGroups = [
+    "video"
+    "render"
+  ];
 
   services.postgresql = {
     package = pkgs.postgresql_16;

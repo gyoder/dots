@@ -29,4 +29,8 @@
   };
   systemd.tmpfiles.rules = [ "d /mnt/ext/files 0750 zipline zipline -" ];
   services.nginx.virtualHosts."l.gae.moe".locations."/".proxyPass = "http://127.0.0.1:4567";
+  services.nginx.virtualHosts."l.gae.moe".extraConfig = ''
+    proxy_buffering off;
+    proxy_request_buffering off;
+  '';
 }

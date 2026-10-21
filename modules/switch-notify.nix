@@ -12,14 +12,20 @@ let
       exit 0
     fi
 
-    printf 'Successfully switched %s to %s\n' \
-      ${lib.escapeShellArg config.networking.hostName} \
-      "$(${pkgs.coreutils}/bin/readlink -f /run/current-system)" |
+    if [ "''${1:-}" = failed ]; then
+      outcome="rebuild failed"
+      message="NixOS rebuild failed (exit status ''${2:-unknown})"
+    else
+      outcome="switch succeeded"
+      message="Successfully switched to $(${pkgs.coreutils}/bin/readlink -f /run/current-system)"
+    fi
+
+    printf '%s: %s\n' ${lib.escapeShellArg config.networking.hostName} "$message" |
       ${pkgs.curl}/bin/curl \
         --config "$credentials" \
         --fail --silent --show-error \
         --connect-timeout 3 --max-time 10 \
-        --header ${lib.escapeShellArg "Title: ${config.networking.hostName}: NixOS switch succeeded"} \
+        --header "Title: "${lib.escapeShellArg config.networking.hostName}": NixOS $outcome" \
         --data-binary @- \
         --output /dev/null \
         https://ntfy.gae.moe/nixos

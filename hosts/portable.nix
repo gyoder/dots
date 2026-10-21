@@ -11,6 +11,7 @@
     ../modules/users.nix
     ../modules/tailscale.nix
     ../modules/terminal.nix
+    ../modules/nixos-base.nix
   ];
 
   hardware.enableAllHardware = true;
@@ -27,26 +28,8 @@
     };
   };
 
-  networking = {
-    hostName = "portable";
-    networkmanager.enable = true;
-  };
-
-  environment.sessionVariables.NIX_HOST = "portable";
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-
-  services.openssh = {
-    enable = true;
-    openFirewall = true;
-    settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
-      KbdInteractiveAuthentication = false;
-    };
-  };
+  networking.networkmanager.enable = true;
+  services.openssh.ports = [ 22 ];
 
   services.cage = {
     enable = true;

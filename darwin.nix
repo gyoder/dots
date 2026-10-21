@@ -1,17 +1,13 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
 
 let
-  paneru = builtins.getFlake "github:karinushka/paneru/5a033bc3a59f752ae72944f06945ab13cc570e04";
   host = import ./hosts.nix;
 in
 {
-  imports = [ paneru.darwinModules.paneru ];
-
   networking.hostName = host.name;
 
   environment.systemPackages = [
@@ -32,82 +28,43 @@ in
 
   programs.fish.enable = true;
 
-  services.paneru = {
-    enable = true;
-
-    settings = {
-      options = {
-        disable_native_tabs = true;
-        focus_follows_mouse = false;
-        mouse_follows_focus = false;
-
-        animation_speed = 12.0;
-
-        preset_column_widths = [
-          0.45
-          0.65
-          0.9
-        ];
-        window_resize_cycle = true;
-        create_virtual_workspace_automatically = true;
-        virtual_workspace_animations = true;
-
-      };
-
-      swipe = {
-        sensitivity = 0.35;
-        deceleration = 4.0;
-        continuous = true;
-
-        gesture = {
-          fingers_count = 3;
-          direction = "Natural";
-          vertical = false;
-        };
-      };
-
-      padding = {
-        top = 5;
-        bottom = 5;
-        left = 5;
-        right = 5;
-      };
-
-      windows.all = {
-        title = ".*";
-        horizontal_padding = 5;
-        vertical_padding = 5;
-      };
-
-      windows.todoist_quick_add = {
-        bundle_id = "com.todoist.mac.Todoist";
-        title = "^Todoist$";
-        floating = true;
-      };
-
-      bindings = {
-        window_focus_west = "cmd + shift - h";
-        window_focus_east = "cmd + shift - l";
-
-        window_swap_west = "cmd + shift + ctrl - h";
-        window_swap_east = "cmd + shift + ctrl - l";
-
-        # window_virtual_south = "cmd - j";
-        # window_virtual_north = "cmd - k";
-
-        window_center = "alt - c";
-        window_resize = "cmd + shift - f";
-        window_balance = "alt - b";
-
-        quit = "ctrl + alt - q";
-      };
-    };
-  };
   system.defaults.CustomUserPreferences = {
+    NSGlobalDomain.NSUserKeyEquivalents = {
+      # Command+Option+Shift+J: toggle native fullscreen.
+      "Enter Full Screen" = "@~$j";
+      "Exit Full Screen" = "@~$j";
+      # Command+Option+Shift+H/L: tile to the left/right half.
+      "Window->Move & Resize->Left" = "@~$h";
+      "Window->Move & Resize->Right" = "@~$l";
+    };
     "com.apple.symbolichotkeys" = {
       AppleSymbolicHotKeys = {
         "64" = {
           enabled = false;
+        };
+        # Control+Left: move to the Space on the left.
+        "79" = {
+          enabled = true;
+          value = {
+            parameters = [
+              65535
+              123
+              262144
+            ];
+            type = "standard";
+          };
+        };
+        # Control+Right: move to the Space on the right.
+        "81" = {
+          enabled = true;
+          value = {
+            parameters = [
+              65535
+              124
+              262144
+            ];
+            type = "standard";
+          };
         };
       };
     };
@@ -118,4 +75,5 @@ in
   };
 
   security.pam.services.sudo_local.touchIdAuth = true;
+  security.pam.services.sudo_local.reattach = true;
 }

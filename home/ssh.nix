@@ -1,9 +1,4 @@
 {
-  principals ? (import ../hosts.nix).sshPrincipals or [ ],
-  extraKeys ? [ ],
-}:
-
-{
   lib,
   ...
 }:
@@ -12,7 +7,7 @@ let
   host = import ../hosts.nix;
   authorizedKeys = lib.concatStringsSep "\n" (
     import ../ssh-keys.nix {
-      inherit host principals extraKeys;
+      inherit host;
     }
   );
 in

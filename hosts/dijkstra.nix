@@ -17,6 +17,7 @@ in
     ../modules/copyparty.nix
     ../modules/hotspot.nix
     ../modules/fedora-vm.nix
+    ../modules/seedbox.nix
   ];
 
   boot.loader = {
@@ -34,6 +35,8 @@ in
   virtualisation.libvirtd.enable = true;
 
   networking.networkmanager.enable = true;
+  services.openssh.openFirewall = false;
+  services.tailscale.openFirewall = true;
   fileSystems = {
     "/mnt/data" = {
       device = "/dev/disk/by-uuid/a40705bf-4ee5-4f61-a0df-798a62ab72bc";

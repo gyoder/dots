@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 
 let
   host = import ../hosts.nix;
@@ -19,8 +19,8 @@ in
 
   services.openssh = {
     enable = true;
-    openFirewall = true;
-    ports = [
+    openFirewall = lib.mkDefault true;
+    ports = lib.mkDefault [
       22
       2222
     ];

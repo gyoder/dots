@@ -12,7 +12,7 @@ if host.type == "home" then
     pkgs = import sources.nixpkgs { system = host.system; };
   }
 else if host.type == "darwin" then
-  import <darwin> {
+  import sources.darwin {
     inherit configuration;
     nixpkgs = sources.nixpkgs;
     system = host.system;

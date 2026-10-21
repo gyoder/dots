@@ -4,12 +4,14 @@ let
   gitDir = "/mnt/ext/git";
   sorcery = import ../pkgs/sorcery.nix { inherit pkgs; };
   auth = import ./nginx-auth.nix { };
+
   instances = {
     public = {
       domain = "git.gae.moe";
       exports = "${gitDir}/srv/public";
       repositories = {
         grace = "${gitDir}/grace";
+        forks = "${gitDir}/forks";
       };
     };
     private = {
@@ -24,11 +26,20 @@ let
       };
     };
   };
+
+  artifactSymlinks =
+    dir: instance:
+    lib.mapAttrsToList (
+      namespace: path:
+      "L+ ${dir}/${namespace} - - - - ${gitDir}/artifacts/${lib.removePrefix "${gitDir}/" path}"
+    ) instance.repositories;
+
   sshCommand = pkgs.writeShellScript "sorcery-ssh-command" ''
     export PATH=${pkgs.git}/bin:$PATH
     export SORCERY_REPOSITORIES=${instances.public.exports}
     export SORCERY_INSTANCE_NAME=git.gae.moe
     export SORCERY_CLONE_URL_BASE=https://git.gae.moe
+    export SORCERY_SSH_TUI=${sorcery.sshTuiPackage}/bin/sorcery-ssh-tui
     umask 0007
     exec ${sorcery.sshPackage}/bin/sorcery-ssh
   '';
@@ -100,21 +111,39 @@ let
           alias ${instance.exports}/;
         '';
       }
-      // lib.optionalAttrs (name == "private") {
+      // {
         "~ ^/[^/]+/[^/]+/(info/refs|git-upload-pack)$" = {
-          proxyPass = "http://unix:/run/sorcery-private/sock";
-          extraConfig = auth.git;
+          proxyPass = "http://unix:/run/sorcery-${name}/sock";
+          extraConfig = lib.optionalString (name == "private") auth.git + ''
+            proxy_buffering off;
+            proxy_request_buffering off;
+          '';
         };
       };
   };
+
+  mkArtifactHost = root: protected: {
+    inherit root;
+    locations = (lib.optionalAttrs protected auth.locations) // {
+      "/" = {
+        extraConfig = ''
+          ${lib.optionalString protected auth.browser}
+          autoindex on;
+          autoindex_localtime on;
+          autoindex_exact_size off;
+        '';
+      };
+    };
+  };
 in
 {
-
   imports = [ ./githooks.nix ];
+
   programs.git = {
     enable = true;
     config.init.defaultBranch = "main";
   };
+
   users.groups.git = { };
   users.users.git = {
     isSystemUser = true;
@@ -132,9 +161,10 @@ in
   '';
   environment.etc."ssh/git-principals".mode = "0644";
   environment.etc."ssh/git-authorized-keys".text = ''
-    restrict sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIA6Eq2yVsZrCH8so7f3ygH0UWp6WkOxbhLNFC9QewKwoAAAABHNzaDo= grace_yoder@outlook.com
+    restrict,pty sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIA6Eq2yVsZrCH8so7f3ygH0UWp6WkOxbhLNFC9QewKwoAAAABHNzaDo= grace_yoder@outlook.com
   '';
   environment.etc."ssh/git-authorized-keys".mode = "0644";
+
   services.openssh = {
     enable = true;
     extraConfig = ''
@@ -147,7 +177,7 @@ in
         PasswordAuthentication no
         KbdInteractiveAuthentication no
         DisableForwarding yes
-        PermitTTY no
+        PermitTTY yes
         PermitUserRC no
         X11Forwarding no
     '';
@@ -158,7 +188,11 @@ in
     "d ${gitDir}/mirrors 0750 git git -"
     "d ${gitDir}/mirrors/very_old 0750 git git -"
     "d ${gitDir}/srv 0750 git git -"
+    "d ${gitDir}/srv/artifacts 0750 git git -"
+    "d ${gitDir}/srv/artifacts-private 0750 git git -"
   ]
+  ++ artifactSymlinks "${gitDir}/srv/artifacts" instances.public
+  ++ artifactSymlinks "${gitDir}/srv/artifacts-private" instances.private
   ++ lib.concatLists (
     lib.mapAttrsToList (
       _: instance:
@@ -173,7 +207,12 @@ in
   systemd.services = lib.mapAttrs' (
     name: instance: lib.nameValuePair "sorcery-${name}" (mkService name instance)
   ) instances;
-  services.nginx.virtualHosts = lib.mapAttrs' (
-    name: instance: lib.nameValuePair instance.domain (mkHost name instance)
-  ) instances;
+
+  services.nginx.virtualHosts =
+    lib.mapAttrs' (name: instance: lib.nameValuePair instance.domain (mkHost name instance)) instances
+    // {
+      "artifacts.gae.moe" = mkArtifactHost "${gitDir}/srv/artifacts" false;
+
+      "i.artifacts.gae.moe" = mkArtifactHost "${gitDir}/srv/artifacts-private" true;
+    };
 }
