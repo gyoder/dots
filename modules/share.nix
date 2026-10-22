@@ -4,7 +4,7 @@ let
   host = import ../hosts.nix;
 in
 {
-  users.groups.share = { };
+  users.groups.share.gid = 992;
   users.users.${host.user}.extraGroups = [ "share" ];
 
   systemd.tmpfiles.rules = [

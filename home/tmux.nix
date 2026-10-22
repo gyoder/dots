@@ -33,7 +33,7 @@ in
     mouse = true;
     keyMode = "vi";
     baseIndex = 1;
-    prefix = "C-\\";
+    prefix = "C-\\\\";
     terminal = "xterm-ghostty";
     plugins = with pkgs.tmuxPlugins; [
       sensible

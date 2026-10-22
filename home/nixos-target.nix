@@ -45,7 +45,7 @@ let
       copy --to "ssh://$builder" "$drv" ${runner}
     unit="nixos-target-$NIX_HOST-$(${pkgs.coreutils}/bin/date +%s)-''${tmp##*/}"
 
-    if [ "$2" = listen ]; then
+    if [ "''${2-}" = listen ]; then
       exec ${pkgs.openssh}/bin/ssh "$builder" \
         "sudo -n systemd-run --unit=$unit --collect --wait /bin/sh ${runner} $drv $unit $NIX_HOST"
     fi

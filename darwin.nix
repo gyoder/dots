@@ -6,6 +6,7 @@
 
 let
   host = import ./hosts.nix;
+  tailnet = import ./tailnet.nix;
 in
 {
   networking.hostName = host.name;
@@ -30,6 +31,24 @@ in
   };
 
   programs.fish.enable = true;
+
+  environment.etc."auto_master" = {
+    knownSha256Hashes = [ "b2aac03248e8f229c703561f5bb059f9be491e5db9f447692398d775a9fb12a5" ];
+    text = ''
+      +auto_master
+      /home auto_home -nobrowse,hidefromfinder
+      /Network/Servers -fstab
+      /- auto_dijkstra
+      /- -static
+    '';
+  };
+  environment.etc."auto_dijkstra".text = ''
+    /Volumes/share -fstype=nfs,rw,vers=4.1,tcp,hard,intr,nosuid ${tailnet.dijkstra}:/mnt/data/share
+  '';
+  system.activationScripts.postActivation.text = ''
+    mkdir -p /Volumes/share
+    /usr/sbin/automount -vc
+  '';
 
   system.defaults.CustomUserPreferences = {
     NSGlobalDomain.NSUserKeyEquivalents = {

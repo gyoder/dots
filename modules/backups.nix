@@ -10,7 +10,6 @@ let
   exportOptions = [
     "rw"
     "sync"
-    "fsid=0"
     "all_squash"
     "anonuid=${uid}"
     "anongid=${gid}"
