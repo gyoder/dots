@@ -17,12 +17,13 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
-  nix.gc = lib.mkIf (host.type == "home") {
-    automatic = true;
-    dates = "weekly";
-    randomizedDelaySec = "1h";
-    options = "--delete-older-than 30d";
-  };
+  # Weird with cs.purdue.edu
+  # nix.gc = lib.mkIf (host.type == "home") {
+  #   automatic = true;
+  #   dates = "weekly";
+  #   randomizedDelaySec = "1h";
+  #   options = "--delete-older-than 30d";
+  # };
 
   imports = [
     ./home/base.nix
