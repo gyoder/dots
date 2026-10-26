@@ -11,6 +11,10 @@
     url = "https://github.com/nix-community/home-manager/archive/975cea5f20d2a5e7e008f68da9043e7bb5c0e928.tar.gz";
     sha256 = "0a0vdrld2i2bqqdwib7qiqlnvszsfni0l5gcpr3slpg93sqi4rvh";
   };
+  sops-nix = builtins.fetchTarball {
+    url = "https://github.com/Mic92/sops-nix/archive/442449fa7b1fe6c692d0103ac9fc8f9e82931cf3.tar.gz";
+    sha256 = "1p742s16ms9kj5dskir0cn7gadl4kric1cfjf4hjshgvjmlq4pr9";
+  };
   microvm = builtins.fetchTarball {
     url = "https://github.com/microvm-nix/microvm.nix/archive/f13928fe9900e91709d7ce581eefa47eaafa79e1.tar.gz";
     sha256 = "08b7lqmrkgn0n5smzk1h24488lnf75a09py0z7pzia0afcxpfg4d";

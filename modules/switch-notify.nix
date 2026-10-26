@@ -7,7 +7,9 @@
 
 let
   notify = pkgs.writeShellScript "notify-nixos-switch" ''
-    credentials=/etc/secrets/ntfy-nixos-switch.curl
+    credentials=${
+      lib.escapeShellArg (config.sops.secrets.ntfy-nixos-switch.path or "/run/secrets/ntfy-nixos-switch")
+    }
     if [ ! -r "$credentials" ]; then
       exit 0
     fi

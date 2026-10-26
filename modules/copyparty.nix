@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   host = import ../hosts.nix;
@@ -30,6 +35,12 @@ in
 {
   imports = [ ./share.nix ];
 
+  sops.secrets.copyparty = {
+    sopsFile = ../secrets/dijkstra/copyparty.json;
+    format = "binary";
+    restartUnits = [ "copyparty.service" ];
+  };
+
   users.users.copyparty = {
     isSystemUser = true;
     group = "share";
@@ -57,7 +68,7 @@ in
       Group = "share";
       WorkingDirectory = "/mnt/data/copyparty";
       ExecStart = "${lib.getExe pkgs.copyparty} -c ${configuration} -c %d/accounts.conf";
-      LoadCredential = [ "accounts.conf:/etc/secrets/copyparty.conf" ];
+      LoadCredential = [ "accounts.conf:${config.sops.secrets.copyparty.path}" ];
       Restart = "on-failure";
       RestartSec = 5;
       UMask = "0007";

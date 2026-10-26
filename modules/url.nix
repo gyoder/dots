@@ -1,6 +1,12 @@
-{ ... }:
+{ config, ... }:
 
 {
+  sops.secrets.zipline = {
+    sopsFile = ../secrets/knuth/zipline.json;
+    format = "binary";
+    restartUnits = [ "zipline.service" ];
+  };
+
   services.zipline = {
     enable = true;
     settings = {
@@ -16,7 +22,7 @@
       OAUTH_OIDC_USERINFO_URL = "https://auth.gae.moe/api/oidc/userinfo";
       OAUTH_OIDC_REDIRECT_URI = "https://l.gae.moe/api/auth/oauth/oidc";
     };
-    environmentFiles = [ "/etc/secrets/zipline.env" ];
+    environmentFiles = [ config.sops.secrets.zipline.path ];
   };
   users.groups.zipline = { };
   users.users.zipline = {

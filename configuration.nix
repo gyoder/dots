@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   host = import ./hosts.nix;
   sources = import ./sources.nix;
@@ -17,6 +17,7 @@ assert lib.assertMsg (
     system = host.system;
     config.allowUnfree = true;
   };
+  nix.package = pkgs.lixPackageSets.stable.lix;
   nix.nixPath = [
     "nixpkgs=${sources.nixpkgs}"
     "home-manager=${sources.home-manager}"

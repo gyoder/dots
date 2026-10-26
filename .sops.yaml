@@ -1,0 +1,15 @@
+keys:
+  - &grace 6862A9C0848F0C5933BFFBEC510E0EC785B0A8AA
+  - &recovery age1mtcy3clmy2d96yxwrl3rqlqu6n9kr7jxcj4fmwu9th027mh9evgsxqgdl7
+  - &knuth age1kk84fxy64llvltg0dpxunfdje5llwf9p2vm2h3chtnr9wrccaskqqw0ulx
+  - &dijkstra age1ugnuzfpzc2wqt9xe9kusr0v53wx38kcmt7y37gzyl09fzsstvejq2ec97x
+
+creation_rules:
+  - path_regex: ^secrets/knuth/[^/]+\.json$
+    key_groups:
+      - pgp: [*grace]
+        age: [*recovery, *knuth]
+  - path_regex: ^secrets/dijkstra/[^/]+\.json$
+    key_groups:
+      - pgp: [*grace]
+        age: [*recovery, *dijkstra]

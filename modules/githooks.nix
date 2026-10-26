@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   gitDir = "/mnt/ext/git";
@@ -45,7 +50,7 @@ let
       else
         outcome=failed
       fi
-      credentials=/var/lib/git-build-notify/credentials.curl
+      credentials=${config.sops.secrets.git-build-notify.path}
       if [ -r "$credentials" ]; then
         printf 'Build/deploy %s: %s (%s) at %s\nArtifacts: %s\n' \
           "$outcome" "$repo" "$ref" "$rev" "$artifactDir" |
@@ -177,7 +182,7 @@ let
       timeout 120 git -C "$repo" push --force "$remote" --all || failed=1
       timeout 120 git -C "$repo" push --force "$remote" --tags || failed=1
       if [ "$failed" -ne 0 ]; then
-        credentials=/var/lib/git-build-notify/credentials.curl
+        credentials=${config.sops.secrets.git-build-notify.path}
         if [ -r "$credentials" ]; then
           printf 'Failed to push %s to %s\n' "$repo" "$remote" |
             ${pkgs.curl}/bin/curl --config "$credentials" \
@@ -190,6 +195,12 @@ let
   '';
 in
 {
+  sops.secrets.git-build-notify = {
+    sopsFile = ../secrets/knuth/git-build-notify.json;
+    format = "binary";
+    owner = "git";
+  };
+
   environment.systemPackages = [ regenerate ];
   users.users.git.linger = true;
 

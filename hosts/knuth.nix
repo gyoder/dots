@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [
@@ -38,7 +38,7 @@
     description = "Notify when the Knuth backup fails";
     serviceConfig.Type = "oneshot";
     script = ''
-      credentials=/etc/secrets/ntfy-nixos-switch.curl
+      credentials=${config.sops.secrets.ntfy-nixos-switch.path}
       if [ ! -r "$credentials" ]; then
         echo "Backup failed; notification credentials are unavailable" >&2
         exit 0

@@ -1,14 +1,33 @@
-{ config, ... }:
+{ config, lib, ... }:
 
 {
+  sops.secrets =
+    lib.genAttrs
+      [
+        "authelia-jwt"
+        "authelia-storage"
+        "authelia-session"
+        "authelia-oidc-hmac"
+        "authelia-oidc-key"
+        "authelia-zipline-client-secret"
+        "authelia-immich-client-secret"
+        "authelia-jellyfin-client-secret"
+        "authelia-users"
+      ]
+      (name: {
+        sopsFile = ../secrets/knuth + "/${name}.json";
+        format = "binary";
+        restartUnits = [ "authelia-main.service" ];
+      });
+
   services.authelia.instances.main = {
     enable = true;
     secrets = {
-      jwtSecretFile = "/etc/secrets/authelia/jwt";
-      storageEncryptionKeyFile = "/etc/secrets/authelia/storage";
-      sessionSecretFile = "/etc/secrets/authelia/session";
-      oidcHmacSecretFile = "/etc/secrets/authelia/oidc-hmac";
-      oidcIssuerPrivateKeyFile = "/etc/secrets/authelia/oidc-key.pem";
+      jwtSecretFile = config.sops.secrets.authelia-jwt.path;
+      storageEncryptionKeyFile = config.sops.secrets.authelia-storage.path;
+      sessionSecretFile = config.sops.secrets.authelia-session.path;
+      oidcHmacSecretFile = config.sops.secrets.authelia-oidc-hmac.path;
+      oidcIssuerPrivateKeyFile = config.sops.secrets.authelia-oidc-key.path;
     };
     settings = {
       theme = "dark";
@@ -130,10 +149,10 @@
   };
 
   systemd.services.authelia-main.serviceConfig.LoadCredential = [
-    "zipline-client-secret:/etc/secrets/authelia/zipline-client-secret"
-    "users.yml:/etc/secrets/authelia/users.yml"
-    "immich-client-secret:/etc/secrets/authelia/immich-client-secret"
-    "jellyfin-client-secret:/etc/secrets/authelia/jellyfin-client-secret"
+    "zipline-client-secret:${config.sops.secrets.authelia-zipline-client-secret.path}"
+    "users.yml:${config.sops.secrets.authelia-users.path}"
+    "immich-client-secret:${config.sops.secrets.authelia-immich-client-secret.path}"
+    "jellyfin-client-secret:${config.sops.secrets.authelia-jellyfin-client-secret.path}"
   ];
   environment.systemPackages = [ config.services.authelia.instances.main.package ];
 }

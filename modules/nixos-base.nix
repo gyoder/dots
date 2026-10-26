@@ -4,7 +4,10 @@ let
   host = import ../hosts.nix;
 in
 {
-  imports = [ ./switch-notify.nix ];
+  imports = [
+    ./secrets.nix
+    ./switch-notify.nix
+  ];
 
   nix.settings.experimental-features = [
     "nix-command"
