@@ -27,7 +27,7 @@ let
     [/]
       /mnt/data/share
       accs:
-        rwmd: ${host.user}
+        rwmd: grace, nate
       flags:
         scan: 300
   '';

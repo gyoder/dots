@@ -7,7 +7,7 @@ let
     shell=${pkgs.fish}/bin/fish --login
     pad=12x12
 
-    [colors]
+    [colors-dark]
     background=191724
     foreground=e0def4
     regular0=26233a

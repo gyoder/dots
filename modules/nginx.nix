@@ -139,6 +139,9 @@ in
       "words.gay" = staticSite "/mnt/ext/git/www/private/words.gay/words.gay";
       "some.words.gay" = staticSite "/mnt/ext/git/www/private/words.gay/some.words.gay";
       "little.words.gay" = staticSite "/mnt/ext/git/www/private/words.gay/little.words.gay";
+
+      "gae.moe" = staticSite "/mnt/ext/git/www/private/gae.moe/main";
+
     };
   };
 

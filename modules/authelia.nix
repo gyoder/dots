@@ -59,8 +59,6 @@
           {
             domain = [
               "files.gae.moe"
-              "books.gae.moe"
-              "term.gae.moe"
               "i.git.gae.moe"
               "i.artifacts.gae.moe"
             ];

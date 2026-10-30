@@ -51,6 +51,7 @@ in
     ./home/packages.nix
     ./home/pkgs_mac.nix
     ./home/ghostty.nix
+    ./home/wezterm.nix
   ]
   ++ lib.optionals (host.name == "cs.purdue.edu") [
     ./home/cs_purdue.nix

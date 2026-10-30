@@ -12,6 +12,11 @@
     ../modules/nixos-base.nix
   ];
 
+  services.tailscale = {
+    useRoutingFeatures = "server";
+    extraSetFlags = [ "--advertise-exit-node" ];
+  };
+
   systemd.services.backup-ext = {
     description = "Mirror /mnt/ext to dijkstra";
     wants = [ "network-online.target" ];
