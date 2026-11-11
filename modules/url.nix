@@ -13,6 +13,7 @@
       CORE_PORT = 4567;
       CORE_TRUST_PROXY = "true";
       DATASOURCE_LOCAL_DIRECTORY = "/mnt/ext/files";
+      FILES_MAX_FILE_SIZE = "5gb";
       FEATURES_USER_REGISTRATION = "false";
       FEATURES_OAUTH_REGISTRATION = "true";
       OAUTH_BYPASS_LOCAL_LOGIN = "true";

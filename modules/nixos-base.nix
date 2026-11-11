@@ -1,8 +1,4 @@
-{ lib, ... }:
-
-let
-  host = import ../hosts.nix;
-in
+{ host, lib, ... }:
 {
   imports = [
     ./secrets.nix
@@ -18,7 +14,6 @@ in
     "1.1.1.1"
     "9.9.9.9"
   ];
-  environment.sessionVariables.NIX_HOST = host.name;
 
   services.openssh = {
     enable = true;

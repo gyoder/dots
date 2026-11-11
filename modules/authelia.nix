@@ -12,6 +12,7 @@
         "authelia-zipline-client-secret"
         "authelia-immich-client-secret"
         "authelia-jellyfin-client-secret"
+        "authelia-continuwuity-client-secret"
         "authelia-users"
       ]
       (name: {
@@ -77,6 +78,24 @@
       storage.local.path = "/var/lib/authelia-main/db.sqlite3";
       notifier.filesystem.filename = "/var/lib/authelia-main/notifications.txt";
       identity_providers.oidc.clients = [
+        {
+          client_id = "continuwuity";
+          client_name = "Matrix";
+          client_secret = ''{{ secret (printf "%s/continuwuity-client-secret" (mustEnv "CREDENTIALS_DIRECTORY")) | trim }}'';
+          public = false;
+          authorization_policy = "one_factor";
+          require_pkce = true;
+          pkce_challenge_method = "S256";
+          redirect_uris = [ "https://matrix.gae.moe/_continuwuity/oidc/complete" ];
+          scopes = [
+            "openid"
+            "profile"
+          ];
+          response_types = [ "code" ];
+          grant_types = [ "authorization_code" ];
+          token_endpoint_auth_method = "client_secret_basic";
+          userinfo_signed_response_alg = "none";
+        }
         {
           client_id = "zipline";
           client_name = "Zipline";
@@ -151,6 +170,7 @@
     "users.yml:${config.sops.secrets.authelia-users.path}"
     "immich-client-secret:${config.sops.secrets.authelia-immich-client-secret.path}"
     "jellyfin-client-secret:${config.sops.secrets.authelia-jellyfin-client-secret.path}"
+    "continuwuity-client-secret:${config.sops.secrets.authelia-continuwuity-client-secret.path}"
   ];
   environment.systemPackages = [ config.services.authelia.instances.main.package ];
 }

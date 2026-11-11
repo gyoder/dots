@@ -1,20 +1,14 @@
 {
+  host,
   config,
   pkgs,
   ...
 }:
 
-let
-  host = import ./hosts.nix;
-  tailnet = import ./tailnet.nix;
-in
 {
   networking.hostName = host.name;
 
   environment.systemPackages = [
-    (pkgs.writeShellScriptBin "rebuild.sh" ''
-      exec /etc/nix-darwin/rebuild.sh "$@"
-    '')
     pkgs.raycast
     pkgs.thaw
   ];
@@ -32,29 +26,11 @@ in
 
   programs.fish.enable = true;
 
-  environment.etc."auto_master" = {
-    knownSha256Hashes = [ "b2aac03248e8f229c703561f5bb059f9be491e5db9f447692398d775a9fb12a5" ];
-    text = ''
-      +auto_master
-      /home auto_home -nobrowse,hidefromfinder
-      /Network/Servers -fstab
-      /- auto_dijkstra
-      /- -static
-    '';
-  };
-  environment.etc."auto_dijkstra".text = ''
-    /Volumes/share -fstype=nfs,rw,vers=4.1,tcp,hard,intr,nosuid ${tailnet.dijkstra}:/mnt/data/share
-  '';
-  system.activationScripts.postActivation.text = ''
-    mkdir -p /Volumes/share
-    /usr/sbin/automount -vc
-  '';
-
   system.defaults.CustomUserPreferences = {
+    "org.wezfurlong.wezterm".ApplePressAndHoldEnabled = false;
     NSGlobalDomain.NSUserKeyEquivalents = {
-      # Command+Option+Shift+J: toggle native fullscreen.
-      "Enter Full Screen" = "@~$j";
-      "Exit Full Screen" = "@~$j";
+      # Command+Option+Shift+J: maximize without entering fullscreen.
+      "Fill" = "@~$j";
       # Command+Option+Shift+H/L: tile to the left/right half.
       "Window->Move & Resize->Left" = "@~$h";
       "Window->Move & Resize->Right" = "@~$l";

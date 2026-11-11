@@ -1,7 +1,6 @@
-{ pkgs }:
+{ pkgs, source }:
 
 let
-  source = builtins.getFlake "git+https://git.gae.moe/forks/sorcery?rev=a873d20e867ae2de57786f4f5439aa4c591fafe0";
   manifest = builtins.readFile "${source.outPath}/src/grammar_manifest.rs";
   grammarVersion = builtins.head (builtins.match ''.*VERSION: &str = "([^"]+)";.*'' manifest);
   artifacts = builtins.filter builtins.isList (

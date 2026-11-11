@@ -1,11 +1,11 @@
-{ lib, ... }:
-
-let
-  host = import ../hosts.nix;
-  sources = import ../sources.nix;
-in
 {
-  imports = [ (sources.sops-nix + "/modules/sops") ];
+  host,
+  inputs,
+  lib,
+  ...
+}:
+{
+  imports = [ inputs.sops-nix.nixosModules.sops ];
 
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
   sops.gnupg.sshKeyPaths = [ ];

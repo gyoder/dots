@@ -1,53 +1,24 @@
-{ config, pkgs, ... }:
+{
+  host,
+  pkgs,
+  ...
+}:
 
 let
-  host = import ../hosts.nix;
   root = "/mnt/backup";
-  nfs = "${root}/nfs";
   timemachine = "${root}/timemachine";
-  uid = toString config.users.users.${host.user}.uid;
-  gid = toString config.ids.gids.users;
-  exportOptions = [
-    "rw"
-    "sync"
-    "all_squash"
-    "anonuid=${uid}"
-    "anongid=${gid}"
-    "no_subtree_check"
-    "insecure"
-  ];
 in
 {
   users.users.${host.user}.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIzErojBe08D6vMxI+LJXOx7bM+RJF7ZFrCopagpYNm6 root@knuth"
   ];
 
-  services.nfs.server = {
-    enable = true;
-    exports.${nfs} = {
-      "100.64.0.0/10" = exportOptions;
-      "fd7a:115c:a1e0::/48" = exportOptions;
-    };
-  };
-  services.nfs.settings.nfsd = {
-    vers3 = false;
-    vers4 = true;
-    udp = false;
-  };
-  systemd.services.nfs-server = {
-    unitConfig.RequiresMountsFor = [ root ];
-  };
-
   systemd.services.backup-directories = {
-    description = "Prepare backup shares on the mounted backup disk";
+    description = "Prepare the Time Machine directory on the mounted backup disk";
     requiredBy = [
-      "nfs-server.service"
-      "nfs-mountd.service"
       "samba-smbd.service"
     ];
     before = [
-      "nfs-server.service"
-      "nfs-mountd.service"
       "samba-smbd.service"
     ];
     unitConfig.RequiresMountsFor = [ root ];
@@ -56,7 +27,7 @@ in
       RemainAfterExit = true;
     };
     script = ''
-      ${pkgs.coreutils}/bin/install -d -m 0700 -o ${host.user} -g users ${nfs} ${timemachine}
+      ${pkgs.coreutils}/bin/install -d -m 0700 -o ${host.user} -g users ${timemachine}
     '';
   };
 

@@ -1,6 +1,8 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
+  xdg.configFile."wezterm/picker.fish".source = ../fish/wezterm-picker.fish;
+
   programs.wezterm = {
     enable = true;
     extraConfig = ''
@@ -11,113 +13,72 @@
       config.font = wezterm.font('ComicCode Nerd Font', { weight = 'DemiBold' })
       config.harfbuzz_features = { 'calt=0', 'liga=0', 'dlig=0' }
       config.send_composed_key_when_left_alt_is_pressed = false
-      config.use_fancy_tab_bar = false
+      config.use_fancy_tab_bar = true
       config.default_workspace = 'local'
-      config.leader = { key = '\\', mods = 'CTRL', timeout_milliseconds = 1000 }
 
       config.unix_domains = { { name = 'unix' } }
+      config.default_domain = 'unix'
       config.default_gui_startup_args = { 'connect', 'unix' }
-      config.ssh_domains = wezterm.default_ssh_domains()
-
-      local function switch(window, pane, name, spawn)
-        window:perform_action(act.SwitchToWorkspace {
-          name = name,
-          spawn = spawn,
-        }, pane)
+      local ssh_domains = wezterm.default_ssh_domains()
+      for i = 5, 15 do
+        local host = string.format('borg%02d', i)
+        table.insert(ssh_domains, {
+          name = 'SSH:' .. host,
+          remote_address = host .. '.cs',
+          multiplexing = 'None',
+        })
       end
-
-      local remote_project = act.PromptInputLine {
-        description = 'Remote project: SSH-config-host:/absolute/path',
-        action = wezterm.action_callback(function(window, pane, line)
-          if not line or line == "" then return end
-          local host, cwd = line:match('^([^:]+):(/.*)$')
-          for _, domain in ipairs(config.ssh_domains) do
-            if domain.name == 'SSHMUX:' .. (host or "") then
-              switch(window, pane, line, {
-                domain = { DomainName = domain.name },
-                cwd = cwd,
-              })
-              return
-            end
-          end
-          window:toast_notification('WezTerm',
-            'Use a host from ~/.ssh/config and an absolute remote path.', nil, 5000)
-        end),
-      }
+      config.ssh_domains = ssh_domains
 
       local picker = wezterm.action_callback(function(window, pane)
-        local choices = {}
-        local targets = {}
-        local function add(label, target)
-          local id = tostring(#choices + 1)
-          table.insert(choices, { id = id, label = label })
-          targets[id] = target
-        end
-
+        local args = { '${pkgs.fish}/bin/fish', '${config.xdg.configHome}/wezterm/picker.fish' }
         for _, name in ipairs(wezterm.mux.get_workspace_names()) do
-          add('workspace  ' .. name, { name = name })
+          table.insert(args, 'workspace\t' .. name)
         end
-        for _, domain in ipairs(config.ssh_domains) do
-          if domain.name:match('^SSHMUX:') then
-            local host = domain.name:sub(8)
-            add('ssh        ' .. host, {
-              name = host,
-              spawn = { domain = { DomainName = domain.name } },
-            })
+        for _, domain in ipairs(ssh_domains) do
+          if domain.name:match('^SSH:') then
+            table.insert(args, 'ssh\t' .. domain.name:sub(5) .. '\t' .. domain.remote_address)
           end
         end
-
-        local ok, stdout = wezterm.run_child_process {
-          '${pkgs.zoxide}/bin/zoxide', 'query', '-l',
-        }
-        if ok then
-          for path in stdout:gmatch('[^\r\n]+') do
-            add('directory  ' .. path, {
-              name = path,
-              spawn = { domain = { DomainName = 'unix' }, cwd = path },
-            })
-          end
-        end
-        add('+ remote project…', { remote = true })
-
-        window:perform_action(act.InputSelector {
-          title = 'Workspaces / SSH / projects',
-          fuzzy = true,
-          choices = choices,
-          action = wezterm.action_callback(function(win, selected_pane, id)
-            if not id then return end
-            local target = targets[id]
-            if target.remote then
-              win:perform_action(remote_project, selected_pane)
-            else
-              switch(win, selected_pane, target.name, target.spawn)
-            end
-          end),
+        window:perform_action(act.SpawnCommandInNewTab {
+          domain = { DomainName = 'unix' },
+          args = args,
         }, pane)
       end)
 
-      config.keys = {
-        { key = 'T', mods = 'LEADER|SHIFT', action = picker },
-        { key = 'p', mods = 'SUPER', action = picker },
-        { key = '\\', mods = 'LEADER|CTRL', action = act.SendKey { key = '\\', mods = 'CTRL' } },
-        { key = 'v', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
-        { key = 'b', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
-        { key = 'c', mods = 'LEADER', action = act.SpawnTab 'CurrentPaneDomain' },
-        { key = 'x', mods = 'LEADER', action = act.CloseCurrentPane { confirm = true } },
-        { key = 'z', mods = 'LEADER', action = act.TogglePaneZoomState },
-        { key = '[', mods = 'LEADER', action = act.ActivateCopyMode },
-        { key = 's', mods = 'LEADER', action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|DOMAINS' } },
-        { key = 'h', mods = 'ALT', action = act.ActivatePaneDirection 'Left' },
-        { key = 'j', mods = 'ALT', action = act.ActivatePaneDirection 'Down' },
-        { key = 'k', mods = 'ALT', action = act.ActivatePaneDirection 'Up' },
-        { key = 'l', mods = 'ALT', action = act.ActivatePaneDirection 'Right' },
+      wezterm.on('user-var-changed', function(window, pane, name, value)
+        if name ~= 'workspace_picker' then return end
+        local target = wezterm.json_parse(value)
+        window:perform_action(act.SwitchToWorkspace {
+          name = target.name,
+          spawn = {
+            domain = { DomainName = 'unix' },
+            cwd = target.cwd ~= "" and target.cwd or nil,
+            args = target.host ~= "" and { '${pkgs.openssh}/bin/ssh', target.host } or nil,
+          },
+        }, pane)
+        window:perform_action(act.CloseCurrentPane { confirm = false }, pane)
+      end)
+
+      local rename_workspace = act.PromptInputLine {
+        description = 'New workspace name',
+        action = wezterm.action_callback(function(window, pane, line)
+          if not line or line == "" then return end
+          wezterm.mux.rename_workspace(window:active_workspace(), line)
+        end),
       }
-      for i = 1, 9 do
-        table.insert(config.keys, { key = tostring(i), mods = 'ALT', action = act.ActivateTab(i - 1) })
-      end
+
+      config.keys = {
+        { key = 'V', mods = 'CTRL|SHIFT', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+        { key = 'H', mods = 'CTRL|SHIFT', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
+        { key = 'p', mods = 'SUPER', action = picker },
+        { key = 'R', mods = 'SUPER|SHIFT', action = rename_workspace },
+      }
 
       wezterm.on('update-right-status', function(window, pane)
-        window:set_right_status(window:active_workspace() .. ' | ' .. pane:get_domain_name())
+        local ok, domain = pcall(function() return pane:get_domain_name() end)
+        if not ok then return end
+        window:set_right_status(window:active_workspace() .. ' | ' .. domain)
       end)
 
       return config

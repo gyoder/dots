@@ -6,7 +6,6 @@
 }:
 
 let
-  host = import ../hosts.nix;
   tailnet = import ../tailnet.nix;
   configuration = pkgs.writeText "copyparty.conf" ''
     [global]

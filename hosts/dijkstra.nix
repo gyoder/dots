@@ -1,10 +1,8 @@
-{ ... }:
-
-let
-  host = import ../hosts.nix;
-in
+{ host, ... }:
 {
   imports = [
+    ../common.nix
+    ./hardware-configurations/dijkstra.nix
     ../modules/tailscale.nix
     ../modules/users.nix
     ../modules/nixos-base.nix
@@ -13,8 +11,8 @@ in
     ../modules/immich.nix
     ../modules/jellyfin.nix
     ../modules/samba.nix
-    ../modules/nfs-share.nix
     ../modules/backups.nix
+    ../modules/matrix.nix
     ../modules/copyparty.nix
     ../modules/hotspot.nix
     ../modules/fedora-vm.nix

@@ -8,6 +8,8 @@
 
 {
   imports = [
+    ../common.nix
+    ./hardware-configurations/portable.nix
     ../modules/users.nix
     ../modules/tailscale.nix
     ../modules/terminal.nix

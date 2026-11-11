@@ -1,34 +1,23 @@
-{ lib, pkgs, ... }:
-let
-  host = import ./hosts.nix;
-  sources = import ./sources.nix;
-in
-assert lib.assertMsg (
-  host.type != "home"
-) "${host.name} is a Home Manager host; use home-manager instead.";
 {
-  imports = [
-    (./hosts + "/${host.name}.nix")
-  ]
-  ++ lib.optional (host.type == "nixos") (./hosts/hardware-configurations + "/${host.name}.nix");
-
+  host,
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
+{
   nixpkgs.hostPlatform = host.system;
-  nixpkgs.pkgs = import sources.nixpkgs {
-    system = host.system;
-    config.allowUnfree = true;
-  };
+  nixpkgs.config.allowUnfree = true;
   nix.package = pkgs.lixPackageSets.stable.lix;
   nix.nixPath = [
-    "nixpkgs=${sources.nixpkgs}"
-    "home-manager=${sources.home-manager}"
-    "darwin=${sources.darwin}"
-    "nixos-config=/etc/nixos/configuration.nix"
-    "darwin-config=/etc/nix-darwin/configuration.nix"
+    "nixpkgs=${inputs.nixpkgs}"
+    "home-manager=${inputs.home-manager}"
+    "darwin=${inputs.darwin}"
   ];
 
   nix.distributedBuilds = true;
-  nix.buildMachines = lib.filter (m: m != { }) [
-    (lib.optionalAttrs (host.name != "dijkstra") {
+  nix.buildMachines = lib.optionals (host.name != "dijkstra") [
+    {
       hostName = "dijkstra.i.gae.moe";
       sshUser = "builder";
       sshKey = "/root/.ssh/id_ed25519";
@@ -42,7 +31,7 @@ assert lib.assertMsg (
         "nixos-test"
         "benchmark"
       ];
-    })
+    }
   ];
   nix.settings.builders-use-substitutes = true;
   nix.gc = {
@@ -81,10 +70,7 @@ assert lib.assertMsg (
     publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFbrncs13r5yxwPZreDwgRJg0t9ngRSw9rCnYl9cN8fk";
   };
 
-  security.sudo.extraConfig = ''
-    Defaults env_keep += "NIX_HOST"
-  ''
-  + lib.optionalString (host.type == "nixos") ''
+  security.sudo.extraConfig = lib.optionalString (host.type == "nixos") ''
     Defaults env_keep += "XDG_CONFIG_HOME EDITOR VISUAL JJ_CONFIG"
   '';
 }

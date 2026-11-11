@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -110,6 +109,8 @@ in
 
     virtualHosts = {
       "auth.gae.moe" = proxy "http://127.0.0.1:9091";
+      "matrix.gae.moe" = proxy "http://${tailnet.dijkstra}:6167";
+      "bridge.gae.moe" = proxy "http://${tailnet.dijkstra}:6693";
       "fin.gae.moe" = (proxy "http://${tailnet.dijkstra}:8096") // {
         extraConfig = "proxy_buffering off;";
       };
@@ -140,7 +141,19 @@ in
       "some.words.gay" = staticSite "/mnt/ext/git/www/private/words.gay/some.words.gay";
       "little.words.gay" = staticSite "/mnt/ext/git/www/private/words.gay/little.words.gay";
 
-      "gae.moe" = staticSite "/mnt/ext/git/www/private/gae.moe/main";
+      "gae.moe" = lib.recursiveUpdate (staticSite "/mnt/ext/git/www/private/gae.moe/main") {
+        locations = {
+          "= /.well-known/matrix/server".extraConfig = ''
+            default_type application/json;
+            return 200 '{"m.server":"matrix.gae.moe:443"}';
+          '';
+          "= /.well-known/matrix/client".extraConfig = ''
+            default_type application/json;
+            add_header Access-Control-Allow-Origin "*" always;
+            return 200 '{"m.homeserver":{"base_url":"https://matrix.gae.moe"}}';
+          '';
+        };
+      };
 
     };
   };

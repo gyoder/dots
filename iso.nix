@@ -1,7 +1,17 @@
-{ lib, modulesPath, ... }:
-
-assert lib.assertMsg (builtins.getEnv "NIX_HOST" == "portable") "Build with NIX_HOST=portable.";
 {
+  host,
+  lib,
+  modulesPath,
+  ...
+}:
+
+assert lib.assertMsg (host.name == "portable") "must be portable";
+{
+  disabledModules = [
+    ./common.nix
+    ./hosts/hardware-configurations/portable.nix
+  ];
+
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
     ./hosts/portable.nix
@@ -16,11 +26,18 @@ assert lib.assertMsg (builtins.getEnv "NIX_HOST" == "portable") "Build with NIX_
   installer.cloneConfig = false;
   environment.etc."nixos".source = lib.cleanSourceWith {
     src = ./.;
-    filter = path: type:
+    filter =
+      path: type:
       let
         name = baseNameOf path;
       in
-      !(builtins.elem name [ ".git" ".jj" ] || lib.hasPrefix "result" name);
+      !(
+        builtins.elem name [
+          ".git"
+          ".jj"
+        ]
+        || lib.hasPrefix "result" name
+      );
   };
 
   isoImage.edition = "portable";

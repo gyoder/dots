@@ -8,6 +8,9 @@
     sqlite
     podman
 
+    ffmpeg-full
+    sox
+
     # kicad
   ];
 }

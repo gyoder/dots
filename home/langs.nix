@@ -14,7 +14,6 @@
     cmake
     bear
     gnumake
-    just
     uv
     platformio-core
   ];

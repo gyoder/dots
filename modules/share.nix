@@ -1,8 +1,4 @@
-{ pkgs, ... }:
-
-let
-  host = import ../hosts.nix;
-in
+{ host, pkgs, ... }:
 {
   users.groups.share.gid = 992;
   users.users.${host.user}.extraGroups = [ "share" ];

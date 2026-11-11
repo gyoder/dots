@@ -1,8 +1,9 @@
-{ config, ... }:
-
-let
-  home-manager = (import ../sources.nix).home-manager;
-in
+{
+  config,
+  host,
+  inputs,
+  ...
+}:
 {
   nix.settings.trusted-users = [
     "root"
@@ -15,12 +16,14 @@ in
   ];
 
   imports = [
+    ../common.nix
     ../darwin.nix
-    "${home-manager}/nix-darwin"
+    inputs.home-manager.darwinModules.home-manager
   ];
 
   home-manager = {
-    useGlobalPkgs = false;
+    extraSpecialArgs = { inherit host inputs; };
+    useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
     users.${config.system.primaryUser} = {

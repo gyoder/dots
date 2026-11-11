@@ -1,8 +1,16 @@
-{ lib, pkgs, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   gitDir = "/mnt/ext/git";
-  sorcery = import ../pkgs/sorcery.nix { inherit pkgs; };
+  sorcery = import ../pkgs/sorcery.nix {
+    inherit pkgs;
+    source = inputs.sorcery;
+  };
   auth = import ./nginx-auth.nix { };
 
   instances = {

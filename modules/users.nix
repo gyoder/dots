@@ -1,11 +1,11 @@
-{ pkgs, ... }:
-
-let
-  host = import ../hosts.nix;
-  home-manager = (import ../sources.nix).home-manager;
-in
 {
-  imports = [ "${home-manager}/nixos" ];
+  host,
+  inputs,
+  pkgs,
+  ...
+}:
+{
+  imports = [ inputs.home-manager.nixosModules.home-manager ];
 
   nix.settings.trusted-users = [ host.user ];
 
@@ -27,13 +27,11 @@ in
   security.sudo.wheelNeedsPassword = false;
 
   home-manager = {
-    useGlobalPkgs = false;
+    extraSpecialArgs = { inherit host inputs; };
+    useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
 
-    users.${host.user} = {
-      imports = [ ../home.nix ];
-
-    };
+    users.${host.user}.imports = [ ../home.nix ];
   };
 }

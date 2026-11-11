@@ -1,10 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
-  dots = toString ./..;
   packagePath = "typst/packages/local/grace-personal-template/0.1.0";
   template = {
-    source = config.lib.file.mkOutOfStoreSymlink "${dots}/typst";
+    source = ../typst;
   };
 in
 {

@@ -1,10 +1,11 @@
 {
+  host,
   lib,
   ...
 }:
 
 let
-  host = import ../hosts.nix;
+  hosts = import ../hosts.nix;
   authorizedKeys = lib.concatStringsSep "\n" (
     import ../ssh-keys.nix {
       inherit host;
@@ -12,16 +13,36 @@ let
   );
 in
 {
-  home.activation.authorizedKeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          run mkdir -p "$HOME/.ssh"
-          run chmod 700 "$HOME/.ssh"
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    settings =
+      lib.mapAttrs (name: remote: {
+        HostName = remote.ssh.hostname or "${name}.i.gae.moe";
+        User = remote.user;
+        Port = remote.ssh.port or 22;
+      }) hosts
+      // {
+        "*.cs" = {
+          HostName = "%h.purdue.edu";
+          User = hosts."cs.purdue.edu".user;
+          ProxyJump = "${hosts."cs.purdue.edu".user}@data.cs.purdue.edu";
+        };
+      };
+  };
 
-          if [[ -z "''${DRY_RUN:-}" ]]; then
-            cat > "$HOME/.ssh/authorized_keys" <<'EOF'
-    ${authorizedKeys}
-    EOF
+  home.activation.authorizedKeys = lib.mkIf (host.type != "nixos") (
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      run mkdir -p "$HOME/.ssh"
+      run chmod 700 "$HOME/.ssh"
 
-            chmod 600 "$HOME/.ssh/authorized_keys"
-          fi
-  '';
+      if [[ -z "''${DRY_RUN:-}" ]]; then
+        cat > "$HOME/.ssh/authorized_keys" <<'EOF'
+      ${authorizedKeys}
+      EOF
+
+        chmod 600 "$HOME/.ssh/authorized_keys"
+      fi
+    ''
+  );
 }

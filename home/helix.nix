@@ -1,4 +1,5 @@
 {
+  host,
   pkgs,
   ...
 }:
@@ -40,7 +41,7 @@ in
           select = "underline";
         };
         default-yank-register = "+";
-        clipboard-provider = if (import ../hosts.nix).name == "turing" then "pasteboard" else "termcode";
+        clipboard-provider = if host.name == "turing" then "pasteboard" else "termcode";
         cursorline = true;
         cursorcolumn = true;
         continue-comments = false;

@@ -1,15 +1,12 @@
 {
-  config,
+  inputs,
   lib,
   pkgs,
   ...
 }:
 
 let
-  tpbSrc = builtins.fetchGit {
-    url = "https://git.gae.moe/grace/tpb.git";
-    ref = "refs/tags/0.1.3";
-  };
+  tpbSrc = inputs.tpb;
 in
 {
   home.packages = with pkgs; [
@@ -24,6 +21,7 @@ in
     uutils-coreutils
     wget
     jq
+    just
     yq
     yj
     most
@@ -62,6 +60,7 @@ in
     enable = true;
 
     shellAliases = {
+      fsh = ''nix develop --command "$SHELL"'';
       setupidf = "source /opt/esp/esp-idf/export.fish";
       pysource = "source .venv/bin/activate.fish";
       tcl = "clear && clear";
@@ -70,6 +69,25 @@ in
     };
 
     functions = {
+      wez-reconnect = {
+        description = "Reattach WezTerm to the persistent local mux";
+        body = ''
+          wezterm connect unix
+        '';
+      };
+
+      wezssh = {
+        description = "Open a Purdue SSH host in a WezTerm workspace";
+        body = ''
+          if test (count $argv) -ne 1
+            echo "Usage: wezssh HOST" >&2
+            return 2
+          end
+          wezterm cli --prefer-mux spawn --new-window --workspace "$argv[1]" \
+            --domain-name local -- ${pkgs.openssh}/bin/ssh "$argv[1]"
+        '';
+      };
+
       ask = {
         description = "Ask for input and respond with input";
         body = ''

@@ -2,6 +2,8 @@
 
 {
   imports = [
+    ../common.nix
+    ./hardware-configurations/knuth.nix
     ../modules/dns.nix
     ../modules/nginx.nix
     ../modules/ntfy.nix
