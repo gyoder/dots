@@ -19,7 +19,7 @@
       url = "git+https://git.gae.moe/grace/tpb.git?ref=refs/tags/0.1.4";
       # flake = false;
     };
-    sorcery.url = "git+https://git.gae.moe/forks/sorcery?rev=f7e7a6656134fe1d865d9ed377e84076e3d19ea0";
+    sorcery.url = "git+https://git.gae.moe/forks/sorcery?ref=refs/heads/grace-patches";
   };
 
   outputs =

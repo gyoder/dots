@@ -1,14 +1,6 @@
 { pkgs, source }:
 
-let
-  manifest = builtins.readFile "${source.outPath}/src/grammar_manifest.rs";
-  grammarVersion = builtins.head (builtins.match ''.*VERSION: &str = "([^"]+)";.*'' manifest);
-  artifacts = builtins.filter builtins.isList (
-    builtins.split ''"([^"]+)" => Some\(\([[:space:]]*([0-9]+),[[:space:]]*"([0-9a-f]+)"'' manifest
-  );
-in
 {
-  inherit grammarVersion;
   sshPackage = source.packages.${pkgs.stdenv.hostPlatform.system}.sorcery-ssh;
   sshTuiPackage = source.packages.${pkgs.stdenv.hostPlatform.system}.sorcery-ssh-tui;
 
@@ -36,14 +28,4 @@ in
           'if link.starts_with("https://") || link.starts_with("mailto:") { continue; } assert!(link.starts_with(['"'"'/'"'"', '"'"'#'"'"']), "{}: relative link {link}", page.display());'
     '';
   });
-
-  grammars = pkgs.linkFarm "sorcery-grammars-${grammarVersion}" (
-    map (artifact: {
-      name = "${builtins.elemAt artifact 0}.wasm";
-      path = pkgs.fetchurl {
-        url = "https://cdn.jsdelivr.net/npm/@arborium/${builtins.elemAt artifact 0}@${grammarVersion}/grammar_bg.wasm";
-        sha256 = builtins.elemAt artifact 2;
-      };
-    }) artifacts
-  );
 }

@@ -68,10 +68,6 @@ let
       SORCERY_INSTANCE_NAME = instance.domain;
       SORCERY_CLONE_URL_BASE = "https://${instance.domain}";
     };
-    preStart = ''
-      mkdir -p /var/cache/sorcery-${name}/.arborium/${sorcery.grammarVersion}
-      cp -L --remove-destination ${sorcery.grammars}/*.wasm /var/cache/sorcery-${name}/.arborium/${sorcery.grammarVersion}/
-    '';
     serviceConfig = {
       ExecStart = "${sorcery.package}/bin/sorceryd";
       User = "git";
