@@ -14,3 +14,6 @@ target host:
 
 logs:
     ssh grace@dijkstra.i.gae.moe 'sudo -n journalctl --unit=nixos-remote.service --invocation=0 --lines=100 --follow --no-pager'
+
+gc host:
+    ssh {{host}} -- sudo nix-collect-garbage -d

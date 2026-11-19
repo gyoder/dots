@@ -123,11 +123,16 @@ in
           command = "${pkgs.nixd}/bin/nixd";
         };
         luals = {
-          command = "${pkgs.lua-language-server}/bin/lua-language-server";
+          command =
+            if host.name == "knuth" then
+              "lua-language-server"
+            else
+              "${pkgs.lua-language-server}/bin/lua-language-server";
         };
 
         pyright = {
-          command = "${pkgs.pyright}/bin/pyright-langserver";
+          command =
+            if host.name == "knuth" then "pyright-langserver" else "${pkgs.pyright}/bin/pyright-langserver";
           args = [ "--stdio" ];
           config = {
             python.analysis = {
@@ -139,12 +144,12 @@ in
         };
 
         ruff = {
-          command = "${pkgs.ruff}/bin/ruff";
+          command = if host.name == "knuth" then "ruff" else "${pkgs.ruff}/bin/ruff";
           args = [ "server" ];
         };
 
         clangd = {
-          command = "${pkgs.clang-tools}/bin/clangd";
+          command = if host.name == "knuth" then "clangd" else "${pkgs.clang-tools}/bin/clangd";
           args = [
             "--background-index"
             "--offset-encoding=utf-8"
@@ -152,15 +157,19 @@ in
         };
 
         tailwindcss = {
-          command = "${pkgs.tailwindcss-language-server}/bin/tailwindcss-language-server";
+          command =
+            if host.name == "knuth" then
+              "tailwindcss-language-server"
+            else
+              "${pkgs.tailwindcss-language-server}/bin/tailwindcss-language-server";
           args = [ "--stdio" ];
         };
 
-        zls.command = "${pkgs.zls}/bin/zls";
-        gopls.command = "${pkgs.gopls}/bin/gopls";
+        zls.command = if host.name == "knuth" then "zls" else "${pkgs.zls}/bin/zls";
+        gopls.command = if host.name == "knuth" then "gopls" else "${pkgs.gopls}/bin/gopls";
 
         tinymist = {
-          command = "${pkgs.tinymist}/bin/tinymist";
+          command = if host.name == "knuth" then "tinymist" else "${pkgs.tinymist}/bin/tinymist";
           config = {
             formatterMode = "typstyle";
             typstExtraArgs = [
@@ -171,7 +180,8 @@ in
         };
 
         rust-analyzer = {
-          command = "${pkgs.rust-analyzer}/bin/rust-analyzer";
+          command =
+            if host.name == "knuth" then "rust-analyzer" else "${pkgs.rust-analyzer}/bin/rust-analyzer";
           config."rust-analyzer" = {
             check.command = "clippy";
             diagnostics.enable = true;
@@ -179,7 +189,7 @@ in
         };
 
         gdscript = {
-          command = "${pkgs.netcat}/bin/nc";
+          command = if host.name == "knuth" then "nc" else "${pkgs.netcat}/bin/nc";
           args = [
             "127.0.0.1"
             "6005"
@@ -191,7 +201,7 @@ in
         # config.AutomaticWorkspaceInit = true;
         # };
 
-        asm-lsp.command = "${pkgs.asm-lsp}/bin/asm-lsp";
+        asm-lsp.command = if host.name == "knuth" then "asm-lsp" else "${pkgs.asm-lsp}/bin/asm-lsp";
 
         codebook = {
           command = "${pkgs.codebook}/bin/codebook-lsp";
@@ -199,28 +209,48 @@ in
         };
 
         json = {
-          command = "${pkgs.vscode-langservers-extracted}/bin/vscode-json-language-server";
+          command =
+            if host.name == "knuth" then
+              "vscode-json-language-server"
+            else
+              "${pkgs.vscode-langservers-extracted}/bin/vscode-json-language-server";
           args = [ "--stdio" ];
           config.provideFormatter = true;
         };
 
         eslint = {
-          command = "${pkgs.vscode-langservers-extracted}/bin/vscode-eslint-language-server";
+          command =
+            if host.name == "knuth" then
+              "vscode-eslint-language-server"
+            else
+              "${pkgs.vscode-langservers-extracted}/bin/vscode-eslint-language-server";
           args = [ "--stdio" ];
         };
 
         typescript-language-server = {
-          command = "${pkgs.typescript-language-server}/bin/typescript-language-server";
+          command =
+            if host.name == "knuth" then
+              "typescript-language-server"
+            else
+              "${pkgs.typescript-language-server}/bin/typescript-language-server";
           args = [ "--stdio" ];
         };
 
         css = {
-          command = "${pkgs.vscode-langservers-extracted}/bin/vscode-css-language-server";
+          command =
+            if host.name == "knuth" then
+              "vscode-css-language-server"
+            else
+              "${pkgs.vscode-langservers-extracted}/bin/vscode-css-language-server";
           args = [ "--stdio" ];
         };
 
         html = {
-          command = "${pkgs.vscode-langservers-extracted}/bin/vscode-html-language-server";
+          command =
+            if host.name == "knuth" then
+              "vscode-html-language-server"
+            else
+              "${pkgs.vscode-langservers-extracted}/bin/vscode-html-language-server";
           args = [ "--stdio" ];
           config = {
             provideFormatter = true;
@@ -242,7 +272,7 @@ in
         };
 
         astro = {
-          command = "${pkgs.astro-language-server}/bin/astro-ls";
+          command = if host.name == "knuth" then "astro-ls" else "${pkgs.astro-language-server}/bin/astro-ls";
           args = [ "--stdio" ];
           config.typescript.tsdk = "./node_modules/typescript/lib";
         };

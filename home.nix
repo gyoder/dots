@@ -18,8 +18,8 @@
     ./home/tmux.nix
     ./home/vim.nix
     ./home/vcs.nix
-    ./home/wezterm.nix
   ]
+  ++ lib.optional (host.name != "knuth") ./home/wezterm.nix
   ++ lib.optional (lib.hasSuffix "-linux" host.system) ./home/linux.nix
   ++ lib.optional (builtins.elem host.name [
     "turing"

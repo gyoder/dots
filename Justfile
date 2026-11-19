@@ -17,7 +17,9 @@ rebuild:
     end
 
 target host:
-    #!/usr/bin/env fish
+    #! /usr/bin/env nix-shell
+    #! nix-shell -i fish -p fish nixos-rebuild-ng
+
     nixos-rebuild switch \
         --flake '.#{{host}}' \
         --build-host builder@dijkstra.i.gae.moe \
