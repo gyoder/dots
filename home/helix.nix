@@ -149,7 +149,8 @@ in
         };
 
         clangd = {
-          command = if host.name == "knuth" then "clangd" else "${pkgs.clang-tools}/bin/clangd";
+          command =
+            if host.name == "knuth" then "clangd" else "${pkgs.llvmPackages_22.clang-tools}/bin/clangd";
           args = [
             "--background-index"
             "--offset-encoding=utf-8"
