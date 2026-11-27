@@ -36,5 +36,9 @@
     ./home/packages.nix
     ./home/pkgs_mac.nix
     ./home/ghostty.nix
+  ]
+  ++ lib.optionals (host.name == "lovelace") [
+    ./home/packages.nix
+    ./home/ghostty.nix
   ];
 }

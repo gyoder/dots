@@ -2,6 +2,7 @@
   host,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 {
@@ -30,13 +31,14 @@
     };
     openssh = {
       ports = [ 22 ];
-      openFirewall = false;
+      openFirewall = true;
     };
   };
 
   nix.distributedBuilds = lib.mkForce false;
 
   environment.systemPackages = with pkgs; [
+    inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
     age
     gitleaks
     gnupg

@@ -1,16 +1,16 @@
 { pkgs, ... }:
 
 {
-  home.packages = [ pkgs.ghostty-bin.terminfo ];
+  home.packages = [ pkgs.ghostty.terminfo ];
 
   programs.ghostty = {
     enable = true;
 
-    package = pkgs.ghostty-bin;
+    package = pkgs.ghostty;
     enableFishIntegration = true;
 
     settings = {
-      env = [ "TERMINFO=${pkgs.ghostty-bin.terminfo}/share/terminfo" ];
+      env = [ "TERMINFO=${pkgs.ghostty.terminfo}/share/terminfo" ];
       clipboard-read = "allow";
       clipboard-write = "allow";
       copy-on-select = true;

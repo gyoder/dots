@@ -20,6 +20,10 @@
       # flake = false;
     };
     sorcery.url = "git+https://git.gae.moe/forks/sorcery?ref=refs/heads/grace-patches";
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
