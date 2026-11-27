@@ -42,6 +42,13 @@
     type = "nixos";
   };
 
+  lovelace = {
+    user = "grace";
+    home = "/home/grace";
+    system = "x86_64-linux";
+    type = "nixos";
+  };
+
   portable = {
     sshPrincipals = [ "t:dev" ];
     user = "grace";
